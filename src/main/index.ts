@@ -1,4 +1,4 @@
-import { app, shell, BrowserWindow } from 'electron'
+import { app, clipboard, shell, BrowserWindow } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { AccountService } from './accounts'
@@ -64,7 +64,8 @@ app.whenReady().then(() => {
       store: context.store,
       tokens: createEncryptedStorage(join(userData, 'tokens.bin')),
       google: readGoogleConfig(import.meta.env),
-      openBrowser: (url) => shell.openExternal(url)
+      openBrowser: (url) => shell.openExternal(url),
+      copyText: (text) => clipboard.writeText(text)
     })
     // Kalenderlisten im Hintergrund abgleichen. Fehler sind hier nicht kritisch,
     // sie zeigen sich beim Laden der Termine.

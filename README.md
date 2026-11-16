@@ -11,7 +11,7 @@ alle Termine **bidirektional** synchronisiert und sie in einer einzigen Ansicht 
 
 ![Status](https://img.shields.io/badge/Status-Etappe%202%20in%20Arbeit-orange?style=for-the-badge)
 ![Plattform](https://img.shields.io/badge/Plattform-Windows-0078D4?style=for-the-badge)
-![Version](https://img.shields.io/badge/Version-0.2.0-lightgrey?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-0.2.1-lightgrey?style=for-the-badge)
 
 ![Electron](https://img.shields.io/badge/Electron-2B2E3A?style=flat-square&logo=electron&logoColor=9FEAF9)
 ![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white)

@@ -76,6 +76,11 @@ export interface AppApi {
   listAccounts(): Promise<Account[]>
   /** Öffnet die Google-Anmeldung im Browser und wartet, bis sie abgeschlossen ist. */
   connectGoogle(): Promise<Account>
+  /** Öffnet die Seite der laufenden Anmeldung nochmals im Browser. */
+  reopenLogin(): Promise<void>
+  /** Kopiert die Adresse der laufenden Anmeldung in die Zwischenablage. */
+  copyLoginLink(): Promise<void>
+  cancelLogin(): Promise<void>
   removeAccount(accountId: string): Promise<void>
   listCalendars(): Promise<Calendar[]>
   setCalendarVisible(calendarId: string, visible: boolean): Promise<void>

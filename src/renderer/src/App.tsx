@@ -19,6 +19,7 @@ function App(): React.JSX.Element {
   const [calendars, setCalendars] = useState<Calendar[]>([])
   const [loading, setLoading] = useState(true)
   const [connecting, setConnecting] = useState(false)
+  const [linkCopied, setLinkCopied] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [selected, setSelected] = useState<{ event: CalendarEvent; anchor: AnchorRect } | null>(
     null
@@ -71,6 +72,7 @@ function App(): React.JSX.Element {
 
   const connectGoogle = useCallback(() => {
     setConnecting(true)
+    setLinkCopied(false)
     setError(null)
     window.api
       .connectGoogle()
@@ -78,6 +80,16 @@ function App(): React.JSX.Element {
       .catch((connectError) => setError(errorMessage(connectError)))
       .finally(() => setConnecting(false))
   }, [loadAccounts])
+
+  const loginAction = useCallback((action: 'reopen' | 'copy' | 'cancel') => {
+    const run =
+      action === 'reopen'
+        ? window.api.reopenLogin()
+        : action === 'copy'
+          ? window.api.copyLoginLink().then(() => setLinkCopied(true))
+          : window.api.cancelLogin()
+    run.catch((actionError) => setError(errorMessage(actionError)))
+  }, [])
 
   const removeAccount = useCallback(
     (account: Account) => {
@@ -121,6 +133,20 @@ function App(): React.JSX.Element {
           <button type="button" className="button" onClick={connectGoogle} disabled={connecting}>
             {connecting ? 'Warte auf Anmeldung im Browser …' : 'Google-Konto verbinden'}
           </button>
+          {connecting && (
+            <div className="login-help">
+              <p>Die Anmeldung läuft in deinem Browser. Ist dort keine Google-Seite aufgegangen?</p>
+              <button type="button" className="link-button" onClick={() => loginAction('reopen')}>
+                Seite nochmals öffnen
+              </button>
+              <button type="button" className="link-button" onClick={() => loginAction('copy')}>
+                {linkCopied ? 'Link kopiert' : 'Link kopieren'}
+              </button>
+              <button type="button" className="link-button" onClick={() => loginAction('cancel')}>
+                Abbrechen
+              </button>
+            </div>
+          )}
         </div>
 
         <StatusBadge status={status} />

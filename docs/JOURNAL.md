@@ -15,6 +15,29 @@ Laufendes Protokoll des Projekts. Der neuste Eintrag steht oben.
 
 ---
 
+## 2026-11-16 · Anmeldung mit Notausgängen (Version 0.2.1)
+
+**Gemacht**
+
+- Namir meldete, beim Verbinden sei kein Browser aufgegangen. Zwei Anmeldungen waren zuvor nach fünf Minuten abgelaufen.
+- Während die App auf die Anmeldung wartet, zeigt sie jetzt drei Auswege: «Seite nochmals öffnen», «Link kopieren» und «Abbrechen». Vorher blieb der Knopf fünf Minuten gesperrt, ohne Ausweg.
+- Version 0.2.1 gebaut und installiert.
+
+**Geprüft**
+
+- 48 Unit-Tests bestanden, neu der Abbruch von der App aus.
+- An der installierten App: Nach dem Klick wechselt der Titel des Firefox-Fensters auf «Anmelden – Google Konten». Die App öffnet den Browser also. Der kopierte Link ist die Google-Anmeldeadresse mit Rückweg auf 127.0.0.1. «Abbrechen» gibt den Knopf sofort wieder frei.
+
+**Aufgefallen**
+
+- Die Anmeldeseite geht als neuer Tab im bestehenden Firefox-Fenster auf. Liegt das Fenster im Hintergrund, sieht es aus, als passiere nichts.
+
+**Nicht geprüft**
+
+- Weiterhin A-11 bis A-14: Die Anmeldung selbst muss Namir im Browser abschliessen.
+
+---
+
 ## 2026-11-16 · Google Cloud eingerichtet
 
 **Gemacht**

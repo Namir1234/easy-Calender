@@ -33,6 +33,18 @@ export function registerIpc(ready: Promise<AppContext>): void {
     return accounts.connectGoogle()
   })
 
+  ipcMain.handle('accounts:reopenLogin', async (): Promise<void> => {
+    await (await ready).accounts.reopenLogin()
+  })
+
+  ipcMain.handle('accounts:copyLoginLink', async (): Promise<void> => {
+    ;(await ready).accounts.copyLoginLink()
+  })
+
+  ipcMain.handle('accounts:cancelLogin', async (): Promise<void> => {
+    ;(await ready).accounts.cancelLogin()
+  })
+
   ipcMain.handle('accounts:remove', async (_event, accountId: unknown): Promise<void> => {
     const id = requireId(accountId, 'Konto-ID')
     const { accounts } = await ready

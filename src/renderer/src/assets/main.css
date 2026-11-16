@@ -293,6 +293,21 @@ p {
   padding: 0 20px 16px;
 }
 
+.login-help {
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--ink-muted);
+}
+
+.login-help p {
+  margin: 0 0 4px;
+}
+
+.login-help .link-button {
+  display: block;
+  margin-left: -8px;
+}
+
 /* Status der Datenbank: eine Zeile mit Trennlinie, kein eigener Kasten */
 
 .status {

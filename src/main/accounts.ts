@@ -13,6 +13,7 @@ export interface AccountServiceOptions {
   tokens: SecureStorage
   google: GoogleConfigResult
   openBrowser(url: string): Promise<void>
+  copyText(text: string): void
 }
 
 /**
@@ -22,21 +23,31 @@ export interface AccountServiceOptions {
 export class AccountService {
   private readonly demo = new DemoProvider()
   private readonly googleProviders = new Map<string, GoogleProvider>()
-  private loginRunning = false
+  /** Die laufende Anmeldung: ihre Adresse bei Google und der Abbruch */
+  private login: { url: string | null; abort: AbortController } | null = null
 
   constructor(private readonly options: AccountServiceOptions) {}
 
   /** Meldet ein Google-Konto an und speichert es mit seinen Kalendern. */
   async connectGoogle(): Promise<Account> {
     const config = this.requireGoogleConfig()
-    if (this.loginRunning) {
+    if (this.login) {
       throw new Error('Es läuft bereits eine Anmeldung. Schliesse sie zuerst im Browser ab.')
     }
 
-    this.loginRunning = true
+    const login = { url: null as string | null, abort: new AbortController() }
+    this.login = login
     try {
       const { store, tokens, openBrowser } = this.options
-      const email = await loginWithGoogle(config, tokens, openBrowser)
+      const email = await loginWithGoogle(
+        config,
+        tokens,
+        (url) => {
+          login.url = url
+          return openBrowser(url)
+        },
+        login.abort.signal
+      )
       this.googleProviders.delete(email)
       const calendars = await this.googleProvider(email).listCalendars()
       const account = await store.saveAccount({ provider: 'google', email, calendars })
@@ -44,8 +55,28 @@ export class AccountService {
       await store.removeDemoAccounts()
       return account
     } finally {
-      this.loginRunning = false
+      this.login = null
     }
+  }
+
+  /** Öffnet die Anmeldeseite der laufenden Anmeldung nochmals im Browser. */
+  async reopenLogin(): Promise<void> {
+    await this.options.openBrowser(this.requireLoginUrl())
+  }
+
+  /** Legt die Adresse der laufenden Anmeldung in die Zwischenablage. */
+  copyLoginLink(): void {
+    this.options.copyText(this.requireLoginUrl())
+  }
+
+  /** Bricht die laufende Anmeldung ab. Ohne laufende Anmeldung passiert nichts. */
+  cancelLogin(): void {
+    this.login?.abort.abort()
+  }
+
+  private requireLoginUrl(): string {
+    if (!this.login?.url) throw new Error('Es läuft gerade keine Anmeldung')
+    return this.login.url
   }
 
   /** Entfernt ein Konto. Bleibt keines übrig, kommen die Demo-Daten zurück. */

@@ -6,6 +6,8 @@ export interface LoopbackSession {
   redirectUri: string
   /** Wird mit dem Autorisierungscode erfüllt, sobald der Browser zurückkommt */
   code: Promise<string>
+  /** Bricht das Warten ab, `code` schlägt dann mit einer Meldung fehl */
+  cancel(): void
   close(): void
 }
 
@@ -26,6 +28,7 @@ export async function startLoopback(
 ): Promise<LoopbackSession> {
   let server: Server
   let timer: NodeJS.Timeout
+  let cancel: () => void
 
   const code = new Promise<string>((resolve, reject) => {
     server = createServer((request, response) => {
@@ -67,6 +70,8 @@ export async function startLoopback(
       resolve(received)
     })
 
+    cancel = () => reject(new Error('Die Anmeldung wurde abgebrochen'))
+
     timer = setTimeout(
       () => reject(new Error('Die Anmeldung wurde nicht rechtzeitig abgeschlossen')),
       timeoutMs
@@ -87,5 +92,5 @@ export async function startLoopback(
   })
   const { port } = server!.address() as AddressInfo
 
-  return { redirectUri: `http://127.0.0.1:${port}`, code, close }
+  return { redirectUri: `http://127.0.0.1:${port}`, code, cancel: cancel!, close }
 }
