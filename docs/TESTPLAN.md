@@ -35,7 +35,7 @@ Diese Fälle werden an der gestarteten App geprüft, ohne echte Konten.
 | A-5 | Windows auf hell bzw. dunkel stellen           | Die App folgt der Einstellung                                        | ✅     |
 | A-6 | Ungültige Eingaben über die IPC-API schicken   | Der Main-Prozess lehnt sie mit einer Fehlermeldung ab                | ✅     |
 | A-7 | In der Oberfläche auf Node zugreifen           | Nicht möglich, nur `window.api` ist vorhanden                        | ✅     |
-| A-8 | App mit Supabase-Zugangsdaten starten          | Status «Supabase verbunden», Demo-Daten liegen in der Datenbank      | ⬜     |
+| A-8 | App mit Supabase-Zugangsdaten starten          | Status «Supabase verbunden», Demo-Daten liegen in der Datenbank      | ✅     |
 | A-9 | Installer bauen und die paketierte App starten | `dist/easy-calender-0.1.0-setup.exe` entsteht, die App läuft         | ✅     |
 
 ## Manuelle Sync-Tests (ab Etappe 5)
@@ -58,4 +58,5 @@ Diese Fälle werden an der gestarteten App geprüft, ohne echte Konten.
 - `npm test`: 26 von 26 Tests bestanden. `npm run typecheck` und `npm run lint` ohne Befund.
 - A-1 bis A-7 an der gebauten App geprüft, automatisiert über das Chrome DevTools Protocol. A-5 wurde über die simulierte Systemeinstellung geprüft, nicht über den Windows-Schalter selbst.
 - A-9: Installer gebaut (rund 121 MB, unsigniert). Die paketierte App aus `dist/win-unpacked` gestartet und geprüft. Der Installer selbst wurde nicht ausgeführt.
-- **Nicht geprüft:** A-8 und die Supabase-Variante der Datenschicht. Dafür fehlt noch ein Supabase-Projekt.
+- A-8 am selben Tag nachgeholt, nachdem das Supabase-Projekt eingerichtet war: Status «Supabase verbunden», Lesen, Schreiben und Zurücklesen funktionieren, nach einem Neustart keine Duplikate. Ohne Anmeldung liefert die Datenbank keine Zeilen und lehnt Schreiben mit 401 ab.
+- **Noch offen:** Für die Supabase-Variante der Datenschicht gibt es keinen automatischen Test. Sie ist nur von Hand an der laufenden App geprüft.

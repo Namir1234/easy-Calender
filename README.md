@@ -218,7 +218,7 @@ npm test        # Unit-Tests (Vitest)
 npm run build   # Windows-Installer erzeugen (landet in dist/)
 ```
 
-Ohne weitere Einrichtung startet die App mit Demo-Daten im Arbeitsspeicher.
+Ohne `.env` startet die App mit Demo-Daten im Arbeitsspeicher. Mit Supabase-Zugangsdaten liegen Konten und Kalender in der Datenbank.
 
 ### Dienste registrieren
 

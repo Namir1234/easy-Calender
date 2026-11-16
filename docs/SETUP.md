@@ -6,10 +6,10 @@ Ohne Einrichtung startet die App mit Demo-Daten. Für den echten Betrieb musst d
 
 ## Checkliste
 
-- [ ] Supabase: Projekt erstellt
-- [ ] Supabase: Schema eingespielt
-- [ ] Supabase: «Anonymous sign-ins» aktiviert
-- [ ] Supabase: URL und Publishable Key in `.env`
+- [x] Supabase: Projekt erstellt
+- [x] Supabase: Schema eingespielt
+- [x] Supabase: «Anonymous sign-ins» aktiviert
+- [x] Supabase: URL und Publishable Key in `.env`
 - [ ] Google Cloud: Projekt erstellt, Calendar API aktiviert (ab Etappe 2)
 - [ ] Google Cloud: OAuth-Client «Desktop app» angelegt, eigenes Konto als Testnutzer eingetragen
 - [ ] Azure: App registriert, Berechtigungen gesetzt (ab Etappe 3)
@@ -18,7 +18,7 @@ Ohne Einrichtung startet die App mit Demo-Daten. Für den echten Betrieb musst d
 
 In Supabase liegen die verbundenen Konten, die Kalender und später der Sync-Zustand. Tokens von Google und Microsoft werden dort nicht gespeichert.
 
-> **Stand:** Der Supabase-Teil der App ist geschrieben, aber noch nie gegen ein echtes Projekt gelaufen. Wenn beim ersten Verbinden etwas nicht klappt, zeigt die App den Grund unten links an.
+> **Stand:** Für Namirs Installation ist das am 2026-11-16 erledigt und geprüft. Die Schritte gelten für eine neue Einrichtung.
 
 1. Erstelle auf [supabase.com](https://supabase.com/) ein neues Projekt.
 2. Öffne den **SQL Editor**, füge den Inhalt von [`supabase/migrations/20261116000000_init.sql`](../supabase/migrations/20261116000000_init.sql) ein und führe ihn aus. Das legt die Tabellen und die Zugriffsregeln an.
