@@ -28,6 +28,14 @@ describe('startLoopback', () => {
     await outcome
   })
 
+  it('lässt sich von der App aus abbrechen', async () => {
+    const session = await startLoopback('geheim', 5_000)
+    const outcome = expect(session.code).rejects.toThrow('abgebrochen')
+    session.cancel()
+    await outcome
+    await expect(fetch(session.redirectUri)).rejects.toThrow()
+  })
+
   it('gibt nach Ablauf der Frist auf', async () => {
     const session = await startLoopback('geheim', 50)
     await expect(session.code).rejects.toThrow('nicht rechtzeitig')

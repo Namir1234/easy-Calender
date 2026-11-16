@@ -31,10 +31,12 @@ const tokenKey = (email: string): string => `google:${email.toLowerCase()}`
 export async function loginWithGoogle(
   config: GoogleConfig,
   tokens: SecureStorage,
-  openBrowser: (url: string) => Promise<void>
+  openBrowser: (url: string) => Promise<void>,
+  signal?: AbortSignal
 ): Promise<string> {
   const state = randomBytes(24).toString('base64url')
   const loopback = await startLoopback(state, LOGIN_TIMEOUT_MS)
+  signal?.addEventListener('abort', loopback.cancel, { once: true })
 
   try {
     const client = new OAuth2Client({
@@ -77,6 +79,7 @@ export async function loginWithGoogle(
     tokens.setItem(tokenKey(email), received.refresh_token)
     return email
   } finally {
+    signal?.removeEventListener('abort', loopback.cancel)
     loopback.close()
   }
 }
