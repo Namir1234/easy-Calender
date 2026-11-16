@@ -10,8 +10,8 @@ Ohne Einrichtung startet die App mit Demo-Daten. Für den echten Betrieb musst d
 - [x] Supabase: Schema eingespielt
 - [x] Supabase: «Anonymous sign-ins» aktiviert
 - [x] Supabase: URL und Publishable Key in `.env`
-- [ ] Google Cloud: Projekt erstellt, Calendar API aktiviert (ab Etappe 2)
-- [ ] Google Cloud: OAuth-Client «Desktop app» angelegt, eigenes Konto als Testnutzer eingetragen
+- [x] Google Cloud: Projekt erstellt, Calendar API aktiviert
+- [x] Google Cloud: OAuth-Client «Desktop app» angelegt, eigenes Konto als Testnutzer eingetragen
 - [ ] Azure: App registriert, Berechtigungen gesetzt (ab Etappe 3)
 
 ## 1. Supabase
@@ -36,7 +36,7 @@ In Supabase liegen die verbundenen Konten, die Kalender und später der Sync-Zus
 4. Lege unter «Anmeldedaten» einen **OAuth-Client** vom Typ **«Desktop app»** an.
 5. Notiere **Client-ID** und **Client-Secret** und trag sie in `.env` ein (siehe unten).
 
-Die App fragt bei der Anmeldung diese Berechtigungen an: E-Mail-Adresse, Kalenderliste lesen, Termine lesen und schreiben. Solange die App bei Google im Testmodus ist, zeigt Google bei der Anmeldung einen Hinweis «Google hat diese App nicht überprüft». Für den Eigengebrauch ist das in Ordnung.
+Die App fragt bei der Anmeldung diese Berechtigungen an: E-Mail-Adresse, Kalenderliste lesen, Termine lesen und schreiben. Solange die App bei Google im Testmodus ist, zeigt Google bei der Anmeldung einen Hinweis «Google hat diese App nicht überprüft». Für den Eigengebrauch ist das in Ordnung. Im Testmodus läuft die Anmeldung allerdings nach sieben Tagen ab, dann muss das Konto in der App neu verbunden werden.
 
 Beim Typ «Desktop app» muss keine Redirect-URI eingetragen werden. Die App verwendet `http://127.0.0.1` mit einem zufälligen Port.
 
