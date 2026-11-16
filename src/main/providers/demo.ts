@@ -1,4 +1,5 @@
-import { toDateString, type DayRange } from '../dateRange'
+import type { NormalizedEvent } from '../../shared/types'
+import { toDateString, toDayNumber, type DayRange } from '../dateRange'
 import type { CalendarProvider, ProviderEvent } from './types'
 
 const TIME_ZONE = 'Europe/Zurich'
@@ -112,9 +113,14 @@ function describeDay(dayNumber: number): DayInfo {
 
 /**
  * Liefert erfundene Termine für die Demo-Kalender. Die Termine werden aus
- * festen Vorlagen berechnet: gleicher Zeitraum, gleiche Termine.
+ * festen Vorlagen berechnet: gleicher Zeitraum, gleiche Termine. Eigene
+ * Termine lassen sich zum Ausprobieren anlegen, sie leben aber nur bis zum
+ * Beenden der App.
  */
 export class DemoProvider implements CalendarProvider {
+  private readonly own = new Map<string, { calendar: string; event: ProviderEvent }>()
+  private nextId = 1
+
   async listEvents(calendarRemoteId: string, range: DayRange): Promise<ProviderEvent[]> {
     const templates = TEMPLATES[calendarRemoteId] ?? []
     const events: ProviderEvent[] = []
@@ -141,6 +147,57 @@ export class DemoProvider implements CalendarProvider {
       }
     }
 
+    for (const { calendar, event } of this.own.values()) {
+      if (calendar !== calendarRemoteId) continue
+      const startDay = toDayNumber(event.allDay ? event.start : localDate(event.start))
+      const endDay = toDayNumber(event.allDay ? event.end : localDate(event.end))
+      if (startDay < range.endDay && endDay >= range.startDay) events.push({ ...event })
+    }
+
     return events
   }
+
+  listForSync(calendarRemoteId: string, range: DayRange): Promise<ProviderEvent[]> {
+    return this.listEvents(calendarRemoteId, range)
+  }
+
+  async getEvent(_calendarRemoteId: string, eventId: string): Promise<ProviderEvent | null> {
+    const entry = this.own.get(eventId)
+    return entry ? { ...entry.event } : null
+  }
+
+  async createEvent(calendarRemoteId: string, event: NormalizedEvent): Promise<ProviderEvent> {
+    const created = { ...event, recurrence: null, id: `demo-eigen-${this.nextId++}` }
+    this.own.set(created.id, { calendar: calendarRemoteId, event: created })
+    return { ...created }
+  }
+
+  async updateEvent(
+    calendarRemoteId: string,
+    eventId: string,
+    event: NormalizedEvent
+  ): Promise<ProviderEvent> {
+    this.requireOwn(eventId)
+    const updated = { ...event, recurrence: null, id: eventId }
+    this.own.set(eventId, { calendar: calendarRemoteId, event: updated })
+    return { ...updated }
+  }
+
+  async deleteEvent(_calendarRemoteId: string, eventId: string): Promise<void> {
+    this.requireOwn(eventId)
+    this.own.delete(eventId)
+  }
+
+  private requireOwn(eventId: string): void {
+    if (!this.own.has(eventId)) {
+      throw new Error('Die Beispieltermine lassen sich nicht ändern. Verbinde ein eigenes Konto.')
+    }
+  }
+}
+
+/** Das lokale Datum eines Zeitpunkts als `YYYY-MM-DD`. */
+function localDate(instant: string): string {
+  const date = new Date(instant)
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  return `${date.getFullYear()}-${month}-${String(date.getDate()).padStart(2, '0')}`
 }

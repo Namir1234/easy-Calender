@@ -105,3 +105,34 @@ export function readGoogleConfig(env: GoogleEnv): GoogleConfigResult {
   }
   return { kind: 'configured', config: { clientId, clientSecret } }
 }
+
+export interface MicrosoftConfig {
+  clientId: string
+}
+
+/** Die Umgebungsvariable, die für Microsoft gelesen wird. */
+export interface MicrosoftEnv {
+  MAIN_VITE_MS_CLIENT_ID?: unknown
+}
+
+export type MicrosoftConfigResult =
+  | { kind: 'configured'; config: MicrosoftConfig }
+  | { kind: 'missing' }
+  | { kind: 'invalid'; reason: string }
+
+/**
+ * Liest die Anwendungs-ID der App-Registrierung bei Microsoft (Azure).
+ * Ein Secret gibt es nicht: Die App ist dort ein öffentlicher Client.
+ */
+export function readMicrosoftConfig(env: MicrosoftEnv): MicrosoftConfigResult {
+  const clientId = asTrimmedString(env.MAIN_VITE_MS_CLIENT_ID)
+  if (!clientId) return { kind: 'missing' }
+  if (!/^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(clientId)) {
+    return {
+      kind: 'invalid',
+      reason:
+        'MAIN_VITE_MS_CLIENT_ID muss eine Anwendungs-ID sein (Form 00000000-0000-0000-0000-000000000000)'
+    }
+  }
+  return { kind: 'configured', config: { clientId } }
+}

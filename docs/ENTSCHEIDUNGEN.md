@@ -16,6 +16,9 @@ Wichtige technische Entscheidungen mit Begründung. Neue Entscheidungen kommen u
 | [E-010](#e-010-fullcalendar-7)                                        | 2026-11-16 | FullCalendar 7                                         | gilt   |
 | [E-011](#e-011-neutrale-oberfläche-nach-festen-gestaltungsregeln)     | 2026-11-16 | Neutrale Oberfläche nach festen Gestaltungsregeln      | gilt   |
 | [E-012](#e-012-googleapiscalendar-und-eng-gefasste-berechtigungen)    | 2026-11-16 | `@googleapis/calendar` und eng gefasste Berechtigungen | gilt   |
+| [E-013](#e-013-microsoft-ohne-zusatzbibliotheken)                     | 2026-11-16 | Microsoft ohne Zusatzbibliotheken                      | gilt   |
+| [E-014](#e-014-abgleich-über-listen-und-fingerabdrücke)               | 2026-11-16 | Abgleich über Listen und Fingerabdrücke                | gilt   |
+| [E-015](#e-015-serien-als-ganzes-ohne-ausnahmen)                      | 2026-11-16 | Serien als Ganzes, ohne Ausnahmen                      | gilt   |
 
 ---
 
@@ -96,3 +99,21 @@ Wichtige technische Entscheidungen mit Begründung. Neue Entscheidungen kommen u
 **Entscheidung:** Für Google wird das Paket `@googleapis/calendar` zusammen mit `google-auth-library` verwendet, nicht das Sammelpaket `googleapis`. Die App fragt nur diese Berechtigungen an: Kalenderliste lesen (`calendar.calendarlist.readonly`) sowie Termine lesen und schreiben (`calendar.events`), dazu die E-Mail-Adresse des Kontos.
 
 **Begründung:** `googleapis` enthält alle Google-APIs und würde den Installer unnötig vergrössern. `@googleapis/calendar` ist derselbe offizielle Code, nur für die Calendar API. Die Berechtigungen sind so eng wie möglich: Die App kann keine Kalender anlegen, löschen oder freigeben. Das Schreiben von Terminen wird erst ab Etappe 4 gebraucht, aber schon jetzt angefragt, damit später keine zweite Zustimmung nötig ist.
+
+## E-013: Microsoft ohne Zusatzbibliotheken
+
+**Entscheidung:** Die Anmeldung bei Microsoft und die Zugriffe auf Microsoft Graph laufen direkt über `fetch`, ohne `@azure/msal-node` und ohne `@microsoft/microsoft-graph-client`. Das ersetzt die ursprüngliche Planung.
+
+**Begründung:** Die App braucht nur den Standardablauf «Authorization Code mit PKCE» und eine Handvoll Graph-Aufrufe. Der Rückweg über den lokalen Server und PKCE sind von der Google-Anmeldung schon da und werden wiederverwendet. Zwei Bibliotheken weniger heisst kleinerer Installer und weniger fremder Code im Main-Prozess. Das Refresh-Token liegt wie bei Google verschlüsselt im `safeStorage`.
+
+## E-014: Abgleich über Listen und Fingerabdrücke
+
+**Entscheidung:** Der Abgleich holt bei jedem Lauf die Termine beider Kalender im Fenster von 30 Tagen zurück bis 365 Tage voraus und vergleicht sie. Delta-Abfragen (`syncToken`, `/delta`) werden nicht verwendet. Pro Verknüpfung wird für jede Seite ein Fingerabdruck der abgeglichenen Felder gespeichert, in den Spalten `google_etag` und `ms_changekey` der Tabelle `event_links`.
+
+**Begründung:** Der Listenvergleich kommt ohne Zustand aus, der ablaufen oder verloren gehen kann, und ist darum einfacher zu prüfen. Für private Kalender reicht die Geschwindigkeit. Ein Fingerabdruck pro Seite statt eines gemeinsamen verhindert Ping-Pong auch dann, wenn ein Anbieter einen Termin leicht anders zurückgibt, als er geschrieben wurde. Schutzmassnahmen: Fehlt ein verknüpfter Termin in der Liste, wird einzeln nachgefragt, bevor er als gelöscht gilt. Würden auf einen Schlag mehr als 15 Termine und mehr als die Hälfte gelöscht, stoppt der Abgleich.
+
+## E-015: Serien als Ganzes, ohne Ausnahmen
+
+**Entscheidung:** Eine Serie wird als ein Termin mit Regel abgeglichen. Einzelne geänderte oder abgesagte Termine einer Serie (Ausnahmen) werden nicht übertragen. Regeln, die Outlook nicht abbilden kann, werden nicht übertragen und im Bereich «Synchronisation» gemeldet.
+
+**Begründung:** Ausnahmen sind bei Google und Microsoft sehr unterschiedlich gebaut. Ein falscher Abgleich wäre schlimmer als ein fehlender. Die Serie selbst deckt den häufigsten Fall ab.

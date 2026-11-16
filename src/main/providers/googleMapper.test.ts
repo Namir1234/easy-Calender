@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { mapGoogleEvent, normalizeColor } from './googleMapper'
+import { mapGoogleEvent, normalizeColor, toGoogleBody } from './googleMapper'
 
 describe('mapGoogleEvent', () => {
   it('wandelt einen Termin mit Uhrzeit um', () => {
@@ -25,7 +25,8 @@ describe('mapGoogleEvent', () => {
       allDay: false,
       timeZone: 'Europe/Zurich',
       recurrence: null,
-      status: 'confirmed'
+      status: 'confirmed',
+      updatedAt: undefined
     })
   })
 
@@ -89,6 +90,45 @@ describe('mapGoogleEvent', () => {
     ).toBeNull()
     expect(mapGoogleEvent({ id: 'x' }, 'UTC')).toBeNull()
     expect(mapGoogleEvent({ id: 'x', start: {}, end: {} }, 'UTC')).toBeNull()
+  })
+})
+
+describe('toGoogleBody', () => {
+  const base = {
+    title: 'Zahnarzt',
+    start: '2026-11-17T08:00:00.000Z',
+    end: '2026-11-17T08:30:00.000Z',
+    allDay: false,
+    timeZone: 'Europe/Zurich',
+    recurrence: null,
+    status: 'confirmed' as const
+  }
+
+  it('schickt Zeit mit Zeitzone und leert leere Felder', () => {
+    expect(toGoogleBody(base)).toEqual({
+      summary: 'Zahnarzt',
+      description: '',
+      location: '',
+      start: { dateTime: '2026-11-17T08:00:00.000Z', date: null, timeZone: 'Europe/Zurich' },
+      end: { dateTime: '2026-11-17T08:30:00.000Z', date: null, timeZone: 'Europe/Zurich' },
+      recurrence: []
+    })
+  })
+
+  it('schickt ganztägige Termine als Datum und Serien als RRULE', () => {
+    const body = toGoogleBody({
+      ...base,
+      allDay: true,
+      start: '2026-12-24',
+      end: '2026-12-25',
+      recurrence: 'FREQ=YEARLY'
+    })
+    expect(body.start).toEqual({ date: '2026-12-24', dateTime: null, timeZone: null })
+    expect(body.recurrence).toEqual(['RRULE:FREQ=YEARLY'])
+  })
+
+  it('lässt bei einem einzelnen Vorkommen die Serie in Ruhe', () => {
+    expect(toGoogleBody({ ...base, recurrence: 'SERIE' })).not.toHaveProperty('recurrence')
   })
 })
 

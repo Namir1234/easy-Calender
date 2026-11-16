@@ -1,5 +1,5 @@
-import type { EventStatus } from '../../shared/types'
-import type { ProviderEvent } from './types'
+import type { EventStatus, NormalizedEvent } from '../../shared/types'
+import { SERIES_INSTANCE, seriesRule, type ProviderEvent } from './types'
 
 /** Die Felder eines Google-Termins, die die App liest. */
 export interface GoogleEvent {
@@ -12,6 +12,7 @@ export interface GoogleEvent {
   end?: GoogleEventTime | null
   recurrence?: string[] | null
   recurringEventId?: string | null
+  updated?: string | null
 }
 
 interface GoogleEventTime {
@@ -53,8 +54,41 @@ export function mapGoogleEvent(event: GoogleEvent, fallbackTimeZone: string): Pr
     allDay,
     timeZone: event.start.timeZone ?? fallbackTimeZone,
     // Einzelne Vorkommen einer Serie tragen keine Regel, nur den Verweis auf die Serie.
-    recurrence: rule ? rule.slice('RRULE:'.length) : event.recurringEventId ? 'SERIE' : null,
-    status: STATUSES[event.status ?? ''] ?? 'confirmed'
+    recurrence: rule
+      ? rule.slice('RRULE:'.length)
+      : event.recurringEventId
+        ? SERIES_INSTANCE
+        : null,
+    status: STATUSES[event.status ?? ''] ?? 'confirmed',
+    updatedAt: event.updated ?? undefined
+  }
+}
+
+/**
+ * Baut den Termin so, wie Google ihn beim Erstellen und Ändern erwartet.
+ * Leere Felder gehen als leerer Text hinaus, damit ein Ändern sie auch leert.
+ */
+export function toGoogleBody(event: NormalizedEvent): GoogleEvent & {
+  start: GoogleEventTime
+  end: GoogleEventTime
+} {
+  const rule = seriesRule(event)
+  const time = (value: string): GoogleEventTime =>
+    event.allDay
+      ? { date: value.slice(0, 10), dateTime: null, timeZone: null }
+      : { dateTime: value, date: null, timeZone: event.timeZone }
+  return {
+    summary: event.title,
+    description: event.description ?? '',
+    location: event.location ?? '',
+    start: time(event.start),
+    end: time(event.end),
+    // Ein einzelnes Vorkommen behält seine Serie: Das Feld bleibt dann weg.
+    ...(rule
+      ? { recurrence: [`RRULE:${rule}`] }
+      : event.recurrence === null
+        ? { recurrence: [] }
+        : {})
   }
 }
 

@@ -2,7 +2,7 @@
 
 Dieses Dokument beschreibt den geplanten Aufbau der App. Es wird mit jeder Etappe an den echten Stand angepasst.
 
-> **Stand:** Etappe 2 (Code). Gebaut sind Oberfläche, IPC-API, Datenschicht, Demo-Provider sowie Google-Login und Google-Provider. Microsoft und die Sync-Engine sind geplant.
+> **Stand:** Version 0.9.0. Alle Teile sind gebaut. Mit echten Konten geprüft sind sie noch nicht.
 
 ## Überblick
 
@@ -130,38 +130,40 @@ erDiagram
 
 ## Sync-Algorithmus
 
-Der Algorithmus läuft pro Kalender-Paar.
+Der Abgleich läuft pro Kalenderpaar (ein Google-Kalender, ein Outlook-Kalender). Der Code steht in `src/main/sync/`.
 
-1. **Änderungen holen.** Beide Seiten werden inkrementell abgefragt: Google über `syncToken`, Graph über `/calendarView/delta`. Beim ersten Lauf gilt ein Zeitfenster von 30 Tagen zurück bis 365 Tage voraus.
-2. **Gegenstück suchen.** Für jede Änderung wird über `event_links` das Gegenstück gesucht:
-   - **neu:** auf der anderen Seite erstellen und den Link speichern
-   - **geändert:** Hash der normalisierten Felder mit `last_hash` vergleichen. Ist er gleich, ist es das Echo des eigenen Updates und wird ignoriert. Sonst wird die andere Seite aktualisiert.
-   - **gelöscht oder abgesagt:** auf der anderen Seite löschen
-3. **Konflikte lösen.** Wurden beide Seiten seit dem letzten Sync geändert, gewinnt die neuere `updated` bzw. `lastModifiedDateTime`. Das wird ins Sync-Log geschrieben.
-4. **Markierung setzen.** Im Termin selbst wird eine ID-Markierung gespeichert (Google `extendedProperties.private`, Graph `singleValueExtendedProperties`). Damit werden gespiegelte Termine auch nach einem Verlust der Datenbank wiedererkannt.
-5. **Fehler behandeln.**
+1. **Listen holen.** Von beiden Seiten kommen die Einzeltermine von 30 Tagen zurück bis 365 Tage voraus, dazu die Serien als Ganzes.
+2. **Verknüpfte Termine vergleichen.** Zu jedem Paar von Terminen gibt es eine Zeile in `event_links` mit einem Fingerabdruck pro Seite: So sah der Termin dort beim letzten Abgleich aus.
 
-   | Fehler | Reaktion                             |
-   | ------ | ------------------------------------ |
-   | `401`  | Token erneuern                       |
-   | `410`  | `syncToken` abgelaufen, Vollabgleich |
-   | `429`  | Backoff                              |
+   | Lage                                         | Reaktion                           |
+   | -------------------------------------------- | ---------------------------------- |
+   | Keine Seite hat sich geändert                | nichts                             |
+   | Eine Seite hat sich geändert                 | Die andere wird nachgeführt        |
+   | Beide haben sich geändert                    | Die jüngere Änderung gewinnt       |
+   | Eine Seite fehlt, die andere ist unverändert | Der Termin wird auch dort gelöscht |
+   | Eine Seite fehlt, die andere wurde geändert  | Der Termin wird wiederhergestellt  |
+   | Beide Seiten fehlen                          | Die Verknüpfung wird entfernt      |
+
+3. **Neue Termine übertragen.** Termine ohne Verknüpfung werden auf der anderen Seite angelegt. Steht derselbe Termin (gleicher Titel, gleiche Zeit) schon auf beiden Seiten, wird er nur verknüpft.
+4. **Löschen, mit Vorsicht.** Gelöscht wird zuletzt. Fehlt ein Termin in der Liste, fragt die App erst einzeln nach, ob es ihn wirklich nicht mehr gibt. Wären es mehr als 15 Löschungen und mehr als die Hälfte aller Verknüpfungen, wird nichts gelöscht und der Stopp gemeldet.
+5. **Fehler.** Scheitert ein Termin, wird das gemeldet und der Rest läuft weiter.
 
 ### Loop-Schutz
 
-Schreibt die App einen Termin nach Outlook, meldet Outlook diesen beim nächsten Abruf als «geändert». Ohne Schutz würde die App ihn zurück nach Google schreiben, und so weiter. Darum wird nach jedem Schreiben der Hash der normalisierten Felder in `last_hash` gespeichert. Kommt eine Änderung mit demselben Hash zurück, ist es das eigene Echo und wird verworfen.
+Schreibt die App einen Termin nach Outlook, sieht Outlook ihn danach vielleicht leicht anders aus (zum Beispiel die Notiz). Darum wird nach jedem Schreiben festgehalten, wie die Zielseite den Termin wirklich gespeichert hat. Beim nächsten Lauf gilt dieser Stand als «unverändert», und es wird nichts zurückgeschrieben.
 
-### Wann läuft der Sync?
+### Wann läuft der Abgleich?
 
-- alle 2 Minuten (Polling)
-- wenn das Fenster den Fokus bekommt
-- manuell über die Oberfläche
+- alle fünf Minuten, auch wenn das Fenster geschlossen ist und die App im Infobereich weiterläuft
+- wenige Sekunden nach einer Änderung in der App
+- auf Knopfdruck in der Seitenleiste oder im Menü des Symbols im Infobereich
 
 ## Wiederkehrende Termine
 
-- Die Serie wird über RRULE ↔ Graph `patternedRecurrence` abgebildet: täglich, wöchentlich, monatlich, jährlich, mit Ende oder Anzahl.
-- Geänderte oder abgesagte Einzeltermine einer Serie werden als Ausnahmen gesynct.
-- Exotische RRULEs, die Graph nicht abbilden kann, werden als Einzeltermine gespiegelt und mit einer Warnung im Log vermerkt.
+- Eine Serie wird als ein Termin mit Regel abgeglichen. RRULE und das Graph-Format `patternedRecurrence` werden ineinander übersetzt: täglich, wöchentlich, monatlich, jährlich, mit Intervall, Wochentagen («zweiter Dienstag») und Ende (Datum oder Anzahl).
+- Ausnahmen einer Serie werden nicht abgeglichen (E-015).
+- Regeln, die Outlook nicht kennt, werden nicht übertragen und in der App gemeldet.
+- In der Anzeige sind Serien in einzelne Termine aufgelöst. Wird dort einer geändert oder gelöscht, betrifft das nur diesen einen.
 
 ## Sicherheit
 
@@ -170,4 +172,4 @@ Schreibt die App einen Termin nach Outlook, meldet Outlook diesen beim nächsten
 - Das Fenster läuft mit `sandbox` und `contextIsolation`, ohne Node in der Oberfläche. Alles, was vom Renderer kommt, prüft der Main-Prozess.
 - Der Renderer hat über `contextBridge` nur Zugriff auf eine schmale, definierte API.
 - Google-Anmeldung über OAuth 2.0 «Desktop app» mit Loopback-Redirect und PKCE.
-- Microsoft-Anmeldung über MSAL als öffentlicher Client, Authority `common` für private Konten sowie Schul- und Firmenkonten.
+- Microsoft-Anmeldung als öffentlicher Client mit PKCE und ohne Secret, Authority `common` für private Konten sowie Schul- und Firmenkonten.
