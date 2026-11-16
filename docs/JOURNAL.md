@@ -9,9 +9,33 @@ Laufendes Protokoll des Projekts. Der neuste Eintrag steht oben.
 |                     |                                                                                                        |
 | ------------------- | ------------------------------------------------------------------------------------------------------ |
 | **Etappe**          | 1 von 7 abgeschlossen. Etappe 2 ist geschrieben, aber noch nicht mit einem echten Google-Konto geprüft |
-| **Als Nächstes**    | Google Cloud einrichten, Zugangsdaten in `.env`, Google-Login an der App prüfen                        |
-| **Blockiert durch** | Namir muss in der Google Cloud Console die Nutzungsbedingungen annehmen                                |
+| **Als Nächstes**    | Namir verbindet sein Google-Konto in der App, danach wird Etappe 2 geprüft                             |
+| **Blockiert durch** | Die Google-Anmeldung im Browser kann nur Namir selbst abschliessen                                     |
 | **Offen bei Namir** | Google Cloud einrichten, später Azure (siehe [SETUP.md](SETUP.md))                                     |
+
+---
+
+## 2026-11-16 · Google Cloud eingerichtet
+
+**Gemacht**
+
+- Google-Cloud-Projekt «easy-calender» (von Namir angelegt), Google Calendar API aktiviert.
+- Google Auth Platform eingerichtet: App-Name «easy-Calender», Zielgruppe «Extern» im Testmodus, Namirs Gmail-Adresse als Kontakt und als Testnutzer. Die Nutzungsbedingungen und die Richtlinie zu Nutzerdaten hat Namir selbst angenommen.
+- OAuth-Client vom Typ «Desktopanwendung» angelegt, Client-ID und Secret in `.env` eingetragen (Arbeitsordner und Hauptordner, nicht im Repository).
+- App mit den Zugangsdaten neu gebaut und installiert.
+
+**Geprüft**
+
+- Die Anmeldung wurde aus der installierten App ausgelöst. Sie wurde im Browser nicht innerhalb von fünf Minuten abgeschlossen, die App hat das sauber als Zeitüberschreitung gemeldet.
+
+**Nicht geprüft**
+
+- Weiterhin der ganze Weg mit einem echten Google-Konto (A-11 bis A-14 im Testplan).
+
+**Aufgefallen**
+
+- Google weist darauf hin, dass neue Client-Einstellungen zwischen fünf Minuten und mehreren Stunden brauchen können, bis sie wirken.
+- Im Testmodus laufen Refresh-Tokens bei Google nach sieben Tagen ab. Die App verlangt dann eine neue Anmeldung. Dauerhaft lösen lässt sich das nur, indem die App bei Google auf «In Produktion» gestellt wird.
 
 ---
 
