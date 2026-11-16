@@ -6,13 +6,40 @@ Laufendes Protokoll des Projekts. Der neuste Eintrag steht oben.
 
 ## Aktueller Stand
 
-|                        |                                                                                         |
-| ---------------------- | --------------------------------------------------------------------------------------- |
-| **Etappe**             | 1 von 7 abgeschlossen (Grundgerüst)                                                     |
-| **Als Nächstes**       | Etappe 2: Google-Login, Kalender lesen und anzeigen                                     |
-| **Blockiert durch**    | nichts. Etappe 2 braucht aber die Google-Zugangsdaten                                   |
-| **Offen bei Namir**    | Supabase-Projekt einrichten, danach Google Cloud und Azure (siehe [SETUP.md](SETUP.md)) |
-| **Noch nicht geprüft** | Die Supabase-Anbindung ist geschrieben, aber nie gegen ein echtes Projekt gelaufen      |
+|                     |                                                                    |
+| ------------------- | ------------------------------------------------------------------ |
+| **Etappe**          | 1 von 7 abgeschlossen (Grundgerüst)                                |
+| **Als Nächstes**    | Etappe 2: Google-Login, Kalender lesen und anzeigen                |
+| **Blockiert durch** | nichts. Etappe 2 braucht aber die Google-Zugangsdaten              |
+| **Offen bei Namir** | Google Cloud einrichten, später Azure (siehe [SETUP.md](SETUP.md)) |
+
+---
+
+## 2026-11-16 · Supabase eingerichtet und geprüft
+
+**Gemacht**
+
+- Supabase-Projekt «easy-Calender» angelegt (Organisation Pomodoro-Timer, Gratis-Tarif, Region Europa).
+- Schema aus `supabase/migrations` über den SQL-Editor eingespielt, «Allow anonymous sign-ins» aktiviert.
+- `.env` mit Projekt-URL und Publishable Key angelegt, im Arbeitsordner und im Hauptordner. Die Datei ist nicht im Repository.
+- Impeccable-Skills ins Projekt aufgenommen (`.claude/skills/impeccable`).
+- Etappe 1 nach `main` gebracht.
+
+**Geprüft an der laufenden App**
+
+- Status «Supabase verbunden», die Demo-Konten und -Kalender liegen in der Datenbank.
+- Kalender aus- und wieder einblenden wird in Supabase gespeichert und richtig zurückgelesen.
+- Nach einem Neustart meldet sich die App mit derselben Sitzung an, es entstehen keine doppelten Demo-Daten.
+- Zugriffsregeln: Ohne Anmeldung liefert die Datenbank keine Zeilen, Schreiben wird mit 401 abgelehnt.
+
+**Aufgefallen**
+
+- Das Datenbank-Passwort hat Supabase erzeugt, es ist nirgends notiert. Die App braucht es nicht. Bei Bedarf lässt es sich im Dashboard unter «Database → Settings» neu setzen.
+- Im Gratis-Tarif pausiert Supabase ein Projekt nach längerer Inaktivität. Dann zeigt die App «Supabase-Fehler» und fällt auf Demo-Daten zurück, bis das Projekt im Dashboard wieder gestartet wird.
+
+**Als Nächstes**
+
+- Etappe 2: Google-Login mit Loopback-OAuth und PKCE, Kalender lesen und anzeigen. Dafür braucht es die Google-Zugangsdaten.
 
 ---
 
