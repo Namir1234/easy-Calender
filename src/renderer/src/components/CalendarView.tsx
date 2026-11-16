@@ -45,6 +45,13 @@ function CalendarView({ calendars, colorScheme, onSelect, onError }: Props): Rea
     )
   }, [])
 
+  // Der Main-Prozess fragt nur sichtbare Kalender ab. Ändert sich die
+  // Auswahl oder die Kalenderliste, wird darum neu geladen.
+  const visibleKey = calendars
+    .filter((calendar) => calendar.visible)
+    .map((calendar) => calendar.id)
+    .join(',')
+
   // Termine für den sichtbaren Zeitraum laden. Antworten auf einen
   // inzwischen verlassenen Zeitraum werden verworfen.
   useEffect(() => {
@@ -53,7 +60,11 @@ function CalendarView({ calendars, colorScheme, onSelect, onError }: Props): Rea
     window.api
       .listEvents(range)
       .then((loaded) => {
-        if (!cancelled) setEvents(loaded)
+        if (cancelled) return
+        setEvents(loaded.events)
+        if (loaded.problems.length > 0) {
+          onError(`Nicht alle Kalender konnten geladen werden. ${loaded.problems.join(' · ')}`)
+        }
       })
       .catch((error) => {
         if (!cancelled) onError(error instanceof Error ? error.message : String(error))
@@ -61,7 +72,7 @@ function CalendarView({ calendars, colorScheme, onSelect, onError }: Props): Rea
     return () => {
       cancelled = true
     }
-  }, [range, onError])
+  }, [range, visibleKey, onError])
 
   const calendarEvents = useMemo<EventInput[]>(() => {
     const byId = new Map(calendars.map((calendar) => [calendar.id, calendar]))

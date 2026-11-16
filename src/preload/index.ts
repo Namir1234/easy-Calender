@@ -6,6 +6,8 @@ import type { AppApi } from '../shared/types'
 const api: AppApi = {
   getStatus: () => ipcRenderer.invoke('app:status'),
   listAccounts: () => ipcRenderer.invoke('accounts:list'),
+  connectGoogle: () => ipcRenderer.invoke('accounts:connectGoogle'),
+  removeAccount: (accountId) => ipcRenderer.invoke('accounts:remove', accountId),
   listCalendars: () => ipcRenderer.invoke('calendars:list'),
   setCalendarVisible: (calendarId, visible) =>
     ipcRenderer.invoke('calendars:setVisible', calendarId, visible),

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { readSupabaseConfig } from './config'
+import { readGoogleConfig, readSupabaseConfig } from './config'
 
 function jwtWithRole(role: string): string {
   const encode = (value: object): string => Buffer.from(JSON.stringify(value)).toString('base64url')
@@ -75,6 +75,36 @@ describe('readSupabaseConfig', () => {
       readSupabaseConfig({
         MAIN_VITE_SUPABASE_URL: 'https://abc.supabase.co',
         MAIN_VITE_SUPABASE_KEY: jwtWithRole('service_role')
+      })
+    ).toMatchObject({ kind: 'invalid' })
+  })
+})
+
+describe('readGoogleConfig', () => {
+  const id = '123-abc.apps.googleusercontent.com'
+
+  it('meldet «missing», wenn nichts eingetragen ist', () => {
+    expect(readGoogleConfig({})).toEqual({ kind: 'missing' })
+  })
+
+  it('nimmt Client-ID und Secret an', () => {
+    expect(
+      readGoogleConfig({
+        MAIN_VITE_GOOGLE_CLIENT_ID: ` ${id} `,
+        MAIN_VITE_GOOGLE_CLIENT_SECRET: 's'
+      })
+    ).toEqual({ kind: 'configured', config: { clientId: id, clientSecret: 's' } })
+  })
+
+  it('meldet fehlende oder falsche Werte', () => {
+    expect(readGoogleConfig({ MAIN_VITE_GOOGLE_CLIENT_ID: id })).toMatchObject({ kind: 'invalid' })
+    expect(readGoogleConfig({ MAIN_VITE_GOOGLE_CLIENT_SECRET: 's' })).toMatchObject({
+      kind: 'invalid'
+    })
+    expect(
+      readGoogleConfig({
+        MAIN_VITE_GOOGLE_CLIENT_ID: 'falsch',
+        MAIN_VITE_GOOGLE_CLIENT_SECRET: 's'
       })
     ).toMatchObject({ kind: 'invalid' })
   })

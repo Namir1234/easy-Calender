@@ -1,6 +1,6 @@
 {
   "name": "easy-calender",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Desktop-App, die Google- und Outlook-Kalender bidirektional synchronisiert",
   "main": "./out/main/index.js",
   "author": "Namir",
@@ -22,7 +22,9 @@
   },
   "dependencies": {
     "@electron-toolkit/utils": "^4.0.0",
-    "@supabase/supabase-js": "^2.119.0"
+    "@googleapis/calendar": "^20.2.0",
+    "@supabase/supabase-js": "^2.119.0",
+    "google-auth-library": "^11.3.4"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config-prettier": "^3.0.1",

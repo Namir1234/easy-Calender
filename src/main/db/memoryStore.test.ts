@@ -59,3 +59,67 @@ describe('MemoryStore', () => {
     expect((await store.listCalendars())[0].visible).toBe(true)
   })
 })
+
+describe('MemoryStore: Konten verbinden und entfernen', () => {
+  const google = (
+    calendars: Array<[string, string]>
+  ): Parameters<MemoryStore['saveAccount']>[0] => ({
+    provider: 'google',
+    email: 'ich@example.com',
+    calendars: calendars.map(([remoteId, name]) => ({ remoteId, name, color: '#123456' }))
+  })
+
+  it('legt ein Konto mit Kalendern an', async () => {
+    const store = new MemoryStore()
+    const account = await store.saveAccount(google([['a', 'Privat']]))
+    expect(account).toMatchObject({ provider: 'google', email: 'ich@example.com' })
+    expect(await store.listCalendars()).toHaveLength(1)
+  })
+
+  it('gleicht Kalender ab und behält die Einstellungen bestehender', async () => {
+    const store = new MemoryStore()
+    await store.saveAccount(
+      google([
+        ['a', 'Privat'],
+        ['b', 'Alt']
+      ])
+    )
+    const [first] = await store.listCalendars()
+    await store.setCalendarVisible(first.id, false)
+
+    await store.saveAccount(
+      google([
+        ['a', 'Privat umbenannt'],
+        ['c', 'Neu']
+      ])
+    )
+
+    const calendars = await store.listCalendars()
+    expect(await store.listAccounts()).toHaveLength(1)
+    expect(calendars.map((calendar) => calendar.remoteId).sort()).toEqual(['a', 'c'])
+    const kept = calendars.find((calendar) => calendar.remoteId === 'a')
+    expect(kept).toMatchObject({ id: first.id, name: 'Privat umbenannt', visible: false })
+  })
+
+  it('entfernt ein Konto samt Kalendern und lässt andere stehen', async () => {
+    const store = await seededStore()
+    const account = await store.saveAccount(google([['a', 'Privat']]))
+    const demoCalendars = (await store.listCalendars()).length - 1
+
+    const removed = await store.removeAccount(account.id)
+
+    expect(removed.email).toBe('ich@example.com')
+    expect(await store.listCalendars()).toHaveLength(demoCalendars)
+    await expect(store.removeAccount(account.id)).rejects.toThrow()
+  })
+
+  it('entfernt nur die Demo-Konten', async () => {
+    const store = await seededStore()
+    await store.saveAccount(google([['a', 'Privat']]))
+
+    await store.removeDemoAccounts()
+
+    expect((await store.listAccounts()).map((account) => account.provider)).toEqual(['google'])
+    expect(await store.listCalendars()).toHaveLength(1)
+  })
+})

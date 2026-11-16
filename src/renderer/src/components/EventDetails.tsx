@@ -27,12 +27,15 @@ const DATE_FORMAT = new Intl.DateTimeFormat('de-CH', {
 })
 const TIME_FORMAT = new Intl.DateTimeFormat('de-CH', { hour: '2-digit', minute: '2-digit' })
 
-/** Liest `YYYY-MM-DD` oder `YYYY-MM-DDTHH:mm:ss` als lokale Zeit. */
+/**
+ * Liest einen Zeitpunkt für die Anzeige in der lokalen Zeit. Ein reines
+ * Datum (`YYYY-MM-DD`) würde `new Date` als UTC lesen, darum wird es hier
+ * von Hand zerlegt.
+ */
 function parseLocal(value: string): Date {
-  const [datePart, timePart = '00:00:00'] = value.split('T')
-  const [year, month, day] = datePart.split('-').map(Number)
-  const [hour, minute] = timePart.split(':').map(Number)
-  return new Date(year, month - 1, day, hour, minute)
+  if (value.includes('T')) return new Date(value)
+  const [year, month, day] = value.split('-').map(Number)
+  return new Date(year, month - 1, day)
 }
 
 /** Datum und Uhrzeit als zwei Zeilen, damit nichts mitten in der Zeit umbricht. */

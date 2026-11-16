@@ -66,3 +66,42 @@ function isSecretKey(key: string): boolean {
     return false
   }
 }
+
+export interface GoogleConfig {
+  clientId: string
+  clientSecret: string
+}
+
+/** Die Umgebungsvariablen, die für Google gelesen werden. */
+export interface GoogleEnv {
+  MAIN_VITE_GOOGLE_CLIENT_ID?: unknown
+  MAIN_VITE_GOOGLE_CLIENT_SECRET?: unknown
+}
+
+export type GoogleConfigResult =
+  | { kind: 'configured'; config: GoogleConfig }
+  | { kind: 'missing' }
+  | { kind: 'invalid'; reason: string }
+
+/**
+ * Liest die Zugangsdaten des Google-OAuth-Clients vom Typ «Desktop app».
+ * Das Client-Secret eines Desktop-Clients gilt bei Google nicht als geheim,
+ * es wird aber trotzdem für den Tausch des Codes verlangt.
+ */
+export function readGoogleConfig(env: GoogleEnv): GoogleConfigResult {
+  const clientId = asTrimmedString(env.MAIN_VITE_GOOGLE_CLIENT_ID)
+  const clientSecret = asTrimmedString(env.MAIN_VITE_GOOGLE_CLIENT_SECRET)
+
+  if (!clientId && !clientSecret) return { kind: 'missing' }
+  if (!clientId) return { kind: 'invalid', reason: 'MAIN_VITE_GOOGLE_CLIENT_ID fehlt in .env' }
+  if (!clientSecret) {
+    return { kind: 'invalid', reason: 'MAIN_VITE_GOOGLE_CLIENT_SECRET fehlt in .env' }
+  }
+  if (!clientId.endsWith('.apps.googleusercontent.com')) {
+    return {
+      kind: 'invalid',
+      reason: 'MAIN_VITE_GOOGLE_CLIENT_ID muss auf .apps.googleusercontent.com enden'
+    }
+  }
+  return { kind: 'configured', config: { clientId, clientSecret } }
+}

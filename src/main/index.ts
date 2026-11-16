@@ -1,9 +1,11 @@
 import { app, shell, BrowserWindow } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
+import { AccountService } from './accounts'
+import { readGoogleConfig } from './config'
 import { initStore } from './db'
-import { registerIpc } from './ipc'
-import { DemoProvider } from './providers/demo'
+import { registerIpc, type AppContext } from './ipc'
+import { createEncryptedStorage } from './secureStorage'
 
 function createWindow(): void {
   const mainWindow = new BrowserWindow({
@@ -56,8 +58,20 @@ app.whenReady().then(() => {
   })
 
   // Die Datenquelle wird im Hintergrund verbunden, das Fenster erscheint sofort.
-  const ready = initStore(import.meta.env, app.getPath('userData'))
-  registerIpc(ready, new DemoProvider())
+  const userData = app.getPath('userData')
+  const ready = initStore(import.meta.env, userData).then((context): AppContext => {
+    const accounts = new AccountService({
+      store: context.store,
+      tokens: createEncryptedStorage(join(userData, 'tokens.bin')),
+      google: readGoogleConfig(import.meta.env),
+      openBrowser: (url) => shell.openExternal(url)
+    })
+    // Kalenderlisten im Hintergrund abgleichen. Fehler sind hier nicht kritisch,
+    // sie zeigen sich beim Laden der Termine.
+    void accounts.refreshCalendars().catch(() => [])
+    return { ...context, accounts }
+  })
+  registerIpc(ready)
 
   createWindow()
 
