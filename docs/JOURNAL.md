@@ -6,12 +6,47 @@ Laufendes Protokoll des Projekts. Der neuste Eintrag steht oben.
 
 ## Aktueller Stand
 
-|                     |                                                                    |
-| ------------------- | ------------------------------------------------------------------ |
-| **Etappe**          | 1 von 7 abgeschlossen (Grundgerüst)                                |
-| **Als Nächstes**    | Etappe 2: Google-Login, Kalender lesen und anzeigen                |
-| **Blockiert durch** | nichts. Etappe 2 braucht aber die Google-Zugangsdaten              |
-| **Offen bei Namir** | Google Cloud einrichten, später Azure (siehe [SETUP.md](SETUP.md)) |
+|                     |                                                                                                        |
+| ------------------- | ------------------------------------------------------------------------------------------------------ |
+| **Etappe**          | 1 von 7 abgeschlossen. Etappe 2 ist geschrieben, aber noch nicht mit einem echten Google-Konto geprüft |
+| **Als Nächstes**    | Google Cloud einrichten, Zugangsdaten in `.env`, Google-Login an der App prüfen                        |
+| **Blockiert durch** | Namir muss in der Google Cloud Console die Nutzungsbedingungen annehmen                                |
+| **Offen bei Namir** | Google Cloud einrichten, später Azure (siehe [SETUP.md](SETUP.md))                                     |
+
+---
+
+## 2026-11-16 · Etappe 2: Google-Login und Google-Kalender (Code)
+
+**Gemacht**
+
+- Google-Anmeldung nach OAuth 2.0 für Desktop-Apps: Der Standardbrowser öffnet die Anmeldung und kommt auf einen lokalen Server zurück (127.0.0.1, zufälliger Port). PKCE und ein `state`-Wert sichern den Ablauf ab.
+- Das Refresh-Token liegt verschlüsselt im Electron `safeStorage` (`tokens.bin`), nicht in Supabase.
+- Google-Provider liest die Kalenderliste und die Termine eines Zeitraums. Ein Mapper wandelt Google-Termine ins normalisierte Modell um.
+- Datenschicht erweitert: Konto speichern mit Abgleich der Kalender, Konto entfernen, Demo-Konten entfernen.
+- Oberfläche: Knopf «Google-Konto verbinden», pro Konto «Konto entfernen». Fällt ein Kalender beim Laden aus, werden die anderen trotzdem angezeigt und der Grund gemeldet.
+- Mit dem ersten echten Konto verschwinden die Demo-Daten. Wird das letzte Konto entfernt, kommen sie zurück.
+- Version 0.2.0 als Installer gebaut und auf Namirs Rechner installiert (Desktop-Verknüpfung und Startmenü).
+
+**Geprüft**
+
+- 47 Unit-Tests bestanden, darunter der Rückweg der Anmeldung (richtiger und falscher `state`, Abbruch, Zeitüberschreitung) und der Google-Mapper.
+- An der laufenden App: Termine laden, Kalender ausblenden, Fehlermeldung beim Verbinden ohne Zugangsdaten, Ablehnen ungültiger Eingaben.
+- Die installierte App startet und verbindet sich mit Supabase.
+
+**Nicht geprüft**
+
+- Der gesamte Weg mit einem echten Google-Konto: Anmeldung im Browser, Tausch des Codes, Kalender und Termine von Google lesen, Konto entfernen. Dafür fehlen die Zugangsdaten des OAuth-Clients.
+
+**Aufgefallen**
+
+- Die Google Cloud Console verlangt beim ersten Besuch, dass Namir die Nutzungsbedingungen annimmt. Das ist seine Entscheidung und wurde nicht für ihn angeklickt.
+- Statt `googleapis` wird das kleinere `@googleapis/calendar` verwendet (E-012).
+- Zeitpunkte im Event-Modell dürfen jetzt eine Zeitverschiebung tragen, so wie Google sie liefert.
+- Ausgeblendete Kalender werden nicht mehr abgefragt. Das spart Anfragen bei Google.
+
+**Als Nächstes**
+
+- Google Cloud einrichten (Projekt, Calendar API, Zustimmungsbildschirm mit Testnutzer, OAuth-Client «Desktop app») und Etappe 2 mit dem echten Konto prüfen.
 
 ---
 

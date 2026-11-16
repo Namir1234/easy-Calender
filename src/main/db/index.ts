@@ -4,7 +4,8 @@ import { readSupabaseConfig, type SupabaseEnv } from '../config'
 import { DEMO_SEED } from './demoData'
 import { MemoryStore } from './memoryStore'
 import type { Store } from './store'
-import { createEncryptedStorage, createSupabaseClient, ensureSession } from './supabaseClient'
+import { createEncryptedStorage } from '../secureStorage'
+import { createSupabaseClient, ensureSession } from './supabaseClient'
 import { SupabaseStore } from './supabaseStore'
 
 export interface StoreContext {

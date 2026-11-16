@@ -30,7 +30,10 @@ export interface NormalizedEvent {
   title: string
   description?: string
   location?: string
-  /** Ganztägig: `YYYY-MM-DD`. Sonst lokale Zeit `YYYY-MM-DDTHH:mm:ss` in `timeZone`. */
+  /**
+   * Ganztägig: `YYYY-MM-DD`. Sonst ein Zeitpunkt nach ISO 8601, mit
+   * Zeitverschiebung (`2026-11-17T09:00:00+01:00`) oder ohne (dann lokale Zeit).
+   */
   start: string
   /** Wie `start`. Bei ganztägigen Terminen exklusiv (der Tag danach). */
   end: string
@@ -61,11 +64,20 @@ export interface DbStatus {
   message: string
 }
 
+/** Termine für einen Zeitraum, dazu Meldungen zu Kalendern, die nicht geladen werden konnten. */
+export interface EventsResult {
+  events: CalendarEvent[]
+  problems: string[]
+}
+
 /** Die schmale API, die der Renderer über `window.api` bekommt. */
 export interface AppApi {
   getStatus(): Promise<DbStatus>
   listAccounts(): Promise<Account[]>
+  /** Öffnet die Google-Anmeldung im Browser und wartet, bis sie abgeschlossen ist. */
+  connectGoogle(): Promise<Account>
+  removeAccount(accountId: string): Promise<void>
   listCalendars(): Promise<Calendar[]>
   setCalendarVisible(calendarId: string, visible: boolean): Promise<void>
-  listEvents(range: DateRange): Promise<CalendarEvent[]>
+  listEvents(range: DateRange): Promise<EventsResult>
 }

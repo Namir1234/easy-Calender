@@ -2,7 +2,7 @@
 
 Dieses Dokument beschreibt den geplanten Aufbau der App. Es wird mit jeder Etappe an den echten Stand angepasst.
 
-> **Stand:** Etappe 1. Gebaut sind Oberfläche, IPC-API, Datenschicht und ein Demo-Provider. Anmeldung, echte Provider und die Sync-Engine sind geplant.
+> **Stand:** Etappe 2 (Code). Gebaut sind Oberfläche, IPC-API, Datenschicht, Demo-Provider sowie Google-Login und Google-Provider. Microsoft und die Sync-Engine sind geplant.
 
 ## Überblick
 
@@ -48,23 +48,23 @@ flowchart LR
 
 ## Projektstruktur
 
-Die aktuelle Struktur steht im [README](../README.md#-architektur). Geplant und noch nicht vorhanden sind `auth/` (Google, Microsoft), `providers/google.ts`, `providers/microsoft.ts` und `sync/` (Engine, Mapper, Scheduler).
+Die aktuelle Struktur steht im [README](../README.md#-architektur). Geplant und noch nicht vorhanden sind der Microsoft-Login, `providers/microsoft.ts` und `sync/` (Engine, Mapper, Scheduler).
 
 ## Normalisiertes Event-Modell
 
 Beide Anbieter werden auf ein gemeinsames Modell abgebildet:
 
-| Feld           | Bedeutung                                          |
-| -------------- | -------------------------------------------------- |
-| `title`        | Titel des Termins                                  |
-| `description`  | Beschreibung                                       |
-| `location`     | Ort                                                |
-| `start`, `end` | Beginn und Ende                                    |
-| `allDay`       | Ganztägiger Termin                                 |
-| `timeZone`     | Zeitzone                                           |
-| `recurrence`   | Wiederholung als RRULE                             |
-| `attendees?`   | Teilnehmer (optional, wird in v1 nicht gespiegelt) |
-| `status`       | Status, z. B. bestätigt oder abgesagt              |
+| Feld           | Bedeutung                                                               |
+| -------------- | ----------------------------------------------------------------------- |
+| `title`        | Titel des Termins                                                       |
+| `description`  | Beschreibung                                                            |
+| `location`     | Ort                                                                     |
+| `start`, `end` | Beginn und Ende. Ganztägig als Datum, sonst als Zeitpunkt nach ISO 8601 |
+| `allDay`       | Ganztägiger Termin                                                      |
+| `timeZone`     | Zeitzone                                                                |
+| `recurrence`   | Wiederholung als RRULE                                                  |
+| `attendees?`   | Teilnehmer (optional, wird in v1 nicht gespiegelt)                      |
+| `status`       | Status, z. B. bestätigt oder abgesagt                                   |
 
 Gesynct wird nur diese definierte Teilmenge an Feldern. So geht nichts verloren, nur weil ein Feld beim anderen Anbieter kein Gegenstück hat.
 

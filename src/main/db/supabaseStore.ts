@@ -77,30 +77,90 @@ export class SupabaseStore implements Store {
     if (countError) throw new Error(`Konten konnten nicht gezählt werden: ${countError.message}`)
     if ((count ?? 0) > 0) return
 
-    const { data: accounts, error: accountError } = await this.client
-      .from('accounts')
-      .insert(seed.map((entry) => ({ provider: entry.provider, email: entry.email })))
-      .select('id, provider, email')
-    if (accountError) {
-      throw new Error(`Demo-Konten konnten nicht angelegt werden: ${accountError.message}`)
-    }
+    for (const entry of seed) await this.saveAccount(entry)
+  }
 
-    const calendarRows = seed.flatMap((entry) => {
-      const account = (accounts as AccountRow[]).find(
-        (row) => row.provider === entry.provider && row.email === entry.email
+  async saveAccount(entry: SeedAccount): Promise<Account> {
+    const account = await this.findOrCreateAccount(entry)
+
+    const { data: existing, error: listError } = await this.client
+      .from('calendars')
+      .select('id, remote_id')
+      .eq('account_id', account.id)
+    if (listError) throw new Error(`Kalender konnten nicht geladen werden: ${listError.message}`)
+
+    // Bestehende Kalender behalten ihre Einstellungen (sichtbar, Sync),
+    // weil nur Name und Farbe überschrieben werden.
+    if (entry.calendars.length > 0) {
+      const { error: upsertError } = await this.client.from('calendars').upsert(
+        entry.calendars.map((calendar) => ({
+          account_id: account.id,
+          remote_id: calendar.remoteId,
+          name: calendar.name,
+          color: calendar.color
+        })),
+        { onConflict: 'account_id,remote_id' }
       )
-      if (!account) return []
-      return entry.calendars.map((calendar) => ({
-        account_id: account.id,
-        remote_id: calendar.remoteId,
-        name: calendar.name,
-        color: calendar.color
-      }))
-    })
-
-    const { error: calendarError } = await this.client.from('calendars').insert(calendarRows)
-    if (calendarError) {
-      throw new Error(`Demo-Kalender konnten nicht angelegt werden: ${calendarError.message}`)
+      if (upsertError) {
+        throw new Error(`Kalender konnten nicht gespeichert werden: ${upsertError.message}`)
+      }
     }
+
+    const remoteIds = new Set(entry.calendars.map((calendar) => calendar.remoteId))
+    const goneIds = (existing as Array<{ id: string; remote_id: string }>)
+      .filter((row) => !remoteIds.has(row.remote_id))
+      .map((row) => row.id)
+    if (goneIds.length > 0) {
+      const { error: deleteError } = await this.client.from('calendars').delete().in('id', goneIds)
+      if (deleteError) {
+        throw new Error(`Alte Kalender konnten nicht entfernt werden: ${deleteError.message}`)
+      }
+    }
+
+    return account
+  }
+
+  async removeAccount(accountId: string): Promise<Account> {
+    // Die Kalender des Kontos löscht die Datenbank mit (on delete cascade).
+    const { data, error } = await this.client
+      .from('accounts')
+      .delete()
+      .eq('id', accountId)
+      .select('id, provider, email')
+    if (error) throw new Error(`Konto konnte nicht entfernt werden: ${error.message}`)
+    const [row] = data as AccountRow[]
+    if (!row) throw new Error(`Konto ${accountId} nicht gefunden`)
+    return { id: row.id, provider: row.provider, email: row.email }
+  }
+
+  async removeDemoAccounts(): Promise<void> {
+    const { error } = await this.client.from('accounts').delete().eq('provider', 'demo')
+    if (error) throw new Error(`Demo-Konten konnten nicht entfernt werden: ${error.message}`)
+  }
+
+  private async findOrCreateAccount(entry: SeedAccount): Promise<Account> {
+    const { data: found, error: findError } = await this.client
+      .from('accounts')
+      .select('id, provider, email')
+      .eq('provider', entry.provider)
+      .eq('email', entry.email)
+      .limit(1)
+    if (findError) throw new Error(`Konto konnte nicht gesucht werden: ${findError.message}`)
+    const [existing] = found as AccountRow[]
+    if (existing) return { id: existing.id, provider: existing.provider, email: existing.email }
+
+    const { data: created, error: createError } = await this.client
+      .from('accounts')
+      .insert({
+        provider: entry.provider,
+        email: entry.email,
+        // Verweis auf das lokal gespeicherte Token, nie das Token selbst
+        token_ref: entry.provider === 'demo' ? null : `${entry.provider}:${entry.email}`
+      })
+      .select('id, provider, email')
+      .single()
+    if (createError) throw new Error(`Konto konnte nicht angelegt werden: ${createError.message}`)
+    const row = created as AccountRow
+    return { id: row.id, provider: row.provider, email: row.email }
   }
 }

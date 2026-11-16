@@ -6,6 +6,7 @@ export class MemoryStore implements Store {
   readonly mode = 'memory' as const
   private accounts: Account[] = []
   private calendars: Calendar[] = []
+  private nextId = 1
 
   async listAccounts(): Promise<Account[]> {
     return this.accounts.map((account) => ({ ...account }))
@@ -23,20 +24,57 @@ export class MemoryStore implements Store {
 
   async seedIfEmpty(seed: SeedAccount[]): Promise<void> {
     if (this.accounts.length > 0) return
-    seed.forEach((entry, accountIndex) => {
-      const accountId = `mem-account-${accountIndex + 1}`
-      this.accounts.push({ id: accountId, provider: entry.provider, email: entry.email })
-      entry.calendars.forEach((calendar, calendarIndex) => {
+    for (const entry of seed) await this.saveAccount(entry)
+  }
+
+  async saveAccount(entry: SeedAccount): Promise<Account> {
+    let account = this.accounts.find(
+      (existing) => existing.provider === entry.provider && existing.email === entry.email
+    )
+    if (!account) {
+      account = { id: `mem-account-${this.nextId++}`, provider: entry.provider, email: entry.email }
+      this.accounts.push(account)
+    }
+    const accountId = account.id
+
+    const remoteIds = new Set(entry.calendars.map((calendar) => calendar.remoteId))
+    this.calendars = this.calendars.filter(
+      (calendar) => calendar.accountId !== accountId || remoteIds.has(calendar.remoteId)
+    )
+    for (const remote of entry.calendars) {
+      const existing = this.calendars.find(
+        (calendar) => calendar.accountId === accountId && calendar.remoteId === remote.remoteId
+      )
+      if (existing) {
+        existing.name = remote.name
+        existing.color = remote.color
+      } else {
         this.calendars.push({
-          id: `mem-calendar-${accountIndex + 1}-${calendarIndex + 1}`,
+          id: `mem-calendar-${this.nextId++}`,
           accountId,
-          remoteId: calendar.remoteId,
-          name: calendar.name,
-          color: calendar.color,
+          remoteId: remote.remoteId,
+          name: remote.name,
+          color: remote.color,
           syncEnabled: false,
           visible: true
         })
-      })
-    })
+      }
+    }
+    return { ...account }
+  }
+
+  async removeAccount(accountId: string): Promise<Account> {
+    const account = this.accounts.find((entry) => entry.id === accountId)
+    if (!account) throw new Error(`Konto ${accountId} nicht gefunden`)
+    this.accounts = this.accounts.filter((entry) => entry.id !== accountId)
+    this.calendars = this.calendars.filter((calendar) => calendar.accountId !== accountId)
+    return { ...account }
+  }
+
+  async removeDemoAccounts(): Promise<void> {
+    const demoIds = this.accounts
+      .filter((entry) => entry.provider === 'demo')
+      .map((entry) => entry.id)
+    for (const id of demoIds) await this.removeAccount(id)
   }
 }

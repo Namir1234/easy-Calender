@@ -6,8 +6,10 @@ import EventDetails, { type AnchorRect } from './components/EventDetails'
 import StatusBadge from './components/StatusBadge'
 import { useColorScheme } from './useColorScheme'
 
+/** Electron stellt Fehlern aus dem Main-Prozess einen technischen Vorspann voran. */
 function errorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : String(error)
+  const text = error instanceof Error ? error.message : String(error)
+  return text.replace(/^Error invoking remote method '[^']+': (Error: )?/, '')
 }
 
 function App(): React.JSX.Element {
@@ -16,10 +18,20 @@ function App(): React.JSX.Element {
   const [accounts, setAccounts] = useState<Account[]>([])
   const [calendars, setCalendars] = useState<Calendar[]>([])
   const [loading, setLoading] = useState(true)
+  const [connecting, setConnecting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [selected, setSelected] = useState<{ event: CalendarEvent; anchor: AnchorRect } | null>(
     null
   )
+
+  const loadAccounts = useCallback(async () => {
+    const [loadedAccounts, loadedCalendars] = await Promise.all([
+      window.api.listAccounts(),
+      window.api.listCalendars()
+    ])
+    setAccounts(loadedAccounts)
+    setCalendars(loadedCalendars)
+  }, [])
 
   useEffect(() => {
     let cancelled = false
@@ -57,10 +69,36 @@ function App(): React.JSX.Element {
     })
   }, [])
 
+  const connectGoogle = useCallback(() => {
+    setConnecting(true)
+    setError(null)
+    window.api
+      .connectGoogle()
+      .then(loadAccounts)
+      .catch((connectError) => setError(errorMessage(connectError)))
+      .finally(() => setConnecting(false))
+  }, [loadAccounts])
+
+  const removeAccount = useCallback(
+    (account: Account) => {
+      const sure = window.confirm(
+        `${account.email} entfernen?\n\nDie Termine bleiben bei Google erhalten. Die App zeigt sie nur nicht mehr an.`
+      )
+      if (!sure) return
+      setError(null)
+      window.api
+        .removeAccount(account.id)
+        .then(loadAccounts)
+        .catch((removeError) => setError(errorMessage(removeError)))
+    },
+    [loadAccounts]
+  )
+
   const selectEvent = useCallback((event: CalendarEvent, anchor: AnchorRect) => {
     setSelected({ event, anchor })
   }, [])
   const closeDetails = useCallback(() => setSelected(null), [])
+  const showError = useCallback((message: string) => setError(errorMessage(message)), [])
 
   const selectedCalendar = selected
     ? calendars.find((calendar) => calendar.id === selected.event.calendarId)
@@ -76,7 +114,14 @@ function App(): React.JSX.Element {
           calendars={calendars}
           loading={loading}
           onToggle={setVisible}
+          onRemove={removeAccount}
         />
+
+        <div className="sidebar-actions">
+          <button type="button" className="button" onClick={connectGoogle} disabled={connecting}>
+            {connecting ? 'Warte auf Anmeldung im Browser …' : 'Google-Konto verbinden'}
+          </button>
+        </div>
 
         <StatusBadge status={status} />
       </aside>
@@ -94,7 +139,7 @@ function App(): React.JSX.Element {
           calendars={calendars}
           colorScheme={colorScheme}
           onSelect={selectEvent}
-          onError={setError}
+          onError={showError}
         />
       </main>
 

@@ -5,6 +5,7 @@ interface Props {
   calendars: Calendar[]
   loading: boolean
   onToggle(calendarId: string, visible: boolean): void
+  onRemove(account: Account): void
 }
 
 const PROVIDER_LABELS: Record<ProviderId, string> = {
@@ -13,7 +14,13 @@ const PROVIDER_LABELS: Record<ProviderId, string> = {
   demo: 'Demo'
 }
 
-function CalendarList({ accounts, calendars, loading, onToggle }: Props): React.JSX.Element {
+function CalendarList({
+  accounts,
+  calendars,
+  loading,
+  onToggle,
+  onRemove
+}: Props): React.JSX.Element {
   if (loading) {
     return <p className="sidebar-hint">Kalender werden geladen …</p>
   }
@@ -24,7 +31,7 @@ function CalendarList({ accounts, calendars, loading, onToggle }: Props): React.
   return (
     <nav className="calendar-list" aria-label="Kalender">
       {accounts.map((account) => (
-        <section key={account.id}>
+        <section key={account.id} className="account">
           <h2 className="account-title">
             <span className="account-email" title={account.email}>
               {account.email}
@@ -44,11 +51,18 @@ function CalendarList({ accounts, calendars, loading, onToggle }: Props): React.
                       onChange={(event) => onToggle(calendar.id, event.target.checked)}
                       style={{ accentColor: calendar.color }}
                     />
-                    <span className="calendar-name">{calendar.name}</span>
+                    <span className="calendar-name" title={calendar.name}>
+                      {calendar.name}
+                    </span>
                   </label>
                 </li>
               ))}
           </ul>
+          {account.provider !== 'demo' && (
+            <button type="button" className="link-button" onClick={() => onRemove(account)}>
+              Konto entfernen
+            </button>
+          )}
         </section>
       ))}
     </nav>

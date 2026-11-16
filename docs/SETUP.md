@@ -34,7 +34,11 @@ In Supabase liegen die verbundenen Konten, die Kalender und später der Sync-Zus
 2. Aktiviere unter «APIs und Dienste» die **Google Calendar API**.
 3. Richte den OAuth-Zustimmungsbildschirm ein und trage dein eigenes Google-Konto als **Testnutzer** ein.
 4. Lege unter «Anmeldedaten» einen **OAuth-Client** vom Typ **«Desktop app»** an.
-5. Notiere **Client-ID** und **Client-Secret**.
+5. Notiere **Client-ID** und **Client-Secret** und trag sie in `.env` ein (siehe unten).
+
+Die App fragt bei der Anmeldung diese Berechtigungen an: E-Mail-Adresse, Kalenderliste lesen, Termine lesen und schreiben. Solange die App bei Google im Testmodus ist, zeigt Google bei der Anmeldung einen Hinweis «Google hat diese App nicht überprüft». Für den Eigengebrauch ist das in Ordnung.
+
+Beim Typ «Desktop app» muss keine Redirect-URI eingetragen werden. Die App verwendet `http://127.0.0.1` mit einem zufälligen Port.
 
 ## 3. Azure Portal (ab Etappe 3)
 
@@ -60,10 +64,13 @@ Kopiere [`.env.example`](../.env.example) nach `.env` in den Projektordner und t
 ```env
 MAIN_VITE_SUPABASE_URL=https://dein-projekt.supabase.co
 MAIN_VITE_SUPABASE_KEY=sb_publishable_...
+MAIN_VITE_GOOGLE_CLIENT_ID=....apps.googleusercontent.com
+MAIN_VITE_GOOGLE_CLIENT_SECRET=...
 ```
 
 - Das Präfix `MAIN_VITE_` sorgt dafür, dass die Werte nur im Main-Prozess sichtbar sind, nie in der Oberfläche.
 - `.env` ist über `.gitignore` vom Repository ausgeschlossen.
-- Die Variablen für Google und Microsoft kommen in Etappe 2 und 3 dazu und werden hier nachgeführt.
+- Die Werte werden beim Bauen fest in die App übernommen. Nach einer Änderung an `.env` muss die App neu gestartet (`npm run dev`) bzw. neu gebaut und installiert werden (`npm run build`).
+- Die Variable für Microsoft kommt in Etappe 3 dazu.
 
 Ob die Verbindung steht, siehst du unten links in der App: «Supabase verbunden», «Demo-Daten» oder «Supabase-Fehler» mit dem Grund.

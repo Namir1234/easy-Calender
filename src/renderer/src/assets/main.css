@@ -249,6 +249,50 @@ p {
   white-space: nowrap;
 }
 
+/* Aktionen */
+
+.button {
+  width: 100%;
+  min-height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+  background: var(--paper);
+  cursor: pointer;
+  transition: background-color 120ms ease-out;
+}
+
+.button:hover:not(:disabled) {
+  background: var(--hover);
+}
+
+.button:disabled {
+  color: var(--ink-muted);
+  cursor: default;
+}
+
+.link-button {
+  min-height: 28px;
+  margin-top: 2px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--ink-muted);
+  font-size: 12px;
+  cursor: pointer;
+  transition: color 120ms ease-out;
+}
+
+.link-button:hover {
+  color: var(--ink);
+  text-decoration: underline;
+}
+
+.sidebar-actions {
+  padding: 0 20px 16px;
+}
+
 /* Status der Datenbank: eine Zeile mit Trennlinie, kein eigener Kasten */
 
 .status {

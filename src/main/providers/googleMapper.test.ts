@@ -1,0 +1,105 @@
+import { describe, expect, it } from 'vitest'
+import { mapGoogleEvent, normalizeColor } from './googleMapper'
+
+describe('mapGoogleEvent', () => {
+  it('wandelt einen Termin mit Uhrzeit um', () => {
+    const event = mapGoogleEvent(
+      {
+        id: 'abc',
+        status: 'confirmed',
+        summary: ' Zahnarzt ',
+        description: 'Kontrolle',
+        location: 'Zürich',
+        start: { dateTime: '2026-11-17T09:00:00+01:00', timeZone: 'Europe/Zurich' },
+        end: { dateTime: '2026-11-17T09:30:00+01:00', timeZone: 'Europe/Zurich' }
+      },
+      'UTC'
+    )
+    expect(event).toEqual({
+      id: 'abc',
+      title: 'Zahnarzt',
+      description: 'Kontrolle',
+      location: 'Zürich',
+      start: '2026-11-17T09:00:00+01:00',
+      end: '2026-11-17T09:30:00+01:00',
+      allDay: false,
+      timeZone: 'Europe/Zurich',
+      recurrence: null,
+      status: 'confirmed'
+    })
+  })
+
+  it('erkennt ganztägige Termine und behält das exklusive Ende', () => {
+    const event = mapGoogleEvent(
+      { id: 'ferien', start: { date: '2026-12-24' }, end: { date: '2026-12-27' } },
+      'Europe/Zurich'
+    )
+    expect(event).toMatchObject({
+      start: '2026-12-24',
+      end: '2026-12-27',
+      allDay: true,
+      timeZone: 'Europe/Zurich'
+    })
+  })
+
+  it('nimmt die Zeitzone des Kalenders, wenn der Termin keine hat', () => {
+    const event = mapGoogleEvent(
+      {
+        id: 'x',
+        start: { dateTime: '2026-11-17T09:00:00Z' },
+        end: { dateTime: '2026-11-17T10:00:00Z' }
+      },
+      'Europe/Zurich'
+    )
+    expect(event?.timeZone).toBe('Europe/Zurich')
+  })
+
+  it('setzt einen Platzhalter für Termine ohne Titel', () => {
+    const event = mapGoogleEvent(
+      { id: 'x', summary: '  ', start: { date: '2026-11-17' }, end: { date: '2026-11-18' } },
+      'UTC'
+    )
+    expect(event?.title).toBe('(Ohne Titel)')
+  })
+
+  it('liest die RRULE einer Serie und markiert einzelne Vorkommen', () => {
+    const base = { start: { date: '2026-11-17' }, end: { date: '2026-11-18' } }
+    const series = mapGoogleEvent(
+      { ...base, id: 'serie', recurrence: ['EXDATE:20261124', 'RRULE:FREQ=WEEKLY;BYDAY=TU'] },
+      'UTC'
+    )
+    const instance = mapGoogleEvent(
+      { ...base, id: 'serie_20261117', recurringEventId: 'serie' },
+      'UTC'
+    )
+    expect(series?.recurrence).toBe('FREQ=WEEKLY;BYDAY=TU')
+    expect(instance?.recurrence).toBe('SERIE')
+  })
+
+  it('übernimmt den Status und behandelt Unbekanntes als bestätigt', () => {
+    const base = { id: 'x', start: { date: '2026-11-17' }, end: { date: '2026-11-18' } }
+    expect(mapGoogleEvent({ ...base, status: 'cancelled' }, 'UTC')?.status).toBe('cancelled')
+    expect(mapGoogleEvent({ ...base, status: 'tentative' }, 'UTC')?.status).toBe('tentative')
+    expect(mapGoogleEvent({ ...base, status: 'seltsam' }, 'UTC')?.status).toBe('confirmed')
+  })
+
+  it('verwirft Termine ohne ID oder ohne Zeit', () => {
+    expect(
+      mapGoogleEvent({ start: { date: '2026-11-17' }, end: { date: '2026-11-18' } }, 'UTC')
+    ).toBeNull()
+    expect(mapGoogleEvent({ id: 'x' }, 'UTC')).toBeNull()
+    expect(mapGoogleEvent({ id: 'x', start: {}, end: {} }, 'UTC')).toBeNull()
+  })
+})
+
+describe('normalizeColor', () => {
+  it('übernimmt gültige Farben in Kleinbuchstaben', () => {
+    expect(normalizeColor('#9FE1E7', '#000000')).toBe('#9fe1e7')
+  })
+
+  it('nimmt sonst die Ersatzfarbe', () => {
+    expect(normalizeColor(null, '#2563a8')).toBe('#2563a8')
+    expect(normalizeColor('red', '#2563a8')).toBe('#2563a8')
+    expect(normalizeColor('#fff', '#2563a8')).toBe('#2563a8')
+  })
+})

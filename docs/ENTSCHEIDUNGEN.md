@@ -2,19 +2,20 @@
 
 Wichtige technische Entscheidungen mit Begründung. Neue Entscheidungen kommen unten dazu und bekommen eine fortlaufende Nummer. Wird eine Entscheidung später geändert, bleibt der alte Eintrag stehen und wird als «ersetzt durch E-xxx» markiert.
 
-| Nr.                                                                   | Datum      | Entscheidung                                          | Status |
-| --------------------------------------------------------------------- | ---------- | ----------------------------------------------------- | ------ |
-| [E-001](#e-001-electron-mit-vite-react-und-typescript)                | 2026-11-16 | Electron mit Vite, React und TypeScript               | gilt   |
-| [E-002](#e-002-polling-statt-push-webhooks)                           | 2026-11-16 | Polling statt Push-Webhooks                           | gilt   |
-| [E-003](#e-003-teilnehmer-und-einladungen-werden-nicht-gespiegelt)    | 2026-11-16 | Teilnehmer und Einladungen werden nicht gespiegelt    | gilt   |
-| [E-004](#e-004-tokens-im-electron-safestorage)                        | 2026-11-16 | Tokens im Electron `safeStorage`                      | gilt   |
-| [E-005](#e-005-bei-konflikten-gewinnt-die-neuere-änderung)            | 2026-11-16 | Bei Konflikten gewinnt die neuere Änderung            | gilt   |
-| [E-006](#e-006-loop-schutz-über-hash-und-id-markierung)               | 2026-11-16 | Loop-Schutz über Hash und ID-Markierung               | gilt   |
-| [E-007](#e-007-nur-eine-definierte-teilmenge-an-feldern-wird-gesynct) | 2026-11-16 | Nur eine definierte Teilmenge an Feldern wird gesynct | gilt   |
-| [E-008](#e-008-supabase-statt-lokaler-sqlite-datenbank)               | 2026-11-16 | Supabase statt lokaler SQLite-Datenbank               | gilt   |
-| [E-009](#e-009-anonyme-anmeldung-und-row-level-security)              | 2026-11-16 | Anonyme Anmeldung und Row Level Security              | gilt   |
-| [E-010](#e-010-fullcalendar-7)                                        | 2026-11-16 | FullCalendar 7                                        | gilt   |
-| [E-011](#e-011-neutrale-oberfläche-nach-festen-gestaltungsregeln)     | 2026-11-16 | Neutrale Oberfläche nach festen Gestaltungsregeln     | gilt   |
+| Nr.                                                                   | Datum      | Entscheidung                                           | Status |
+| --------------------------------------------------------------------- | ---------- | ------------------------------------------------------ | ------ |
+| [E-001](#e-001-electron-mit-vite-react-und-typescript)                | 2026-11-16 | Electron mit Vite, React und TypeScript                | gilt   |
+| [E-002](#e-002-polling-statt-push-webhooks)                           | 2026-11-16 | Polling statt Push-Webhooks                            | gilt   |
+| [E-003](#e-003-teilnehmer-und-einladungen-werden-nicht-gespiegelt)    | 2026-11-16 | Teilnehmer und Einladungen werden nicht gespiegelt     | gilt   |
+| [E-004](#e-004-tokens-im-electron-safestorage)                        | 2026-11-16 | Tokens im Electron `safeStorage`                       | gilt   |
+| [E-005](#e-005-bei-konflikten-gewinnt-die-neuere-änderung)            | 2026-11-16 | Bei Konflikten gewinnt die neuere Änderung             | gilt   |
+| [E-006](#e-006-loop-schutz-über-hash-und-id-markierung)               | 2026-11-16 | Loop-Schutz über Hash und ID-Markierung                | gilt   |
+| [E-007](#e-007-nur-eine-definierte-teilmenge-an-feldern-wird-gesynct) | 2026-11-16 | Nur eine definierte Teilmenge an Feldern wird gesynct  | gilt   |
+| [E-008](#e-008-supabase-statt-lokaler-sqlite-datenbank)               | 2026-11-16 | Supabase statt lokaler SQLite-Datenbank                | gilt   |
+| [E-009](#e-009-anonyme-anmeldung-und-row-level-security)              | 2026-11-16 | Anonyme Anmeldung und Row Level Security               | gilt   |
+| [E-010](#e-010-fullcalendar-7)                                        | 2026-11-16 | FullCalendar 7                                         | gilt   |
+| [E-011](#e-011-neutrale-oberfläche-nach-festen-gestaltungsregeln)     | 2026-11-16 | Neutrale Oberfläche nach festen Gestaltungsregeln      | gilt   |
+| [E-012](#e-012-googleapiscalendar-und-eng-gefasste-berechtigungen)    | 2026-11-16 | `@googleapis/calendar` und eng gefasste Berechtigungen | gilt   |
 
 ---
 
@@ -89,3 +90,9 @@ Wichtige technische Entscheidungen mit Begründung. Neue Entscheidungen kommen u
 **Entscheidung:** Die Oberfläche folgt den Regeln in [DESIGN.md](DESIGN.md): neutrale Flächen, Farbe nur für Kalender, ein roter Akzent für «heute» und «jetzt», Systemschrift, Popover statt Modal.
 
 **Begründung:** Wunsch von Namir vom 2026-11-16, die Oberfläche nach dem Katalog von impeccable.style zu überarbeiten. Die erste Fassung hatte mehrere der dort genannten Merkmale: Indigo-Standardpalette, Emoji als Logo, winzige Grossbuchstaben-Labels, Rahmen in Rahmen und ein Modal für vier Zeilen Information.
+
+## E-012: @googleapis/calendar und eng gefasste Berechtigungen
+
+**Entscheidung:** Für Google wird das Paket `@googleapis/calendar` zusammen mit `google-auth-library` verwendet, nicht das Sammelpaket `googleapis`. Die App fragt nur diese Berechtigungen an: Kalenderliste lesen (`calendar.calendarlist.readonly`) sowie Termine lesen und schreiben (`calendar.events`), dazu die E-Mail-Adresse des Kontos.
+
+**Begründung:** `googleapis` enthält alle Google-APIs und würde den Installer unnötig vergrössern. `@googleapis/calendar` ist derselbe offizielle Code, nur für die Calendar API. Die Berechtigungen sind so eng wie möglich: Die App kann keine Kalender anlegen, löschen oder freigeben. Das Schreiben von Terminen wird erst ab Etappe 4 gebraucht, aber schon jetzt angefragt, damit später keine zweite Zustimmung nötig ist.
