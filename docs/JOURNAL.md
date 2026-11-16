@@ -39,7 +39,7 @@ Laufendes Protokoll des Projekts. Der neuste Eintrag steht oben.
 **Aufgefallen**
 
 - Die Supabase-Anbindung konnte nicht getestet werden: Es gibt noch kein Projekt, und lokal fehlen Docker und Postgres. Schlägt die Verbindung fehl, fällt die App auf Demo-Daten zurück und zeigt den Grund an.
-- Das Impeccable-Tool selbst ist nicht installiert. Die Regeln wurden von Hand umgesetzt.
+- Die Impeccable-Skills sind nachträglich ins Projekt installiert (`.claude/skills/impeccable`, ohne Hooks, Telemetrie aus). Der Detektor fand im Quellcode der Oberfläche nichts, konnte dort aber nur die Textmuster-Regeln prüfen, nicht die Regeln für die gerenderte Seite.
 - Der Installer ist unsigniert. Windows zeigt beim Ausführen eine SmartScreen-Warnung.
 - Die Demo-Daten (Anbieter `demo`) müssen in Etappe 2 wieder entfernt werden, auch aus Supabase.
 

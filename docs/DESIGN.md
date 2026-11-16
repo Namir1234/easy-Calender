@@ -2,7 +2,7 @@
 
 Die Gestaltungsregeln der Oberfläche. Wer etwas an der UI ändert, hält sich daran oder passt dieses Dokument an.
 
-Die Regeln folgen dem Katalog von [Impeccable](https://impeccable.style/slop), der typische Merkmale von KI-generierten Oberflächen («AI-Slop») und Qualitätsprobleme auflistet. Die Regeln wurden von Hand umgesetzt, das Impeccable-Tool selbst ist im Projekt nicht installiert.
+Die Regeln folgen dem Katalog von [Impeccable](https://impeccable.style/slop), der typische Merkmale von KI-generierten Oberflächen («AI-Slop») und Qualitätsprobleme auflistet. Die Impeccable-Skills liegen unter `.claude/skills/impeccable` (ohne Hooks). Geprüft wird mit `npx impeccable detect`.
 
 ## Grundsatz
 
