@@ -1,0 +1,401 @@
+/*
+ * Gestaltungsregeln: siehe docs/DESIGN.md.
+ * Die Oberfläche selbst ist neutral. Farbe gehört den Kalendern (sie ist
+ * Information), und ein einziges Rot markiert «heute» und «jetzt».
+ */
+
+:root {
+  /* Flächen */
+  --paper: #ffffff;
+  --panel: #f3f4f5;
+  --hover: #0000000f;
+
+  /* Schrift */
+  --ink: #16181d;
+  --ink-muted: #535966;
+  --ink-faint: #6f7582;
+
+  /* Linien */
+  --line: #e2e4e8;
+  --line-strong: #a3a8b3;
+
+  /* Akzent: nur für «heute», «jetzt» und den Fokus */
+  --accent: #c8321e;
+  --accent-over: #ad2a18;
+  --accent-down: #932213;
+  --accent-fg: #ffffff;
+
+  /* Zustände */
+  --ok: #1f7a4d;
+  --notice: #8a5a00;
+  --error: #a1260d;
+  --error-bg: #fdf1ee;
+
+  --popover-shadow: 0 8px 28px #16181d2e;
+  --popover-border: transparent;
+
+  --font-text: 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif;
+  --font-display: 'Segoe UI Variable Display', 'Segoe UI', system-ui, sans-serif;
+
+  color-scheme: light;
+  font-family: var(--font-text);
+  font-size: 14px;
+  line-height: 1.5;
+
+  /* FullCalendar (Theme «forma») bekommt dieselben Farben */
+  --fc-forma-primary: var(--accent);
+  --fc-forma-primary-over: var(--accent-over);
+  --fc-forma-primary-down: var(--accent-down);
+  --fc-forma-primary-foreground: var(--accent-fg);
+  --fc-forma-event: #2563a8;
+  --fc-forma-event-contrast: #ffffff;
+  --fc-forma-background-event: var(--accent);
+  --fc-forma-highlight: #c8321e33;
+  --fc-forma-background: var(--paper);
+  --fc-forma-faint: #00000008;
+  --fc-forma-muted: #00000012;
+  --fc-forma-strong: #0000001f;
+  --fc-forma-stronger: #00000029;
+  --fc-forma-strongest: #00000033;
+  --fc-forma-foreground: var(--ink);
+  --fc-forma-faint-foreground: var(--ink-faint);
+  --fc-forma-muted-foreground: var(--ink-muted);
+  --fc-forma-border: var(--line);
+  --fc-forma-muted-border: var(--line);
+  --fc-forma-strong-border: var(--line-strong);
+}
+
+:root[data-color-scheme='dark'] {
+  --paper: #17181b;
+  --panel: #101113;
+  --hover: #ffffff14;
+
+  --ink: #ecedef;
+  --ink-muted: #a4a9b3;
+  --ink-faint: #838995;
+
+  --line: #2c2e33;
+  --line-strong: #5a5e68;
+
+  --accent: #ff7a66;
+  --accent-over: #ff8f7d;
+  --accent-down: #ffa394;
+  --accent-fg: #1c0a07;
+
+  --ok: #5fcf9a;
+  --notice: #e0b252;
+  --error: #ff8f7d;
+  --error-bg: #3a1a15;
+
+  /* Im Dunkeln trägt ein Schatten nicht. Die Kante übernimmt. */
+  --popover-shadow: none;
+  --popover-border: var(--line-strong);
+
+  color-scheme: dark;
+
+  --fc-forma-highlight: #ff7a6640;
+  --fc-forma-faint: #ffffff0a;
+  --fc-forma-muted: #ffffff14;
+  --fc-forma-strong: #ffffff1f;
+  --fc-forma-stronger: #ffffff29;
+  --fc-forma-strongest: #ffffff33;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  overflow: hidden;
+  user-select: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+h1,
+h2 {
+  margin: 0;
+  text-wrap: balance;
+}
+
+p {
+  margin: 0;
+  text-wrap: pretty;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Aufbau: Seitenleiste und Kalender, getrennt durch eine einzige Linie */
+
+.app {
+  display: grid;
+  grid-template-columns: 248px minmax(0, 1fr);
+  height: 100%;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--panel);
+  border-right: 1px solid var(--line);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* Seitenleiste */
+
+.wordmark {
+  padding: 20px 20px 0;
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 650;
+  line-height: 1.2;
+}
+
+.sidebar-hint {
+  flex: 1;
+  padding: 28px 20px 0;
+  color: var(--ink-muted);
+}
+
+.calendar-list {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 24px;
+  min-height: 0;
+  padding: 28px 12px 20px;
+  overflow-y: auto;
+}
+
+.calendar-list ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.account-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 8px 4px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.account-email {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-provider {
+  flex-shrink: 0;
+  color: var(--ink-muted);
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.calendar-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 32px;
+  padding: 0 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 120ms ease-out;
+}
+
+.calendar-item:hover {
+  background: var(--hover);
+}
+
+.calendar-item input {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  cursor: pointer;
+}
+
+.calendar-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Status der Datenbank: eine Zeile mit Trennlinie, kein eigener Kasten */
+
+.status {
+  padding: 14px 20px 16px;
+  border-top: 1px solid var(--line);
+  font-size: 13px;
+}
+
+.status-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+
+.status-dot {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.status-ok .status-label {
+  color: var(--ok);
+}
+
+.status-notice .status-label {
+  color: var(--notice);
+}
+
+.status-error .status-label {
+  color: var(--error);
+}
+
+.status-message {
+  margin-top: 2px;
+  color: var(--ink-muted);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+  user-select: text;
+}
+
+/* Fehlermeldung */
+
+.error-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 20px;
+  background: var(--error-bg);
+  color: var(--error);
+  user-select: text;
+}
+
+.error-banner button {
+  flex-shrink: 0;
+  min-height: 28px;
+  padding: 0 12px;
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+}
+
+/* Kalender: füllt die Fläche randlos, ohne zusätzlichen Rahmen */
+
+.calendar-view {
+  flex: 1;
+  min-height: 0;
+}
+
+/* Termin-Details: Popover neben dem Termin */
+
+.event-details {
+  position: fixed;
+  inset: auto;
+  width: 320px;
+  max-width: calc(100vw - 24px);
+  margin: 0;
+  padding: 16px 20px 20px;
+  border: 1px solid var(--popover-border);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: var(--popover-shadow);
+  user-select: text;
+  opacity: 1;
+  transition: opacity 120ms ease-out;
+}
+
+@starting-style {
+  .event-details:popover-open {
+    opacity: 0;
+  }
+}
+
+:root[data-color-scheme='dark'] .event-details {
+  background: #202226;
+}
+
+.event-details h2 {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 650;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.event-when {
+  margin-top: 4px;
+  color: var(--ink-muted);
+}
+
+.event-when span {
+  display: block;
+}
+
+.event-details dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 6px 16px;
+  margin: 16px 0 0;
+}
+
+.event-details dt {
+  color: var(--ink-muted);
+}
+
+.event-details dd {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.calendar-swatch {
+  flex-shrink: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}

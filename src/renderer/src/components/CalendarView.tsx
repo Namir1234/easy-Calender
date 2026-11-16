@@ -1,0 +1,116 @@
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import FullCalendar from '@fullcalendar/react'
+import type { DatesSetInfo, EventClickInfo, EventInput } from '@fullcalendar/react'
+import dayGridPlugin from '@fullcalendar/react/daygrid'
+import timeGridPlugin from '@fullcalendar/react/timegrid'
+import themePlugin from '@fullcalendar/react/themes/forma'
+import deLocale from '@fullcalendar/react/locales/de'
+import '@fullcalendar/react/skeleton.css'
+import '@fullcalendar/react/themes/forma/theme.css'
+import type { Calendar, CalendarEvent, DateRange } from '../../../shared/types'
+import type { ColorScheme } from '../useColorScheme'
+import type { AnchorRect } from './EventDetails'
+
+interface Props {
+  calendars: Calendar[]
+  colorScheme: ColorScheme
+  onSelect(event: CalendarEvent, anchor: AnchorRect): void
+  onError(message: string): void
+}
+
+const PLUGINS = [dayGridPlugin, timeGridPlugin, themePlugin]
+
+const TOOLBAR = {
+  start: 'prev,next today',
+  center: 'title',
+  end: 'dayGridMonth,timeGridWeek,timeGridDay'
+}
+
+/** Lokales Datum als `YYYY-MM-DD`, ohne Umweg über UTC. */
+function toLocalDate(date: Date): string {
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${date.getFullYear()}-${month}-${day}`
+}
+
+function CalendarView({ calendars, colorScheme, onSelect, onError }: Props): React.JSX.Element {
+  const [range, setRange] = useState<DateRange | null>(null)
+  const [events, setEvents] = useState<CalendarEvent[]>([])
+
+  const handleDatesSet = useCallback((info: DatesSetInfo) => {
+    const start = toLocalDate(info.start)
+    const end = toLocalDate(info.end)
+    setRange((current) =>
+      current && current.start === start && current.end === end ? current : { start, end }
+    )
+  }, [])
+
+  // Termine für den sichtbaren Zeitraum laden. Antworten auf einen
+  // inzwischen verlassenen Zeitraum werden verworfen.
+  useEffect(() => {
+    if (!range) return
+    let cancelled = false
+    window.api
+      .listEvents(range)
+      .then((loaded) => {
+        if (!cancelled) setEvents(loaded)
+      })
+      .catch((error) => {
+        if (!cancelled) onError(error instanceof Error ? error.message : String(error))
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [range, onError])
+
+  const calendarEvents = useMemo<EventInput[]>(() => {
+    const byId = new Map(calendars.map((calendar) => [calendar.id, calendar]))
+    return events.flatMap((event) => {
+      const calendar = byId.get(event.calendarId)
+      if (!calendar || !calendar.visible) return []
+      return [
+        {
+          id: event.id,
+          title: event.title,
+          start: event.start,
+          end: event.end,
+          allDay: event.allDay,
+          color: calendar.color,
+          extendedProps: { source: event }
+        }
+      ]
+    })
+  }, [events, calendars])
+
+  const handleEventClick = useCallback(
+    (info: EventClickInfo) => {
+      const { top, bottom, left, right } = info.el.getBoundingClientRect()
+      onSelect(info.event.extendedProps.source as CalendarEvent, { top, bottom, left, right })
+    },
+    [onSelect]
+  )
+
+  return (
+    <div className="calendar-view">
+      <FullCalendar
+        plugins={PLUGINS}
+        locale={deLocale}
+        colorScheme={colorScheme}
+        initialView="timeGridWeek"
+        headerToolbar={TOOLBAR}
+        height="100%"
+        borderless
+        firstDay={1}
+        nowIndicator
+        scrollTime="07:00:00"
+        dayMaxEvents
+        eventDisplay="block"
+        events={calendarEvents}
+        datesSet={handleDatesSet}
+        eventClick={handleEventClick}
+      />
+    </div>
+  )
+}
+
+export default CalendarView
