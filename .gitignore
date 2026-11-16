@@ -1,0 +1,14 @@
+node_modules
+dist
+out
+.DS_Store
+.eslintcache
+*.log*
+
+# Zugangsdaten
+.env
+.env.*
+!.env.example
+
+# Lokale Claude-Arbeitsordner
+.claude/worktrees

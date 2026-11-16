@@ -9,15 +9,15 @@ alle Termine **bidirektional** synchronisiert und sie in einer einzigen Ansicht 
 
 <br>
 
-![Status](https://img.shields.io/badge/Status-in%20Planung-orange?style=for-the-badge)
+![Status](https://img.shields.io/badge/Status-Etappe%201%20von%207-orange?style=for-the-badge)
 ![Plattform](https://img.shields.io/badge/Plattform-Windows-0078D4?style=for-the-badge)
-![Version](https://img.shields.io/badge/Version-0.0.0-lightgrey?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-0.1.0-lightgrey?style=for-the-badge)
 
 ![Electron](https://img.shields.io/badge/Electron-2B2E3A?style=flat-square&logo=electron&logoColor=9FEAF9)
 ![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white)
 ![React](https://img.shields.io/badge/React-20232A?style=flat-square&logo=react&logoColor=61DAFB)
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
-![SQLite](https://img.shields.io/badge/SQLite-003B57?style=flat-square&logo=sqlite&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-1C1C1C?style=flat-square&logo=supabase&logoColor=3ECF8E)
 ![Vitest](https://img.shields.io/badge/Vitest-6E9F18?style=flat-square&logo=vitest&logoColor=white)
 
 <br>
@@ -29,13 +29,17 @@ alle Termine **bidirektional** synchronisiert und sie in einer einzigen Ansicht 
 [Einrichtung](#-einrichtung) ·
 [Dokumentation](#-dokumentation)
 
+<br>
+
+<img src="docs/screenshots/woche-hell.png" alt="Wochenansicht mit vier Kalendern und geöffneten Termin-Details" width="820">
+
 </div>
 
 ---
 
 > [!NOTE]
-> **Projektstatus:** Das Projekt steht ganz am Anfang. Der Plan und die Dokumentation sind da, Code gibt es noch keinen.
-> Den aktuellen Stand findest du immer im [Arbeitsjournal](docs/JOURNAL.md) und in der [Roadmap](#-roadmap).
+> **Projektstatus:** Das Grundgerüst steht (Etappe 1). Die App startet, zeigt Demo-Kalender in Monats-, Wochen- und Tagesansicht und lässt sich als Windows-Installer bauen.
+> Echte Konten und der Sync folgen in den nächsten Etappen. Den aktuellen Stand findest du im [Arbeitsjournal](docs/JOURNAL.md).
 
 ## 💡 Worum geht es?
 
@@ -49,18 +53,24 @@ Wer einen privaten Google-Kalender und dazu Outlook-Kalender von Schule oder Fir
 
 ## ✨ Features
 
-| | Feature | Beschreibung |
-|:-:|---|---|
-| 🔄 | **Bidirektionaler Sync** | Erstellen, Ändern und Löschen wird in beide Richtungen übertragen. |
-| 👥 | **Beliebig viele Konten** | Privates Google-Konto, privates Outlook-Konto sowie Schul- und Firmenkonten von Microsoft. |
-| 🗓️ | **Kombinierte Ansicht** | Monats-, Wochen- und Tagesansicht mit allen Kalendern zusammen. |
-| ✏️ | **Termine in der App** | Erstellen, bearbeiten und löschen, direkt beim jeweiligen Anbieter. |
-| 🔗 | **Kalender-Paare** | Du bestimmst, welche Kalender miteinander gekoppelt sind. Mehrere Paare sind möglich. |
-| 🔁 | **Wiederkehrende Termine** | Serien inklusive verschobener oder abgesagter Einzeltermine. |
-| 🛡️ | **Loop-Schutz** | Die App erkennt das Echo ihrer eigenen Änderungen, es gibt kein Ping-Pong. |
-| ⚖️ | **Konfliktlösung** | Wurden beide Seiten geändert, gewinnt die neuere Änderung. Das steht danach im Sync-Log. |
-| 🔐 | **Sichere Tokens** | Verschlüsselt gespeichert über Electron `safeStorage` (Windows DPAPI). |
-| 📌 | **Läuft im Tray** | Der Sync läuft weiter, auch wenn das Fenster minimiert ist. |
+Das ist das Ziel der App. Was davon schon gebaut ist, zeigt die [Roadmap](#-roadmap).
+
+|     | Feature                    | Beschreibung                                                                               |
+| :-: | -------------------------- | ------------------------------------------------------------------------------------------ |
+| 🔄  | **Bidirektionaler Sync**   | Erstellen, Ändern und Löschen wird in beide Richtungen übertragen.                         |
+| 👥  | **Beliebig viele Konten**  | Privates Google-Konto, privates Outlook-Konto sowie Schul- und Firmenkonten von Microsoft. |
+| 🗓️  | **Kombinierte Ansicht**    | Monats-, Wochen- und Tagesansicht mit allen Kalendern zusammen.                            |
+| ✏️  | **Termine in der App**     | Erstellen, bearbeiten und löschen, direkt beim jeweiligen Anbieter.                        |
+| 🔗  | **Kalender-Paare**         | Du bestimmst, welche Kalender miteinander gekoppelt sind. Mehrere Paare sind möglich.      |
+| 🔁  | **Wiederkehrende Termine** | Serien inklusive verschobener oder abgesagter Einzeltermine.                               |
+| 🛡️  | **Loop-Schutz**            | Die App erkennt das Echo ihrer eigenen Änderungen, es gibt kein Ping-Pong.                 |
+| ⚖️  | **Konfliktlösung**         | Wurden beide Seiten geändert, gewinnt die neuere Änderung. Das steht danach im Sync-Log.   |
+| 🔐  | **Sichere Tokens**         | Verschlüsselt gespeichert über Electron `safeStorage` (Windows DPAPI).                     |
+| 📌  | **Läuft im Tray**          | Der Sync läuft weiter, auch wenn das Fenster minimiert ist.                                |
+
+<div align="center">
+<img src="docs/screenshots/monat-dunkel.png" alt="Monatsansicht im dunklen Modus" width="820">
+</div>
 
 ## 🔄 So funktioniert der Sync
 
@@ -71,7 +81,7 @@ sequenceDiagram
     autonumber
     participant G as Google Calendar
     participant E as Sync-Engine
-    participant DB as SQLite
+    participant DB as Supabase
     participant M as Microsoft Graph
 
     E->>G: Änderungen seit letztem Sync (syncToken)
@@ -101,14 +111,14 @@ Das Diagramm zeigt die Richtung Google → Outlook. Die Gegenrichtung läuft ide
 
 <br>
 
-| Situation | Verhalten |
-|---|---|
+| Situation                                   | Verhalten                                                                             |
+| ------------------------------------------- | ------------------------------------------------------------------------------------- |
 | Beide Seiten seit dem letzten Sync geändert | Die neuere Änderung (`updated` / `lastModifiedDateTime`) gewinnt, Eintrag im Sync-Log |
-| `401` Token abgelaufen | Token erneuern und wiederholen |
-| `410` `syncToken` abgelaufen | Vollabgleich |
-| `429` zu viele Anfragen | Backoff, später erneut versuchen |
-| Lokale Datenbank verloren | Gespiegelte Termine werden über eine ID-Markierung im Termin wiedererkannt |
-| RRULE, die Graph nicht abbilden kann | Wird als Einzeltermine gespiegelt, Warnung im Log |
+| `401` Token abgelaufen                      | Token erneuern und wiederholen                                                        |
+| `410` `syncToken` abgelaufen                | Vollabgleich                                                                          |
+| `429` zu viele Anfragen                     | Backoff, später erneut versuchen                                                      |
+| Datenbank verloren                          | Gespiegelte Termine werden über eine ID-Markierung im Termin wiedererkannt            |
+| RRULE, die Graph nicht abbilden kann        | Wird als Einzeltermine gespiegelt, Warnung im Log                                     |
 
 </details>
 
@@ -124,45 +134,50 @@ flowchart LR
         IPC["IPC-API"]
         ENG["Sync-Engine<br>Mapping, Konflikte, Loop-Schutz"]
         SCH["Scheduler<br>Polling alle 2 Min."]
-        DB[("SQLite")]
+        ST["Datenschicht"]
         GP["Google-Provider"]
         MP["Microsoft-Provider"]
     end
 
+    SB[("Supabase<br>Postgres")]
     GAPI(["Google Calendar API v3"])
     GRAPH(["Microsoft Graph"])
 
     UI <-->|contextBridge| IPC
     IPC --> ENG
     SCH --> ENG
-    ENG <--> DB
+    ENG <--> ST
+    ST <--> SB
     ENG <--> GP
     ENG <--> MP
     GP <--> GAPI
     MP <--> GRAPH
 ```
 
+Sync-Engine, Scheduler und die beiden Provider sind geplant. Gebaut sind bis jetzt Oberfläche, IPC-API, Datenschicht und ein Demo-Provider.
+
 <details>
-<summary><b>Geplante Projektstruktur</b></summary>
+<summary><b>Projektstruktur</b></summary>
 
 ```
 src/
+  shared/types.ts            Typen für Main, Preload und Renderer (Event-Modell, API)
   main/
-    index.ts                 Electron-Start, Fenster, Tray, IPC-Registrierung
-    db/schema.ts, db.ts      SQLite-Schema + Zugriff
-    auth/googleAuth.ts       Loopback-OAuth, Token-Refresh
-    auth/microsoftAuth.ts    MSAL interaktiv + silent, Token-Cache in safeStorage
-    providers/types.ts       CalendarProvider-Interface + normalisiertes Event-Modell
-    providers/google.ts      list/delta (syncToken), create/update/delete
-    providers/microsoft.ts   list/delta (Graph delta), create/update/delete
-    sync/engine.ts           Sync-Zyklus, Mapping, Konfliktlösung, Loop-Schutz
-    sync/mapper.ts           Google ↔ normalisiert ↔ Graph (inkl. Recurrence/RRULE)
-    sync/scheduler.ts        Polling (alle 2 Min. + bei Fokus + manuell)
+    index.ts                 Electron-Start, Fenster, IPC-Registrierung
+    config.ts                liest und prüft die Supabase-Zugangsdaten
+    dateRange.ts             prüft Zeiträume, die vom Renderer kommen
     ipc.ts                   API für den Renderer
+    db/                      Datenschicht: Supabase oder Arbeitsspeicher
+    providers/types.ts       CalendarProvider-Interface
+    providers/demo.ts        Demo-Termine für Etappe 1
   preload/index.ts           contextBridge (sichere, schmale API)
-  renderer/
-    App.tsx, CalendarView.tsx, EventDialog.tsx, AccountsPage.tsx, SyncSettings.tsx
+  renderer/src/
+    App.tsx
+    components/              CalendarView, CalendarList, EventDetails, StatusBadge
+supabase/migrations/         Datenbankschema mit Zugriffsregeln (RLS)
 ```
+
+Geplant und noch nicht vorhanden: `auth/` (Google, Microsoft), `providers/google.ts`, `providers/microsoft.ts`, `sync/` (Engine, Mapper, Scheduler).
 
 </details>
 
@@ -170,21 +185,21 @@ Die Details zu Datenmodell, Event-Modell und Sync-Algorithmus stehen in [docs/AR
 
 ## 🧰 Tech-Stack
 
-| Bereich | Technologie |
-|---|---|
-| App-Gerüst | Electron + Vite + React + TypeScript (Vorlage `electron-vite`) |
-| Kalender-UI | FullCalendar (`@fullcalendar/react`) |
-| Lokale Datenbank | `better-sqlite3` im Main-Prozess |
-| Google | `googleapis` (Calendar API v3), OAuth 2.0 «Desktop app» mit Loopback-Redirect + PKCE |
-| Microsoft | `@azure/msal-node` (Authority `common`) + `@microsoft/microsoft-graph-client` |
-| Token-Speicher | Electron `safeStorage` (Windows DPAPI) |
-| Tests | Vitest |
-| Installer | electron-builder |
+| Bereich        | Technologie                                                                          |
+| -------------- | ------------------------------------------------------------------------------------ |
+| App-Gerüst     | Electron + Vite + React + TypeScript (Vorlage `electron-vite`)                       |
+| Kalender-UI    | FullCalendar 7 (`@fullcalendar/react`)                                               |
+| Datenbank      | Supabase (Postgres) über `@supabase/supabase-js`, Zugriff nur aus dem Main-Prozess   |
+| Google         | `googleapis` (Calendar API v3), OAuth 2.0 «Desktop app» mit Loopback-Redirect + PKCE |
+| Microsoft      | `@azure/msal-node` (Authority `common`) + `@microsoft/microsoft-graph-client`        |
+| Token-Speicher | Electron `safeStorage` (Windows DPAPI)                                               |
+| Tests          | Vitest                                                                               |
+| Installer      | electron-builder                                                                     |
 
 ## 🚀 Roadmap
 
 - [x] **Etappe 0:** Plan, README und Dokumentation
-- [ ] **Etappe 1:** Grundgerüst (Projekt, SQLite, IPC, FullCalendar-UI mit lokalen Dummy-Daten)
+- [x] **Etappe 1:** Grundgerüst (Projekt, Supabase-Datenschicht, IPC, FullCalendar-UI mit Demo-Daten)
 - [ ] **Etappe 2:** Google-Login, Kalender lesen und anzeigen
 - [ ] **Etappe 3:** Microsoft-Login, Kalender lesen und anzeigen
 - [ ] **Etappe 4:** Termine in der App erstellen, bearbeiten und löschen
@@ -194,12 +209,26 @@ Die Details zu Datenmodell, Event-Modell und Sync-Algorithmus stehen in [docs/AR
 
 ## 🔑 Einrichtung
 
-Damit die App auf deine Kalender zugreifen darf, braucht es einmalig zwei kostenlose Registrierungen:
+### Starten
 
-| Anbieter | Was | Ergebnis |
-|---|---|---|
-| **Google Cloud Console** | Projekt, Calendar API, OAuth-Client «Desktop app», dich als Testnutzer eintragen | Client-ID + Secret in `.env` |
-| **Azure Portal** | App-Registrierung als öffentlicher Client mit `Calendars.ReadWrite` + `offline_access` | Client-ID in `.env` |
+```bash
+npm install     # Abhängigkeiten installieren
+npm run dev     # App im Entwicklungsmodus starten
+npm test        # Unit-Tests (Vitest)
+npm run build   # Windows-Installer erzeugen (landet in dist/)
+```
+
+Ohne weitere Einrichtung startet die App mit Demo-Daten im Arbeitsspeicher.
+
+### Dienste registrieren
+
+Für den echten Betrieb braucht es einmalig drei kostenlose Registrierungen:
+
+| Dienst                   | Was                                                                                    | Ab Etappe | Ergebnis in `.env`    |
+| ------------------------ | -------------------------------------------------------------------------------------- | :-------: | --------------------- |
+| **Supabase**             | Projekt, Schema einspielen, «Anonymous sign-ins» aktivieren                            |     1     | URL + Publishable Key |
+| **Google Cloud Console** | Projekt, Calendar API, OAuth-Client «Desktop app», dich als Testnutzer eintragen       |     2     | Client-ID + Secret    |
+| **Azure Portal**         | App-Registrierung als öffentlicher Client mit `Calendars.ReadWrite` + `offline_access` |     3     | Client-ID             |
 
 Die Schritt-für-Schritt-Anleitung steht in [docs/SETUP.md](docs/SETUP.md).
 
@@ -207,31 +236,22 @@ Die Schritt-für-Schritt-Anleitung steht in [docs/SETUP.md](docs/SETUP.md).
 > Bei Schul- oder Firmenkonten kann die Organisation die Zustimmung für Dritt-Apps blockieren.
 > Dann funktionieren nur private Microsoft-Konten, bis ein Admin die App freigibt.
 
-### Entwicklung
-
-> Diese Befehle funktionieren ab Etappe 1, sobald das Grundgerüst steht.
-
-```bash
-npm install     # Abhängigkeiten installieren
-npm run dev     # App im Entwicklungsmodus starten
-npm test        # Unit-Tests (Vitest)
-npm run build   # Windows-Installer erzeugen (electron-builder)
-```
-
 ## 🚧 Bewusste Grenzen (v1)
 
 - **Polling statt Push:** Webhooks bräuchten einen öffentlich erreichbaren Server. Der Sync läuft deshalb nur, solange die App offen ist. Im Tray minimiert reicht.
 - **Keine Teilnehmer und Einladungen:** Sie werden nicht gespiegelt, um ungewollte Einladungsmails zu vermeiden. Gespiegelt werden Titel, Zeit, Ort, Beschreibung und Wiederholung.
+- **Datenbank in der Cloud:** Der Sync-Zustand liegt in Supabase. Die App braucht dafür Internet, was der Sync ohnehin voraussetzt. Tokens von Google und Microsoft bleiben auf dem Gerät.
 
 ## 📚 Dokumentation
 
-| Dokument | Inhalt |
-|---|---|
-| 📓 [Arbeitsjournal](docs/JOURNAL.md) | Laufendes Protokoll: was wann gemacht wurde und was als Nächstes kommt |
-| 🏗️ [Architektur](docs/ARCHITEKTUR.md) | Aufbau, Datenmodell, Event-Modell, Sync-Algorithmus |
-| 🧭 [Entscheidungen](docs/ENTSCHEIDUNGEN.md) | Wichtige technische Entscheidungen mit Begründung |
-| 🔑 [Setup](docs/SETUP.md) | Google Cloud und Azure einrichten, `.env` |
-| 🧪 [Testplan](docs/TESTPLAN.md) | Unit-Tests und manuelle Testfälle mit Status |
+| Dokument                                    | Inhalt                                                                 |
+| ------------------------------------------- | ---------------------------------------------------------------------- |
+| 📓 [Arbeitsjournal](docs/JOURNAL.md)        | Laufendes Protokoll: was wann gemacht wurde und was als Nächstes kommt |
+| 🏗️ [Architektur](docs/ARCHITEKTUR.md)       | Aufbau, Datenmodell, Event-Modell, Sync-Algorithmus                    |
+| 🧭 [Entscheidungen](docs/ENTSCHEIDUNGEN.md) | Wichtige technische Entscheidungen mit Begründung                      |
+| 🎨 [Design](docs/DESIGN.md)                 | Gestaltungsregeln der Oberfläche: Farben, Schrift, Formen              |
+| 🔑 [Setup](docs/SETUP.md)                   | Supabase, Google Cloud und Azure einrichten, `.env`                    |
+| 🧪 [Testplan](docs/TESTPLAN.md)             | Unit-Tests und manuelle Testfälle mit Status                           |
 
 ---
 
