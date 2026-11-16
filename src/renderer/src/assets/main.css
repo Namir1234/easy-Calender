@@ -168,7 +168,7 @@ p {
 /* Seitenleiste */
 
 .wordmark {
-  padding: 20px 20px 0;
+  padding: 20px 20px 14px;
   font-family: var(--font-display);
   font-size: 18px;
   font-weight: 650;
@@ -290,7 +290,219 @@ p {
 }
 
 .sidebar-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   padding: 0 20px 16px;
+}
+
+/* Der mittlere Teil der Seitenleiste scrollt, Titel und Status bleiben stehen. */
+.sidebar-scroll {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.sidebar-scroll .calendar-list,
+.sidebar-scroll .sidebar-hint {
+  flex: none;
+  padding-bottom: 20px;
+}
+
+.demo-note {
+  margin: 0 20px 16px;
+  padding-left: 10px;
+  border-left: 2px solid var(--line-strong);
+  font-size: 13px;
+  color: var(--ink-muted);
+}
+
+.button-strong {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+  font-weight: 600;
+}
+
+.button-strong:hover:not(:disabled) {
+  background: var(--ink-muted);
+}
+
+.button-strong:disabled {
+  border-color: var(--line-strong);
+  background: var(--line-strong);
+  color: var(--paper);
+}
+
+/* Abschnitte der Seitenleiste: eine Trennlinie, kein eigener Kasten */
+
+.sync,
+.settings {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 20px;
+  border-top: 1px solid var(--line);
+}
+
+.section-title {
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.section-hint,
+.sync-status {
+  font-size: 13px;
+  color: var(--ink-muted);
+}
+
+.pair-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pair-name {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.pair-list .link-button,
+.sync > .link-button {
+  align-self: flex-start;
+  margin-left: -8px;
+}
+
+.pair-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sync-problems {
+  margin: 0;
+  padding-left: 16px;
+  font-size: 13px;
+  color: var(--error);
+  overflow-wrap: anywhere;
+}
+
+/* Formularfelder */
+
+.field {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.field > span {
+  font-size: 13px;
+  color: var(--ink-muted);
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  min-height: 32px;
+  padding: 4px 8px;
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+}
+
+.field textarea {
+  resize: vertical;
+}
+
+.field-row {
+  display: flex;
+  gap: 12px;
+}
+
+.field-time {
+  flex: 0 0 112px;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 28px;
+  cursor: pointer;
+}
+
+.check input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--ink);
+}
+
+/* Termin erstellen und ändern: Popover in der Fenstermitte */
+
+.event-form {
+  position: fixed;
+  inset: 0;
+  width: 400px;
+  max-width: calc(100vw - 24px);
+  height: fit-content;
+  max-height: calc(100vh - 24px);
+  margin: auto;
+  padding: 20px;
+  overflow-y: auto;
+  border: 1px solid var(--popover-border);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: var(--popover-shadow);
+}
+
+.event-form:popover-open {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+:root[data-color-scheme='dark'] .event-form {
+  background: #202226;
+}
+
+.event-form h2 {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 650;
+}
+
+.form-note {
+  font-size: 13px;
+  color: var(--ink-muted);
+}
+
+.form-problem {
+  padding: 8px 10px;
+  border-radius: 4px;
+  background: var(--error-bg);
+  color: var(--error);
+}
+
+.form-actions,
+.details-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.details-actions {
+  margin-top: 16px;
 }
 
 .login-help {

@@ -6,12 +6,51 @@ Laufendes Protokoll des Projekts. Der neuste Eintrag steht oben.
 
 ## Aktueller Stand
 
-|                     |                                                                                                        |
-| ------------------- | ------------------------------------------------------------------------------------------------------ |
-| **Etappe**          | 1 von 7 abgeschlossen. Etappe 2 ist geschrieben, aber noch nicht mit einem echten Google-Konto geprüft |
-| **Als Nächstes**    | Namir verbindet sein Google-Konto in der App, danach wird Etappe 2 geprüft                             |
-| **Blockiert durch** | Die Google-Anmeldung im Browser kann nur Namir selbst abschliessen                                     |
-| **Offen bei Namir** | Google Cloud einrichten, später Azure (siehe [SETUP.md](SETUP.md))                                     |
+|                     |                                                                                                                                |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| **Etappe**          | Alle sieben Etappen sind geschrieben (Version 0.9.0). Mit echten Konten geprüft ist noch nichts davon                          |
+| **Als Nächstes**    | Google-Konto verbinden, App bei Microsoft registrieren, dann den Abgleich mit zwei Testkalendern prüfen (Testplan M-1 bis M-6) |
+| **Blockiert durch** | Die Anmeldungen im Browser kann nur Namir abschliessen. Für Microsoft fehlt die Anwendungs-ID in `.env`                        |
+| **Offen bei Namir** | Google-Anmeldung abschliessen, Azure-Registrierung (siehe [SETUP.md](SETUP.md))                                                |
+
+---
+
+## 2026-11-16 · Etappen 3 bis 7 geschrieben (Version 0.9.0)
+
+Namirs Auftrag: das ganze Projekt fertig machen.
+
+**Vorab geklärt**
+
+- Namir meldete zweimal, er sei mit Google verbunden. Die App zeigte aber weiter nur die Beispielkonten, ein Google-Token war nie gespeichert. Vermutlich wurden die Beispielkalender für die eigenen gehalten. Darum steht jetzt über den Beispielkonten ein Hinweis «Das sind Beispieldaten».
+- Geprüft, ob Firefox den Rückweg der Anmeldung erreicht: ja, sowohl über `127.0.0.1` als auch über `localhost`. Der «Seiten-Ladefehler» in Firefox stammte von einem alten Tab einer abgebrochenen Anmeldung.
+
+**Gemacht**
+
+- **Etappe 3, Microsoft:** Anmeldung über den Browser mit PKCE, ohne Secret. Outlook-Kalender und -Termine über Microsoft Graph lesen und schreiben. Mapper zwischen Graph und dem normalisierten Modell.
+- **Etappe 4, Termine bearbeiten:** Formular zum Erstellen und Ändern, Löschen aus dem Detailfenster. Ein Zeitraum lässt sich im Kalender mit der Maus aufziehen. Alles, was die Oberfläche schickt, wird im Main-Prozess geprüft.
+- **Etappe 5, Abgleich:** Sync-Engine für Kalenderpaare Google ↔ Outlook. Neue, geänderte und gelöschte Termine wandern in beide Richtungen. Bei Konflikten gewinnt die jüngere Änderung. Der Abgleich läuft alle fünf Minuten, nach Änderungen in der App und auf Knopfdruck.
+- **Etappe 6, Serien:** Serien werden als Ganzes mit ihrer Regel abgeglichen. RRULE und das Graph-Format werden ineinander übersetzt (täglich, wöchentlich, monatlich, jährlich, mit Intervall, Wochentagen und Ende).
+- **Etappe 7, Feinschliff:** Symbol im Infobereich, Weiterlaufen im Hintergrund, Start mit Windows, nur eine laufende App, Bereich «Synchronisation» mit Stand und Meldungen.
+
+**Geprüft**
+
+- 80 Unit-Tests bestanden. Neu: die Sync-Engine (13 Fälle, darunter kein Ping-Pong, Konflikt, Löschen, Wiederherstellen, Sicherheitsstopp), der Graph-Mapper, die Übersetzung der Serien und die Eingabeprüfung.
+- An der gebauten App mit Beispieldaten: Termin erstellen, Fehlermeldung bei «Ende vor Beginn», Detailfenster, Termin ändern. Die Seitenleiste zeigt Hinweis, beide Verbinden-Knöpfe, Synchronisation und Einstellungen.
+
+**Nicht geprüft**
+
+- Alles, was ein echtes Konto braucht: Google-Anmeldung bis zum Schluss, die ganze Microsoft-Seite, der Abgleich zwischen zwei echten Kalendern, Serien bei beiden Anbietern. Dieser Code ist nur durch Unit-Tests abgedeckt.
+- Löschen eines Termins über die Oberfläche, Symbol im Infobereich, Start mit Windows.
+
+**Aufgefallen und entschieden**
+
+- Statt MSAL und Graph-Client spricht die App direkt mit den Microsoft-Endpunkten (E-013).
+- Der Abgleich vergleicht Listen statt Delta-Tokens zu verwenden und merkt sich pro Seite einen Fingerabdruck (E-014).
+- Ausnahmen einer Serie (ein einzelner verschobener Termin) werden nicht abgeglichen (E-015).
+
+**Als Nächstes**
+
+- Google-Konto verbinden, Azure-Registrierung, dann die manuellen Sync-Tests mit zwei Testkalendern.
 
 ---
 

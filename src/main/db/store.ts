@@ -1,4 +1,5 @@
-import type { Account, Calendar, ProviderId } from '../../shared/types'
+import type { Account, Calendar, ProviderId, SyncPair } from '../../shared/types'
+import type { EventLink } from '../sync/engine'
 
 /** Ein Kalender, wie ihn ein Anbieter meldet, noch ohne Datenbank-ID. */
 export interface RemoteCalendar {
@@ -36,4 +37,13 @@ export interface Store {
   removeAccount(accountId: string): Promise<Account>
   /** Entfernt alle Demo-Konten. */
   removeDemoAccounts(): Promise<void>
+
+  listSyncPairs(): Promise<SyncPair[]>
+  addSyncPair(googleCalendarId: string, msCalendarId: string): Promise<SyncPair>
+  /** Entfernt ein Paar samt seinen Verknüpfungen. Die Termine selbst bleiben. */
+  removeSyncPair(pairId: string): Promise<void>
+  /** Die Verknüpfungen eines Paars. Seite A ist Google, Seite B ist Outlook. */
+  listLinks(pairId: string): Promise<EventLink[]>
+  saveLink(pairId: string, link: EventLink): Promise<void>
+  removeLink(linkId: string): Promise<void>
 }

@@ -1,15 +1,35 @@
 import { ipcMain } from 'electron'
-import type { Account, Calendar, CalendarEvent, DbStatus, EventsResult } from '../shared/types'
+import type {
+  Account,
+  Calendar,
+  CalendarEvent,
+  DbStatus,
+  EventsResult,
+  ProviderId,
+  Settings,
+  SyncPair,
+  SyncStatus
+} from '../shared/types'
 import type { AccountService } from './accounts'
 import { parseDateRange } from './dateRange'
 import type { StoreContext } from './db'
+import { parseEventInput } from './eventInput'
+import type { CalendarProvider } from './providers/types'
+import { parseSettings } from './settings'
+import type { SyncService } from './sync/service'
 
 export interface AppContext extends StoreContext {
   accounts: AccountService
+  sync: SyncService
+}
+
+export interface SettingsAccess {
+  get(): Settings
+  set(settings: Settings): Settings
 }
 
 function requireId(value: unknown, what: string): string {
-  if (typeof value !== 'string' || value.length === 0 || value.length > 100) {
+  if (typeof value !== 'string' || value.length === 0 || value.length > 1100) {
     throw new Error(`Ungültige ${what}`)
   }
   return value
@@ -20,7 +40,28 @@ function requireId(value: unknown, what: string): string {
  * verbunden, darum warten alle Handler zuerst auf `ready`.
  * Alles, was vom Renderer kommt, wird hier geprüft.
  */
-export function registerIpc(ready: Promise<AppContext>): void {
+export function registerIpc(ready: Promise<AppContext>, settings: SettingsAccess): void {
+  /** Sucht zu einem Kalender der App den Anbieter und die ID beim Anbieter. */
+  async function target(
+    calendarId: unknown,
+    expected?: ProviderId
+  ): Promise<{ calendar: Calendar; provider: CalendarProvider }> {
+    const id = requireId(calendarId, 'Kalender-ID')
+    const { store, accounts } = await ready
+    const calendar = (await store.listCalendars()).find((entry) => entry.id === id)
+    const account =
+      calendar && (await store.listAccounts()).find((entry) => entry.id === calendar.accountId)
+    if (!calendar || !account) throw new Error('Kalender nicht gefunden')
+    if (expected && account.provider !== expected) {
+      throw new Error(
+        expected === 'google'
+          ? 'Hier wird ein Google-Kalender erwartet'
+          : 'Hier wird ein Outlook-Kalender erwartet'
+      )
+    }
+    return { calendar, provider: accounts.providerFor(account) }
+  }
+
   ipcMain.handle('app:status', async (): Promise<DbStatus> => (await ready).status)
 
   ipcMain.handle('accounts:list', async (): Promise<Account[]> => {
@@ -33,16 +74,23 @@ export function registerIpc(ready: Promise<AppContext>): void {
     return accounts.connectGoogle()
   })
 
+  ipcMain.handle('accounts:connectMicrosoft', async (): Promise<Account> => {
+    const { accounts } = await ready
+    return accounts.connectMicrosoft()
+  })
+
   ipcMain.handle('accounts:reopenLogin', async (): Promise<void> => {
     await (await ready).accounts.reopenLogin()
   })
 
   ipcMain.handle('accounts:copyLoginLink', async (): Promise<void> => {
-    ;(await ready).accounts.copyLoginLink()
+    const { accounts } = await ready
+    accounts.copyLoginLink()
   })
 
   ipcMain.handle('accounts:cancelLogin', async (): Promise<void> => {
-    ;(await ready).accounts.cancelLogin()
+    const { accounts } = await ready
+    accounts.cancelLogin()
   })
 
   ipcMain.handle('accounts:remove', async (_event, accountId: unknown): Promise<void> => {
@@ -95,5 +143,74 @@ export function registerIpc(ready: Promise<AppContext>): void {
         })
     )
     return { events, problems }
+  })
+
+  ipcMain.handle(
+    'events:create',
+    async (_event, calendarId: unknown, input: unknown): Promise<CalendarEvent> => {
+      const event = parseEventInput(input)
+      const { calendar, provider } = await target(calendarId)
+      const created = await provider.createEvent(calendar.remoteId, event)
+      ;(await ready).sync.runSoon()
+      return { ...created, calendarId: calendar.id }
+    }
+  )
+
+  ipcMain.handle(
+    'events:update',
+    async (
+      _event,
+      calendarId: unknown,
+      eventId: unknown,
+      input: unknown
+    ): Promise<CalendarEvent> => {
+      const id = requireId(eventId, 'Termin-ID')
+      const event = parseEventInput(input)
+      const { calendar, provider } = await target(calendarId)
+      const updated = await provider.updateEvent(calendar.remoteId, id, event)
+      ;(await ready).sync.runSoon()
+      return { ...updated, calendarId: calendar.id }
+    }
+  )
+
+  ipcMain.handle(
+    'events:delete',
+    async (_event, calendarId: unknown, eventId: unknown): Promise<void> => {
+      const id = requireId(eventId, 'Termin-ID')
+      const { calendar, provider } = await target(calendarId)
+      await provider.deleteEvent(calendar.remoteId, id)
+      ;(await ready).sync.runSoon()
+    }
+  )
+
+  ipcMain.handle('sync:listPairs', async (): Promise<SyncPair[]> => {
+    return (await ready).store.listSyncPairs()
+  })
+
+  ipcMain.handle(
+    'sync:addPair',
+    async (_event, googleCalendarId: unknown, msCalendarId: unknown): Promise<SyncPair> => {
+      const google = await target(googleCalendarId, 'google')
+      const outlook = await target(msCalendarId, 'microsoft')
+      const { store, sync } = await ready
+      const pair = await store.addSyncPair(google.calendar.id, outlook.calendar.id)
+      sync.runSoon()
+      return pair
+    }
+  )
+
+  ipcMain.handle('sync:removePair', async (_event, pairId: unknown): Promise<void> => {
+    const id = requireId(pairId, 'Paar-ID')
+    await (await ready).store.removeSyncPair(id)
+  })
+
+  ipcMain.handle('sync:now', async (): Promise<SyncStatus> => (await ready).sync.run())
+
+  ipcMain.handle('sync:status', async (): Promise<SyncStatus> => (await ready).sync.getStatus())
+
+  ipcMain.handle('settings:get', (): Settings => settings.get())
+
+  ipcMain.handle('settings:set', (_event, input: unknown): Settings => {
+    return settings.set(parseSettings(input))
   })
 }

@@ -49,6 +49,47 @@ export interface CalendarEvent extends NormalizedEvent {
   calendarId: string
 }
 
+/** Was die Oberfläche beim Erstellen oder Ändern eines Termins schickt. */
+export interface EventInput {
+  title: string
+  description?: string
+  location?: string
+  /** Ganztägig: `YYYY-MM-DD`. Sonst ein Zeitpunkt nach ISO 8601 mit Zeitverschiebung. */
+  start: string
+  /** Wie `start`. Bei ganztägigen Terminen exklusiv. */
+  end: string
+  allDay: boolean
+  timeZone: string
+  /**
+   * RRULE einer neuen Serie, `null` für Einzeltermine. Beim Ändern eines
+   * einzelnen Vorkommens bleibt der Wert, wie er geliefert wurde.
+   */
+  recurrence: string | null
+}
+
+/** Ein Google-Kalender und ein Outlook-Kalender, die abgeglichen werden. */
+export interface SyncPair {
+  id: string
+  googleCalendarId: string
+  msCalendarId: string
+}
+
+export interface SyncStatus {
+  running: boolean
+  /** Zeitpunkt des letzten Abgleichs (ISO 8601), `null` vor dem ersten */
+  lastRun: string | null
+  /** Was der letzte Abgleich getan hat, in einem Satz */
+  summary: string | null
+  problems: string[]
+}
+
+export interface Settings {
+  /** Die App startet mit Windows, im Hintergrund */
+  autostart: boolean
+  /** Fenster schliessen beendet die App nicht, sie läuft im Infobereich weiter */
+  closeToTray: boolean
+}
+
 export interface DateRange {
   /** ISO-Datum oder -Zeitpunkt, inklusiv */
   start: string
@@ -76,6 +117,8 @@ export interface AppApi {
   listAccounts(): Promise<Account[]>
   /** Öffnet die Google-Anmeldung im Browser und wartet, bis sie abgeschlossen ist. */
   connectGoogle(): Promise<Account>
+  /** Wie `connectGoogle`, für ein Microsoft-Konto (Outlook). */
+  connectMicrosoft(): Promise<Account>
   /** Öffnet die Seite der laufenden Anmeldung nochmals im Browser. */
   reopenLogin(): Promise<void>
   /** Kopiert die Adresse der laufenden Anmeldung in die Zwischenablage. */
@@ -85,4 +128,15 @@ export interface AppApi {
   listCalendars(): Promise<Calendar[]>
   setCalendarVisible(calendarId: string, visible: boolean): Promise<void>
   listEvents(range: DateRange): Promise<EventsResult>
+  createEvent(calendarId: string, input: EventInput): Promise<CalendarEvent>
+  updateEvent(calendarId: string, eventId: string, input: EventInput): Promise<CalendarEvent>
+  deleteEvent(calendarId: string, eventId: string): Promise<void>
+  listSyncPairs(): Promise<SyncPair[]>
+  addSyncPair(googleCalendarId: string, msCalendarId: string): Promise<SyncPair>
+  removeSyncPair(pairId: string): Promise<void>
+  /** Gleicht alle Kalenderpaare jetzt ab und wartet auf das Ergebnis. */
+  syncNow(): Promise<SyncStatus>
+  getSyncStatus(): Promise<SyncStatus>
+  getSettings(): Promise<Settings>
+  setSettings(settings: Settings): Promise<Settings>
 }

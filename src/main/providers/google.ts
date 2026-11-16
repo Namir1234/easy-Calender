@@ -1,8 +1,9 @@
 import { calendar, type calendar_v3 } from '@googleapis/calendar'
 import type { OAuth2Client } from 'google-auth-library'
+import type { NormalizedEvent } from '../../shared/types'
 import { toDateString, type DayRange } from '../dateRange'
-import type { SeedAccount } from '../db/store'
-import { mapGoogleEvent, normalizeColor } from './googleMapper'
+import type { RemoteCalendar } from '../db/store'
+import { mapGoogleEvent, normalizeColor, toGoogleBody } from './googleMapper'
 import type { CalendarProvider, ProviderEvent } from './types'
 
 const DEFAULT_COLOR = '#2563a8'
@@ -15,7 +16,13 @@ function localMidnight(dayNumber: number): string {
   return new Date(year, month - 1, day).toISOString()
 }
 
-/** Liest Kalender und Termine eines Google-Kontos (Calendar API v3). */
+function isGone(error: unknown): boolean {
+  const status =
+    (error as { code?: number; status?: number })?.code ?? (error as { status?: number })?.status
+  return status === 404 || status === 410
+}
+
+/** Liest und schreibt Kalender und Termine eines Google-Kontos (Calendar API v3). */
 export class GoogleProvider implements CalendarProvider {
   private readonly api: calendar_v3.Calendar
 
@@ -23,8 +30,8 @@ export class GoogleProvider implements CalendarProvider {
     this.api = calendar({ version: 'v3', auth })
   }
 
-  async listCalendars(): Promise<SeedAccount['calendars']> {
-    const calendars: SeedAccount['calendars'] = []
+  async listCalendars(): Promise<RemoteCalendar[]> {
+    const calendars: RemoteCalendar[] = []
     let pageToken: string | undefined
 
     for (let page = 0; page < MAX_PAGES; page++) {
@@ -44,7 +51,12 @@ export class GoogleProvider implements CalendarProvider {
     return calendars
   }
 
-  async listEvents(calendarRemoteId: string, range: DayRange): Promise<ProviderEvent[]> {
+  /** @param expand Serien in einzelne Vorkommen auflösen (für die Anzeige) */
+  private async list(
+    calendarRemoteId: string,
+    range: DayRange,
+    expand: boolean
+  ): Promise<ProviderEvent[]> {
     const events: ProviderEvent[] = []
     let pageToken: string | undefined
 
@@ -53,14 +65,16 @@ export class GoogleProvider implements CalendarProvider {
         calendarId: calendarRemoteId,
         timeMin: localMidnight(range.startDay),
         timeMax: localMidnight(range.endDay),
-        // Serien werden von Google in einzelne Vorkommen aufgelöst.
-        singleEvents: true,
-        orderBy: 'startTime',
+        singleEvents: expand,
+        orderBy: expand ? 'startTime' : undefined,
         maxResults: 2500,
         pageToken
       })
       const timeZone = data.timeZone ?? 'UTC'
       for (const item of data.items ?? []) {
+        // Ohne Auflösung liefert Google Serien als Ganzes und dazu ihre
+        // Ausnahmen. Die Ausnahmen werden nicht einzeln abgeglichen.
+        if (!expand && item.recurringEventId) continue
         const event = mapGoogleEvent(item, timeZone)
         if (event && event.status !== 'cancelled') events.push(event)
       }
@@ -69,5 +83,60 @@ export class GoogleProvider implements CalendarProvider {
     }
 
     return events
+  }
+
+  listEvents(calendarRemoteId: string, range: DayRange): Promise<ProviderEvent[]> {
+    return this.list(calendarRemoteId, range, true)
+  }
+
+  listForSync(calendarRemoteId: string, range: DayRange): Promise<ProviderEvent[]> {
+    return this.list(calendarRemoteId, range, false)
+  }
+
+  async getEvent(calendarRemoteId: string, eventId: string): Promise<ProviderEvent | null> {
+    try {
+      const { data } = await this.api.events.get({ calendarId: calendarRemoteId, eventId })
+      const event = mapGoogleEvent(data, data.start?.timeZone ?? 'UTC')
+      return event && event.status !== 'cancelled' ? event : null
+    } catch (error) {
+      if (isGone(error)) return null
+      throw error
+    }
+  }
+
+  async createEvent(calendarRemoteId: string, event: NormalizedEvent): Promise<ProviderEvent> {
+    const { data } = await this.api.events.insert({
+      calendarId: calendarRemoteId,
+      requestBody: toGoogleBody(event)
+    })
+    return this.written(data, event)
+  }
+
+  async updateEvent(
+    calendarRemoteId: string,
+    eventId: string,
+    event: NormalizedEvent
+  ): Promise<ProviderEvent> {
+    const { data } = await this.api.events.patch({
+      calendarId: calendarRemoteId,
+      eventId,
+      requestBody: toGoogleBody(event)
+    })
+    return this.written(data, event)
+  }
+
+  async deleteEvent(calendarRemoteId: string, eventId: string): Promise<void> {
+    try {
+      await this.api.events.delete({ calendarId: calendarRemoteId, eventId })
+    } catch (error) {
+      // Schon gelöscht ist auch gelöscht.
+      if (!isGone(error)) throw error
+    }
+  }
+
+  private written(data: calendar_v3.Schema$Event, sent: NormalizedEvent): ProviderEvent {
+    const event = mapGoogleEvent(data, sent.timeZone)
+    if (!event) throw new Error('Google hat den gespeicherten Termin nicht zurückgegeben')
+    return event
   }
 }

@@ -13,6 +13,8 @@ interface Props {
   event: CalendarEvent
   calendar: Calendar | undefined
   anchor: AnchorRect
+  onEdit(): void
+  onDelete(): void
   onClose(): void
 }
 
@@ -67,7 +69,14 @@ function formatWhen(event: CalendarEvent): string[] {
  * Zeigt die Details eines Termins als Popover direkt neben dem Termin.
  * Ein Klick daneben oder Escape schliesst es, das übernimmt der Browser.
  */
-function EventDetails({ event, calendar, anchor, onClose }: Props): React.JSX.Element {
+function EventDetails({
+  event,
+  calendar,
+  anchor,
+  onEdit,
+  onDelete,
+  onClose
+}: Props): React.JSX.Element {
   const popoverRef = useRef<HTMLDivElement>(null)
 
   // Öffnen und neben dem Termin platzieren: rechts davon, sonst links,
@@ -145,6 +154,15 @@ function EventDetails({ event, calendar, anchor, onClose }: Props): React.JSX.El
           </>
         )}
       </dl>
+
+      <div className="details-actions">
+        <button type="button" className="button" onClick={onEdit}>
+          Bearbeiten
+        </button>
+        <button type="button" className="button" onClick={onDelete}>
+          Löschen
+        </button>
+      </div>
     </div>
   )
 }

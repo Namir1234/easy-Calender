@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import FullCalendar from '@fullcalendar/react'
-import type { DatesSetInfo, EventClickInfo, EventInput } from '@fullcalendar/react'
+import type { DateSelectInfo, DatesSetInfo, EventClickInfo, EventInput } from '@fullcalendar/react'
+import interactionPlugin from '@fullcalendar/react/interaction'
 import dayGridPlugin from '@fullcalendar/react/daygrid'
 import timeGridPlugin from '@fullcalendar/react/timegrid'
 import themePlugin from '@fullcalendar/react/themes/forma'
@@ -14,11 +15,15 @@ import type { AnchorRect } from './EventDetails'
 interface Props {
   calendars: Calendar[]
   colorScheme: ColorScheme
+  /** Ändert sich der Wert, werden die Termine neu geladen. */
+  reloadKey: number
   onSelect(event: CalendarEvent, anchor: AnchorRect): void
+  /** Im Kalender wurde ein freier Zeitraum markiert. */
+  onCreate(start: Date, end: Date, allDay: boolean): void
   onError(message: string): void
 }
 
-const PLUGINS = [dayGridPlugin, timeGridPlugin, themePlugin]
+const PLUGINS = [dayGridPlugin, timeGridPlugin, interactionPlugin, themePlugin]
 
 const TOOLBAR = {
   start: 'prev,next today',
@@ -33,7 +38,14 @@ function toLocalDate(date: Date): string {
   return `${date.getFullYear()}-${month}-${day}`
 }
 
-function CalendarView({ calendars, colorScheme, onSelect, onError }: Props): React.JSX.Element {
+function CalendarView({
+  calendars,
+  colorScheme,
+  reloadKey,
+  onSelect,
+  onCreate,
+  onError
+}: Props): React.JSX.Element {
   const [range, setRange] = useState<DateRange | null>(null)
   const [events, setEvents] = useState<CalendarEvent[]>([])
 
@@ -72,7 +84,7 @@ function CalendarView({ calendars, colorScheme, onSelect, onError }: Props): Rea
     return () => {
       cancelled = true
     }
-  }, [range, visibleKey, onError])
+  }, [range, visibleKey, reloadKey, onError])
 
   const calendarEvents = useMemo<EventInput[]>(() => {
     const byId = new Map(calendars.map((calendar) => [calendar.id, calendar]))
@@ -101,6 +113,11 @@ function CalendarView({ calendars, colorScheme, onSelect, onError }: Props): Rea
     [onSelect]
   )
 
+  const handleSelect = useCallback(
+    (info: DateSelectInfo) => onCreate(info.start, info.end, info.allDay),
+    [onCreate]
+  )
+
   return (
     <div className="calendar-view">
       <FullCalendar
@@ -119,6 +136,8 @@ function CalendarView({ calendars, colorScheme, onSelect, onError }: Props): Rea
         events={calendarEvents}
         datesSet={handleDatesSet}
         eventClick={handleEventClick}
+        selectable
+        select={handleSelect}
       />
     </div>
   )

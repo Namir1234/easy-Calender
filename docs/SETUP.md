@@ -12,7 +12,7 @@ Ohne Einrichtung startet die App mit Demo-Daten. Für den echten Betrieb musst d
 - [x] Supabase: URL und Publishable Key in `.env`
 - [x] Google Cloud: Projekt erstellt, Calendar API aktiviert
 - [x] Google Cloud: OAuth-Client «Desktop app» angelegt, eigenes Konto als Testnutzer eingetragen
-- [ ] Azure: App registriert, Berechtigungen gesetzt (ab Etappe 3)
+- [ ] Azure: App registriert, Berechtigungen gesetzt, Anwendungs-ID in `.env`
 
 ## 1. Supabase
 
@@ -40,19 +40,22 @@ Die App fragt bei der Anmeldung diese Berechtigungen an: E-Mail-Adresse, Kalende
 
 Beim Typ «Desktop app» muss keine Redirect-URI eingetragen werden. Die App verwendet `http://127.0.0.1` mit einem zufälligen Port.
 
-## 3. Azure Portal (ab Etappe 3)
+## 3. Azure Portal (Microsoft)
 
 1. Öffne das [Azure Portal](https://portal.azure.com/) und geh zu «App-Registrierungen».
 2. Erstelle eine neue Registrierung mit diesen Einstellungen:
 
    | Einstellung             | Wert                                                                                 |
    | ----------------------- | ------------------------------------------------------------------------------------ |
+   | Name                    | easy-Calender                                                                        |
    | Unterstützte Kontotypen | Konten in einem beliebigen Organisationsverzeichnis und persönliche Microsoft-Konten |
-   | Art des Clients         | öffentlicher Client (Mobilgerät und Desktop)                                         |
+   | Plattform               | Mobilgerät- und Desktopanwendungen (öffentlicher Client)                             |
    | Redirect-URI            | `http://localhost`                                                                   |
 
-3. Füge unter «API-Berechtigungen» die delegierten Microsoft-Graph-Berechtigungen **`Calendars.ReadWrite`** und **`offline_access`** hinzu.
-4. Notiere die **Anwendungs-ID (Client-ID)**.
+3. Füge unter «API-Berechtigungen» die delegierten Microsoft-Graph-Berechtigungen **`Calendars.ReadWrite`**, **`User.Read`**, **`offline_access`**, **`openid`** und **`email`** hinzu.
+4. Kopiere die **Anwendungs-ID (Client-ID)** von der Übersichtsseite und trag sie als `MAIN_VITE_MS_CLIENT_ID` in `.env` ein. Ein Secret braucht es nicht.
+
+Die Redirect-URI muss genau `http://localhost` heissen, ohne Port. Die App hängt beim Anmelden einen zufälligen Port an, das erlaubt Microsoft bei `localhost`.
 
 > [!WARNING]
 > Bei TBZ- oder Noser-Konten kann die Organisation die Zustimmung für Dritt-Apps blockieren. Dann funktionieren nur private Microsoft-Konten, bis ein Admin die App freigibt.
@@ -66,11 +69,11 @@ MAIN_VITE_SUPABASE_URL=https://dein-projekt.supabase.co
 MAIN_VITE_SUPABASE_KEY=sb_publishable_...
 MAIN_VITE_GOOGLE_CLIENT_ID=....apps.googleusercontent.com
 MAIN_VITE_GOOGLE_CLIENT_SECRET=...
+MAIN_VITE_MS_CLIENT_ID=00000000-0000-0000-0000-000000000000
 ```
 
 - Das Präfix `MAIN_VITE_` sorgt dafür, dass die Werte nur im Main-Prozess sichtbar sind, nie in der Oberfläche.
 - `.env` ist über `.gitignore` vom Repository ausgeschlossen.
 - Die Werte werden beim Bauen fest in die App übernommen. Nach einer Änderung an `.env` muss die App neu gestartet (`npm run dev`) bzw. neu gebaut und installiert werden (`npm run build`).
-- Die Variable für Microsoft kommt in Etappe 3 dazu.
 
 Ob die Verbindung steht, siehst du unten links in der App: «Supabase verbunden», «Demo-Daten» oder «Supabase-Fehler» mit dem Grund.

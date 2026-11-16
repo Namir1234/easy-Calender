@@ -9,9 +9,9 @@ alle Termine **bidirektional** synchronisiert und sie in einer einzigen Ansicht 
 
 <br>
 
-![Status](https://img.shields.io/badge/Status-Etappe%202%20in%20Arbeit-orange?style=for-the-badge)
+![Status](https://img.shields.io/badge/Status-Code%20fertig%2C%20Pr%C3%BCfung%20offen-orange?style=for-the-badge)
 ![Plattform](https://img.shields.io/badge/Plattform-Windows-0078D4?style=for-the-badge)
-![Version](https://img.shields.io/badge/Version-0.2.1-lightgrey?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-0.9.0-lightgrey?style=for-the-badge)
 
 ![Electron](https://img.shields.io/badge/Electron-2B2E3A?style=flat-square&logo=electron&logoColor=9FEAF9)
 ![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white)
@@ -38,8 +38,8 @@ alle Termine **bidirektional** synchronisiert und sie in einer einzigen Ansicht 
 ---
 
 > [!NOTE]
-> **Projektstatus:** Das Grundgerüst steht (Etappe 1), die Daten liegen in Supabase. Der Google-Login (Etappe 2) ist geschrieben, aber noch nicht mit einem echten Konto geprüft.
-> Microsoft und der Sync folgen in den nächsten Etappen. Den aktuellen Stand findest du im [Arbeitsjournal](docs/JOURNAL.md).
+> **Projektstatus:** Alle sieben Etappen sind geschrieben (Version 0.9.0). Geprüft ist die App bisher mit Beispieldaten und durch Unit-Tests.
+> Die Prüfung mit echten Google- und Microsoft-Konten steht noch aus. Den aktuellen Stand findest du im [Arbeitsjournal](docs/JOURNAL.md).
 
 ## 💡 Worum geht es?
 
@@ -177,7 +177,7 @@ src/
 supabase/migrations/         Datenbankschema mit Zugriffsregeln (RLS)
 ```
 
-Seit Etappe 2 dazu: `accounts.ts` (Konten verbinden und entfernen), `auth/` (Google-Login), `providers/google.ts`, `secureStorage.ts` (verschlüsselte Ablage). Geplant und noch nicht vorhanden: Microsoft-Login, `providers/microsoft.ts`, `sync/` (Engine, Mapper, Scheduler).
+Dazu gekommen: `accounts.ts` (Konten verbinden und entfernen), `auth/` (Anmeldung bei Google und Microsoft), `providers/` (Google, Microsoft, Demo), `sync/` (Engine, Fingerabdrücke, Zeitplan), `eventInput.ts` (Eingabeprüfung), `settings.ts`, `secureStorage.ts`.
 
 </details>
 
@@ -191,7 +191,7 @@ Die Details zu Datenmodell, Event-Modell und Sync-Algorithmus stehen in [docs/AR
 | Kalender-UI    | FullCalendar 7 (`@fullcalendar/react`)                                                         |
 | Datenbank      | Supabase (Postgres) über `@supabase/supabase-js`, Zugriff nur aus dem Main-Prozess             |
 | Google         | `@googleapis/calendar` (Calendar API v3), OAuth 2.0 «Desktop app» mit Loopback-Redirect + PKCE |
-| Microsoft      | `@azure/msal-node` (Authority `common`) + `@microsoft/microsoft-graph-client`                  |
+| Microsoft      | Microsoft Graph direkt über `fetch`, Anmeldung mit PKCE (Authority `common`)                   |
 | Token-Speicher | Electron `safeStorage` (Windows DPAPI)                                                         |
 | Tests          | Vitest                                                                                         |
 | Installer      | electron-builder                                                                               |
@@ -200,12 +200,13 @@ Die Details zu Datenmodell, Event-Modell und Sync-Algorithmus stehen in [docs/AR
 
 - [x] **Etappe 0:** Plan, README und Dokumentation
 - [x] **Etappe 1:** Grundgerüst (Projekt, Supabase-Datenschicht, IPC, FullCalendar-UI mit Demo-Daten)
-- [ ] **Etappe 2:** Google-Login, Kalender lesen und anzeigen _(Code fertig, Prüfung mit echtem Konto offen)_
-- [ ] **Etappe 3:** Microsoft-Login, Kalender lesen und anzeigen
-- [ ] **Etappe 4:** Termine in der App erstellen, bearbeiten und löschen
-- [ ] **Etappe 5:** Sync-Engine für Einzeltermine (Mapping, Loop-Schutz, Konflikte, Löschungen)
-- [ ] **Etappe 6:** Wiederkehrende Termine und Ausnahmen
-- [ ] **Etappe 7:** Feinschliff (Kalender-Paare auswählen, Sync-Log, Tray-Icon, Autostart, Fehleranzeigen)
+- [x] **Etappe 2:** Google-Login, Kalender lesen und anzeigen _(Code fertig, Prüfung mit echtem Konto offen)_
+- [x] **Etappe 3:** Microsoft-Login, Kalender lesen und anzeigen _(Code fertig, Prüfung offen)_
+- [x] **Etappe 4:** Termine in der App erstellen, bearbeiten und löschen _(mit Beispieldaten geprüft)_
+- [x] **Etappe 5:** Sync-Engine (Loop-Schutz, Konflikte, Löschungen) _(Unit-Tests, Prüfung mit echten Kalendern offen)_
+- [x] **Etappe 6:** Wiederkehrende Termine als Serie _(ohne Ausnahmen, Prüfung offen)_
+- [x] **Etappe 7:** Feinschliff (Kalender-Paare, Sync-Stand, Symbol im Infobereich, Autostart)
+- [ ] **Abnahme:** manuelle Sync-Tests M-1 bis M-6 mit zwei Testkalendern ([Testplan](docs/TESTPLAN.md))
 
 ## 🔑 Einrichtung
 
