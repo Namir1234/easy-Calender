@@ -6,12 +6,33 @@ Laufendes Protokoll des Projekts. Der neuste Eintrag steht oben.
 
 ## Aktueller Stand
 
-|                     |                                                                                                                                                                  |
-| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Etappe**          | Alle sieben Etappen sind geschrieben (Version 0.10.0). Google ist mit dem echten Konto geprüft. Outlook läuft neu über das lokale Outlook und ist lesend geprüft |
-| **Als Nächstes**    | Namir klickt «Outlook verbinden», dann den Abgleich mit zwei Testkalendern prüfen (Testplan M-1 bis M-6)                                                         |
-| **Blockiert durch** | nichts                                                                                                                                                           |
-| **Offen bei Namir** | Outlook verbinden, je einen Kalender «Sync-Test» in Google und Outlook anlegen                                                                                   |
+|                     |                                                                                                                                                             |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Etappe**          | Alle sieben Etappen sind geschrieben (Version 0.10.1). Google und Outlook sind verbunden und lesend geprüft. Schreiben und Abgleich sind noch nicht geprüft |
+| **Als Nächstes**    | Je einen Kalender «Sync-Test» in Google und Outlook anlegen, als Paar verbinden, Testplan M-1 bis M-6                                                       |
+| **Blockiert durch** | nichts                                                                                                                                                      |
+| **Offen bei Namir** | Testkalender anlegen. Entscheiden, ob das Noser-Konto in der App bleiben soll                                                                               |
+
+---
+
+## 2026-11-17 · Outlook verbunden (Version 0.10.1)
+
+**Gemacht**
+
+- Fehler behoben: In der installierten App scheiterte «Outlook verbinden» mit «Outlook hat eine unlesbare Antwort gegeben». Der Pfad zum Brückenskript zeigte ins App-Archiv, wo PowerShell nicht lesen kann. Er zeigt jetzt auf die entpackte Kopie daneben. In der Entwicklung fiel das nicht auf, weil es dort kein Archiv gibt.
+- In der Auswahl für den Abgleich steht hinter jedem Kalender das Konto. Vorher gab es zweimal «Kalender» ohne Unterschied.
+
+**Geprüft** (an der installierten App)
+
+- «Outlook verbinden»: Beide Konten aus Outlook (classic) erscheinen mit je drei Kalendern, 23 und 5 Termine im Zeitraum von 7 Tagen zurück bis 30 Tage voraus. Google bleibt daneben bestehen, keine Fehlermeldung.
+
+**Nicht geprüft**
+
+- Schreiben ins Outlook und der Abgleich.
+
+**Gelernt**
+
+- Namir hatte gemeldet, die Kalender seien da, bevor die Verbindung stand. Solche Meldungen prüfe ich an der App nach, bevor ich darauf aufbaue.
 
 ---
 

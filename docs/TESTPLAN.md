@@ -57,10 +57,15 @@ Diese Fälle werden an der gestarteten App geprüft, ohne echte Konten.
 | A-18 | Im Formular das Ende vor den Beginn setzen            | Meldung im Formular, nichts wird gespeichert                                                     | ✅                 |
 | A-19 | Termin anklicken, «Bearbeiten», Titel ändern          | Der Termin trägt den neuen Titel                                                                 | ✅ (Beispieldaten) |
 | A-20 | Termin anklicken, «Löschen»                           | Nach der Rückfrage ist der Termin weg                                                            | ⬜                 |
-| A-21 | «Outlook verbinden»                                   | Ohne Anmeldung erscheinen die Konten und Kalender aus Outlook (classic)                          | ⬜                 |
+| A-21 | «Outlook verbinden»                                   | Ohne Anmeldung erscheinen die Konten und Kalender aus Outlook (classic)                          | ✅                 |
 | A-24 | Brückenskript lesend gegen das lokale Outlook         | Konten, Kalender und Termine kommen richtig an                                                   | ✅                 |
 | A-22 | Fenster schliessen mit «im Hintergrund weiterlaufen»  | Die App bleibt im Infobereich, ein Klick auf das Symbol öffnet sie wieder                        | ⬜                 |
 | A-23 | «Mit Windows starten» einschalten, neu anmelden       | Die App startet ohne Fenster im Infobereich                                                      | ⬜                 |
+
+### 2026-11-17 · Version 0.10.1
+
+- A-21 bestanden: beide Outlook-Konten mit Kalendern und Terminen in der installierten App.
+- **Nicht geprüft:** Schreiben ins lokale Outlook, M-1 bis M-6.
 
 ### 2026-11-17 · Version 0.10.0
 

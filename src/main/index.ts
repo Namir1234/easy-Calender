@@ -138,7 +138,11 @@ if (!app.requestSingleInstanceLock()) {
         tokens: createEncryptedStorage(join(userData, 'tokens.bin')),
         google: readGoogleConfig(import.meta.env),
         microsoft: readMicrosoftConfig(import.meta.env),
-        outlook: new OutlookBridge(powershellRunner(outlookScript)),
+        // PowerShell kann nicht ins App-Archiv hineinlesen. Das Skript liegt
+        // darum entpackt daneben (siehe asarUnpack in electron-builder.yml).
+        outlook: new OutlookBridge(
+          powershellRunner(outlookScript.replace('app.asar', 'app.asar.unpacked'))
+        ),
         openBrowser: (url) => shell.openExternal(url),
         copyText: (text) => clipboard.writeText(text)
       })
