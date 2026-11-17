@@ -6,12 +6,36 @@ Laufendes Protokoll des Projekts. Der neuste Eintrag steht oben.
 
 ## Aktueller Stand
 
-|                     |                                                                                                                          |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| **Etappe**          | Alle sieben Etappen sind gebaut und mit echten Konten geprüft. Version 0.11.0 bringt Einstellungen pro Kalender          |
-| **Als Nächstes**    | Namirs Wünsche vom 17.11.: Chatbot zum Eintragen von Terminen, Personen einladen. Beides braucht noch seine Entscheidung |
-| **Blockiert durch** | nichts                                                                                                                   |
-| **Offen bei Namir** | Für den Chatbot: API-Schlüssel und Einverständnis mit den Kosten. Welche echten Kalender abgeglichen werden sollen       |
+|                     |                                                                                                                |
+| ------------------- | -------------------------------------------------------------------------------------------------------------- |
+| **Etappe**          | Alle sieben Etappen sind gebaut und mit echten Konten geprüft. Version 0.12.0 bringt den Assistenten (Chatbot) |
+| **Als Nächstes**    | Ollama installieren und den Assistenten mit dem echten Modell prüfen. Danach: Personen einladen                |
+| **Blockiert durch** | Ollama ist noch nicht installiert. Das macht Namir selbst                                                      |
+| **Offen bei Namir** | Ollama installieren, Modell `qwen2.5:3b` laden. Welche echten Kalender abgeglichen werden sollen               |
+
+---
+
+## 2026-11-17 · Assistent mit lokalem Modell (Version 0.12.0)
+
+Namirs Wunsch: ein eingebauter Chatbot, dem er Termine schreibt und der sie in den richtigen Kalender einträgt. Er soll nichts kosten, stark muss er nicht sein (E-018).
+
+**Gemacht**
+
+- Knopf «Assistent» in der Seitenleiste. Er öffnet rechts eine Spalte mit dem Gespräch.
+- Der Assistent schickt die Nachricht an Ollama auf diesem Rechner (`127.0.0.1:11434`). Das Modell muss nach einem festen JSON-Schema antworten: Titel, Tag, Uhrzeiten, Kalender, Ort, Notiz, oder eine Rückfrage.
+- Kleine Modelle rechnen schlecht mit Daten. Darum bekommt das Modell ein fertiges Kalenderblatt der nächsten vier Wochen («Mittwoch 18.11. = 2026-11-18 (morgen)») und muss nur nachschlagen. Die Uhrzeiten rechnet die App selbst um.
+- Eingetragen wird nie direkt. Der Assistent zeigt einen Vorschlag mit «Eintragen», «Ändern» (öffnet das normale Formular, schon ausgefüllt) und «Verwerfen».
+- Ist etwas unklar oder unstimmig (kein Tag, 30. Februar), fragt der Assistent nach, statt etwas Falsches einzutragen.
+- Läuft Ollama nicht oder fehlt das Modell, zeigt die Spalte eine Anleitung.
+
+**Geprüft**
+
+- 102 Unit-Tests bestanden. Neu: Kalenderblatt, Umwandlung der Antwort (Uhrzeit, ohne Ende, über Mitternacht, ganztägig, mehrtägig, Rückfragen), Wahl des Modells, Prüfung des Verlaufs, Gespräch mit einem nachgebauten Ollama.
+- An der installierten App: Die Spalte öffnet sich und zeigt ohne Ollama die Anleitung. Eine Nachricht ergibt eine verständliche Meldung statt eines Fehlers.
+
+**Nicht geprüft**
+
+- Das Gespräch mit dem echten Modell. Ollama ist noch nicht installiert.
 
 ---
 

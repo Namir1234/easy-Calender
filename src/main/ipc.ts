@@ -1,6 +1,8 @@
 import { ipcMain } from 'electron'
 import type {
   Account,
+  AssistantReply,
+  AssistantStatus,
   Calendar,
   CalendarEvent,
   DbStatus,
@@ -11,6 +13,7 @@ import type {
   SyncStatus
 } from '../shared/types'
 import type { AccountService } from './accounts'
+import { AssistantService, parseTurns } from './assistant/service'
 import { parseDateRange } from './dateRange'
 import type { StoreContext } from './db'
 import { parseEventInput } from './eventInput'
@@ -72,6 +75,21 @@ export function registerIpc(ready: Promise<AppContext>, settings: SettingsAccess
       allDayOnly: Boolean(options.allDayOnly)
     }
   }
+
+  // Der Assistent trägt nur in Kalender ein, die in der App sichtbar sind.
+  const assistant = new AssistantService({
+    listAccounts: async () => (await ready).store.listAccounts(),
+    listCalendars: async () =>
+      (await (await ready).store.listCalendars())
+        .map(withOptions)
+        .filter((calendar) => calendar.visible && !calendar.hidden)
+  })
+
+  ipcMain.handle('assistant:status', (): Promise<AssistantStatus> => assistant.status())
+
+  ipcMain.handle('assistant:ask', (_event, turns: unknown): Promise<AssistantReply> =>
+    assistant.ask(parseTurns(turns))
+  )
 
   ipcMain.handle('app:status', async (): Promise<DbStatus> => (await ready).status)
 

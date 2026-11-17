@@ -64,7 +64,22 @@ Die Redirect-URI muss genau `http://localhost` heissen, ohne Port. Die App häng
 > [!WARNING]
 > Bei TBZ- oder Noser-Konten kann die Organisation die Zustimmung für Dritt-Apps blockieren. Dann funktionieren nur private Microsoft-Konten, bis ein Admin die App freigibt.
 
-## 4. Die Datei .env
+## 4. Assistent (Ollama)
+
+Der Assistent braucht ein Sprachmodell auf deinem Rechner. Das ist gratis und nichts geht ins Internet.
+
+1. Ollama von [ollama.com](https://ollama.com/download) herunterladen und installieren. Es startet danach von selbst im Hintergrund.
+2. Ein Terminal öffnen und das Modell laden (etwa 2 GB):
+
+   ```bash
+   ollama pull qwen2.5:3b
+   ```
+
+3. In easy-Calender auf «Assistent» klicken. Steht dort eine Anleitung, auf «Nochmals prüfen».
+
+Arbeitsspeicher: Das Modell braucht etwa 2 bis 3 GB. Wer mehr Speicher hat und genauere Antworten will, kann ein grösseres Modell laden (z. B. `qwen2.5:7b`, etwa 5 GB). Die App nimmt `qwen2.5:3b`, wenn es da ist, sonst das erste geladene Modell.
+
+## 5. Die Datei .env
 
 Kopiere [`.env.example`](../.env.example) nach `.env` in den Projektordner und trage die Werte ein. Starte die App danach neu.
 

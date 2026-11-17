@@ -26,6 +26,7 @@ Ausführen mit `npm test`.
 | Lokales Outlook | Mapper, Serien ↔ Outlook-Muster, Brücke zum PowerShell-Skript (mit Attrappe)                                                                     | ✅     |
 | Umschrift       | Notizen nach ASCII, Umlaute bleiben beim Abgleich auf der anderen Seite erhalten                                                                 | ✅     |
 | Einstellungen   | Vorgaben, gültige und ungültige Werte, Einstellungen pro Kalender                                                                                | ✅     |
+| Assistent       | Kalenderblatt, Antwort des Modells prüfen und umwandeln, Rückfragen, Wahl des Modells, Gespräch mit nachgebautem Ollama                          | ✅     |
 | Mapper          | Google ↔ Graph: Titel, Ort, Beschreibung                                                                                                         | ⬜     |
 | Mapper          | Zeitzonen                                                                                                                                        | ⬜     |
 | Mapper          | Ganztägige Termine                                                                                                                               | ⬜     |
@@ -65,8 +66,17 @@ Diese Fälle werden an der gestarteten App geprüft, ohne echte Konten.
 | A-26 | «Nur ganztägige Termine zeigen»                                             | Termine mit Uhrzeit dieses Kalenders verschwinden                                                | ✅                               |
 | A-27 | Farbe eines Kalenders ändern                                                | Häkchen und Termine tragen die neue Farbe, auch nach einem Neustart                              | ⬜                               |
 | A-28 | «Neuer Kalender» in einem Outlook-Konto                                     | Der Kalender erscheint in der App und in Outlook                                                 | ⬜                               |
+| A-29 | «Assistent» ohne Ollama                                                     | Spalte zeigt eine Anleitung, Senden ist gesperrt                                                 | ✅                               |
+| A-30 | Assistent: «morgen 14 Uhr Zahnarzt»                                         | Vorschlag mit richtigem Tag und Zeit, nach «Eintragen» steht der Termin im Kalender              | ⬜                               |
+| A-31 | Assistent: unklare Nachricht («Zahnarzt»)                                   | Rückfrage statt Eintrag                                                                          | ⬜                               |
 | A-22 | Fenster schliessen mit «im Hintergrund weiterlaufen»                        | Die App bleibt im Infobereich, ein Klick auf das Symbol öffnet sie wieder                        | ⬜                               |
 | A-23 | «Mit Windows starten» einschalten, neu anmelden                             | Die App startet ohne Fenster im Infobereich                                                      | ⬜                               |
+
+### 2026-11-17 · Version 0.12.0
+
+- `npm test`: 102 von 102 Tests bestanden. `npm run typecheck` und `npm run lint` ohne Befund.
+- A-29 an der installierten App geprüft.
+- **Nicht geprüft:** A-30, A-31. Ollama ist noch nicht installiert.
 
 ### 2026-11-17 · Version 0.11.0
 
