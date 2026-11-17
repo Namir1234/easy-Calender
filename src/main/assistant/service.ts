@@ -5,10 +5,20 @@ import type {
   AssistantTurn,
   Calendar
 } from '../../shared/types'
-import { answerSchema, systemPrompt, toReply, type AssistantCalendar } from './interpret'
-import { OllamaClient, OllamaError, pickModel, type ChatMessage } from './ollama'
+import {
+  answerSchema,
+  calendarNamedIn,
+  mainCalendar,
+  mentionsWhen,
+  mismatch,
+  systemPrompt,
+  toReply,
+  type AssistantCalendar
+} from './interpret'
+import { OllamaClient, OllamaError, UnreadableAnswer, pickModel, type ChatMessage } from './ollama'
 
 const MAX_TURNS = 10
+const ASK_WHEN = 'Wann ist das? Sag mir Tag und Uhrzeit.'
 const MAX_TEXT = 2000
 
 /** Prüft den Gesprächsverlauf, der von der Oberfläche kommt. */
@@ -78,8 +88,47 @@ export class AssistantService {
         ...turns.map((turn) => ({ role: turn.role, content: turn.text }))
       ]
       const raw = await this.client.chat(model, messages, answerSchema(known))
-      return toReply(raw, known, this.timeZone)
+      const reply = toReply(raw, known, this.timeZone)
+      const said = turns.filter((turn) => turn.role === 'user').map((turn) => turn.text)
+      if (reply.kind === 'question') {
+        // Kleine Modelle plappern bei Rückfragen gern die Anweisung nach.
+        // Fehlt das Wann, stellt die App die Frage selbst; zu Langes kürzt sie.
+        if (!mentionsWhen(said)) return { kind: 'question', text: ASK_WHEN }
+        if (reply.text.length > 160 || /allDay|action|YYYY|HH:mm/.test(reply.text)) {
+          return { kind: 'question', text: 'Kannst du mir noch etwas mehr dazu sagen?' }
+        }
+        return reply
+      }
+      if (reply.kind !== 'proposal') return reply
+
+      // Kein Wort zum Wann: Das Modell hat den Tag geraten.
+      if (!mentionsWhen(said)) {
+        return { kind: 'question', text: `Wann ist «${reply.input.title}»?` }
+      }
+      // Stimmt der Vorschlag nicht mit der Nachricht überein, lieber nachfragen.
+      const doubt = mismatch(reply.input, said)
+      if (doubt) return { kind: 'question', text: doubt }
+      // Den Kalender wählt die App: genannt oder sonst der Hauptkalender.
+      const calendar = calendarNamedIn(said, known) ?? mainCalendar(known) ?? known[0]
+      return {
+        ...reply,
+        calendarId: calendar.id,
+        // Der Google-Hauptkalender heisst wie das Konto: nicht doppelt nennen.
+        calendarName:
+          calendar.name === calendar.account
+            ? calendar.name
+            : `${calendar.name} (${calendar.account})`
+      }
     } catch (error) {
+      if (error instanceof UnreadableAnswer) {
+        // Meist fehlt die Angabe, wann: Dann ist das die bessere Rückfrage,
+        // und das Gespräch kann weitergehen.
+        const said = turns.filter((turn) => turn.role === 'user').map((turn) => turn.text)
+        return {
+          kind: 'question',
+          text: mentionsWhen(said) ? error.message : ASK_WHEN
+        }
+      }
       if (error instanceof OllamaError) return { kind: 'problem', text: error.message }
       throw error
     }

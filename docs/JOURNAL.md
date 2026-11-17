@@ -6,12 +6,56 @@ Laufendes Protokoll des Projekts. Der neuste Eintrag steht oben.
 
 ## Aktueller Stand
 
-|                     |                                                                                                                |
-| ------------------- | -------------------------------------------------------------------------------------------------------------- |
-| **Etappe**          | Alle sieben Etappen sind gebaut und mit echten Konten geprüft. Version 0.12.0 bringt den Assistenten (Chatbot) |
-| **Als Nächstes**    | Ollama installieren und den Assistenten mit dem echten Modell prüfen. Danach: Personen einladen                |
-| **Blockiert durch** | Ollama ist noch nicht installiert. Das macht Namir selbst                                                      |
-| **Offen bei Namir** | Ollama installieren, Modell `qwen2.5:3b` laden. Welche echten Kalender abgeglichen werden sollen               |
+|                     |                                                                                                                                   |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| **Etappe**          | Alle sieben Etappen sind gebaut und mit echten Konten geprüft. Version 0.12.1: Assistent mit echtem Modell geprüft und verbessert |
+| **Als Nächstes**    | Handy-Version als Web-App. Danach: Personen einladen                                                                              |
+| **Blockiert durch** | –                                                                                                                                 |
+| **Offen bei Namir** | Welche echten Kalender abgeglichen werden sollen. Wo die Stundenpläne liegen                                                      |
+
+---
+
+## 2026-11-17 · Assistent mit echtem Modell geprüft (Version 0.12.1)
+
+Namir hat erlaubt, Ollama zu installieren. Installiert mit `winget install Ollama.Ollama` (Version 0.40.16), dazu das Modell `qwen2.5:3b` (1,9 GB).
+
+**Was der echte Test zeigte**
+
+Tag und Uhrzeit rechnete das Modell dank Kalenderblatt richtig. Falsch waren:
+
+- Ohne Tag («Zahnarzt») erfand es einen Termin heute um 10 Uhr, statt nachzufragen.
+- Den Kalender wählte es schlecht: «arbeiten bei Noser» landete in Privat, «Mittagessen mit Mama» im Arbeitskalender. In der App wurde ohne Angabe sogar «Geburtstage» vorgeschlagen, weil er zuoberst steht.
+- Ohne Zusammenhang machte es aus «Donnerstag 17 Uhr» einen «Termin» am Dienstag um 14 Uhr.
+- Bei manchen Nachrichten blieb es in einer Schleife hängen, bis nach 120 Sekunden die Zeit ablief. Rückfragen waren manchmal ein langer Text mit Teilen der Anweisung.
+
+**Gemacht**
+
+Die App verlässt sich nicht mehr auf das Modell, wo sie es selbst prüfen kann:
+
+- Nennt die Nachricht kein Wann (kein Tag, keine Zahl, kein «morgen»), fragt die App «Wann ist das?».
+- Den Kalender wählt die App: genannt über Namen («Schulkalender» → «Schule BMS») oder Konto («bei Noser» → noseryoung.ch, dort der Hauptkalender). Sonst der Google-Hauptkalender. Geburtstage und Feiertage nur, wenn es nicht anders geht.
+- Wochentag und Uhrzeit im Vorschlag müssen zur Nachricht passen, und der Titel muss aus der Nachricht stammen. Sonst kommt eine Rückfrage.
+- Das Modell darf höchstens 300 Tokens schreiben. Eine Schleife bricht so nach etwa 15 Sekunden ab.
+- Lange oder wirre Rückfragen ersetzt die App durch eine eigene.
+- «ganztägig» fällt aus dem Titel, eine Notiz gleich dem Titel fällt weg.
+
+**Geprüft**
+
+- 114 Unit-Tests bestanden (neu: Wann erkennen, Kalender wählen, Hauptkalender, Abgleich mit der Nachricht, Rückfragen).
+- An der installierten App mit dem echten Modell:
+  - «morgen 14 Uhr Zahnarzt» → Mi. 18.11., 14 bis 15 Uhr, Google-Hauptkalender.
+  - «nächsten Montag ganztägig arbeiten bei Noser» → Mo. 23.11., ganztägig, Noser «Kalender».
+  - «Kino mit Lea» → «Wann ist das?», dann «am Freitag um 20 Uhr im Pathé» → Fr. 20.11., 20 bis 21 Uhr, Ort Pathé.
+  - «Donnerstag 17 Uhr» ohne Titel → «Was soll ich eintragen?».
+- Eine Antwort dauert 5 bis 25 Sekunden.
+
+**Nicht geprüft**
+
+- «Eintragen» habe ich nicht gedrückt, um nichts in die echten Kalender zu schreiben. Es ruft dieselbe Funktion wie «Neuer Termin», die geprüft ist.
+
+**Wunsch: Handy-Version**
+
+Namir möchte eine Handy-Version und hat «Web-App» gewählt. Sie kommt als nächste Etappe.
 
 ---
 
