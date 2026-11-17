@@ -150,6 +150,10 @@ p {
   height: 100%;
 }
 
+.app.with-assistant {
+  grid-template-columns: 248px minmax(0, 1fr) 320px;
+}
+
 .sidebar {
   display: flex;
   flex-direction: column;
@@ -341,6 +345,130 @@ p {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
+}
+
+/* Assistent: eine Spalte rechts neben dem Kalender */
+
+.assistant {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--panel);
+  border-left: 1px solid var(--line);
+}
+
+.assistant-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 16px 10px 20px;
+}
+
+.assistant-head h2 {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 650;
+}
+
+.assistant-messages {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+  padding: 4px 20px 16px;
+  overflow-y: auto;
+  user-select: text;
+}
+
+.assistant-hint,
+.assistant-thinking {
+  color: var(--ink-muted);
+  font-size: 13px;
+}
+
+.assistant-setup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.assistant-setup ol {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.assistant-setup code {
+  padding: 1px 4px;
+  border-radius: 3px;
+  background: var(--hover);
+  font-family: Consolas, monospace;
+}
+
+.assistant-message {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.assistant-message.from-user {
+  align-self: flex-end;
+  max-width: 85%;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+}
+
+.assistant-message.is-problem p {
+  color: var(--error);
+}
+
+.assistant-proposal {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  background: var(--paper);
+}
+
+.assistant-calendar {
+  color: var(--ink-muted);
+  font-size: 13px;
+}
+
+.assistant-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.assistant-actions .button {
+  width: auto;
+}
+
+.assistant-input {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 16px 16px 20px;
+  border-top: 1px solid var(--line);
+}
+
+.assistant-input textarea {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  resize: none;
 }
 
 /* Aktionen */

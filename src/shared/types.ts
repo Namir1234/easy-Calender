@@ -79,6 +79,29 @@ export interface EventInput {
   recurrence: string | null
 }
 
+/** Ein Beitrag im Gespräch mit dem Assistenten. */
+export interface AssistantTurn {
+  role: 'user' | 'assistant'
+  text: string
+}
+
+/** Was der Assistent auf eine Nachricht antwortet. */
+export type AssistantReply =
+  /** Ein Termin, der auf Bestätigung wartet */
+  | { kind: 'proposal'; calendarId: string; calendarName: string; input: EventInput }
+  /** Eine Rückfrage, das Gespräch geht weiter */
+  | { kind: 'question'; text: string }
+  /** Ein Hinweis, z. B. dass Ollama nicht läuft */
+  | { kind: 'problem'; text: string }
+
+export interface AssistantStatus {
+  ready: boolean
+  /** Das Modell, das antwortet */
+  model?: string
+  /** Was fehlt, als Satz für die Oberfläche */
+  problem?: string
+}
+
 /** Ein Google-Kalender und ein Outlook-Kalender, die abgeglichen werden. */
 export interface SyncPair {
   id: string
@@ -155,6 +178,10 @@ export interface AppApi {
   /** Gleicht alle Kalenderpaare jetzt ab und wartet auf das Ergebnis. */
   syncNow(): Promise<SyncStatus>
   getSyncStatus(): Promise<SyncStatus>
+  /** Ob der Assistent bereit ist (Ollama läuft, ein Modell ist geladen). */
+  assistantStatus(): Promise<AssistantStatus>
+  /** Schickt den Verlauf an den Assistenten. Eingetragen wird dabei nichts. */
+  askAssistant(turns: AssistantTurn[]): Promise<AssistantReply>
   getSettings(): Promise<Settings>
   setSettings(settings: Settings): Promise<Settings>
 }

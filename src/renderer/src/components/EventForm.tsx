@@ -1,9 +1,17 @@
 import { useEffect, useRef, useState } from 'react'
 import type { Calendar, CalendarEvent, EventInput } from '../../../shared/types'
 
+/** Vorgaben für einen neuen Termin, z. B. aus einem Vorschlag des Assistenten. */
+export interface FormDraft {
+  title: string
+  calendarId: string
+  location?: string
+  description?: string
+}
+
 /** Ein neuer Termin mit Vorgabe für die Zeit, oder ein bestehender zum Ändern. */
 export type FormTarget =
-  | { kind: 'create'; start: Date; end: Date; allDay: boolean }
+  | { kind: 'create'; start: Date; end: Date; allDay: boolean; draft?: FormDraft }
   | { kind: 'edit'; event: CalendarEvent }
 
 interface Props {
@@ -74,16 +82,19 @@ function initialFields(target: FormTarget, calendars: Calendar[]): Fields {
   const lastDay = new Date(target.end)
   if (target.allDay) lastDay.setDate(lastDay.getDate() - 1)
   return {
-    title: '',
-    calendarId: calendars[0]?.id ?? '',
+    title: target.draft?.title ?? '',
+    calendarId:
+      calendars.find((calendar) => calendar.id === target.draft?.calendarId)?.id ??
+      calendars[0]?.id ??
+      '',
     allDay: target.allDay,
     startDate: toDateField(target.start),
     startTime: target.allDay ? '09:00' : toTimeField(target.start),
     endDate: toDateField(target.allDay ? lastDay : target.end),
     endTime: target.allDay ? '10:00' : toTimeField(target.end),
     repeat: '',
-    location: '',
-    description: ''
+    location: target.draft?.location ?? '',
+    description: target.draft?.description ?? ''
   }
 }
 

@@ -29,6 +29,8 @@ const api: AppApi = {
   removeSyncPair: (pairId) => ipcRenderer.invoke('sync:removePair', pairId),
   syncNow: () => ipcRenderer.invoke('sync:now'),
   getSyncStatus: () => ipcRenderer.invoke('sync:status'),
+  assistantStatus: () => ipcRenderer.invoke('assistant:status'),
+  askAssistant: (turns) => ipcRenderer.invoke('assistant:ask', turns),
   getSettings: () => ipcRenderer.invoke('settings:get'),
   setSettings: (settings) => ipcRenderer.invoke('settings:set', settings)
 }

@@ -5,11 +5,13 @@ import type {
   CalendarEvent,
   CalendarOptions,
   DbStatus,
+  EventInput,
   Settings
 } from '../../shared/types'
 import CalendarList from './components/CalendarList'
 import CalendarView from './components/CalendarView'
 import EventDetails, { type AnchorRect } from './components/EventDetails'
+import AssistantPanel from './components/AssistantPanel'
 import EventForm, { type FormTarget } from './components/EventForm'
 import StatusBadge from './components/StatusBadge'
 import SyncPanel from './components/SyncPanel'
@@ -37,6 +39,7 @@ function App(): React.JSX.Element {
     null
   )
   const [form, setForm] = useState<FormTarget | null>(null)
+  const [assistantOpen, setAssistantOpen] = useState(false)
   /** Zählt hoch, wenn die Termine neu geladen werden sollen. */
   const [reloadKey, setReloadKey] = useState(0)
 
@@ -186,6 +189,28 @@ function App(): React.JSX.Element {
     setForm({ kind: 'create', start, end, allDay })
   }, [])
 
+  /** Öffnet einen Vorschlag des Assistenten im normalen Formular. */
+  const editProposal = useCallback((calendarId: string, input: EventInput) => {
+    const parse = (value: string): Date => {
+      if (value.includes('T')) return new Date(value)
+      const [year, month, day] = value.split('-').map(Number)
+      return new Date(year, month - 1, day)
+    }
+    setSelected(null)
+    setForm({
+      kind: 'create',
+      start: parse(input.start),
+      end: parse(input.end),
+      allDay: input.allDay,
+      draft: {
+        title: input.title,
+        calendarId,
+        location: input.location,
+        description: input.description
+      }
+    })
+  }, [])
+
   const createNow = (): void => {
     // Vorgabe: die nächste volle Stunde, eine Stunde lang.
     const start = new Date()
@@ -228,7 +253,7 @@ function App(): React.JSX.Element {
   const onlyDemo = accounts.length > 0 && accounts.every((account) => account.provider === 'demo')
 
   return (
-    <div className="app">
+    <div className={assistantOpen ? 'app with-assistant' : 'app'}>
       <aside className="sidebar">
         <h1 className="wordmark">easy-Calender</h1>
 
@@ -240,6 +265,14 @@ function App(): React.JSX.Element {
             disabled={!calendars.some((calendar) => !calendar.hidden)}
           >
             Neuer Termin
+          </button>
+          <button
+            type="button"
+            className="button"
+            aria-pressed={assistantOpen}
+            onClick={() => setAssistantOpen((open) => !open)}
+          >
+            Assistent
           </button>
         </div>
 
@@ -353,6 +386,14 @@ function App(): React.JSX.Element {
           onError={showError}
         />
       </main>
+
+      {assistantOpen && (
+        <AssistantPanel
+          onCreated={reloadEvents}
+          onEdit={editProposal}
+          onClose={() => setAssistantOpen(false)}
+        />
+      )}
 
       {selected && (
         <EventDetails
