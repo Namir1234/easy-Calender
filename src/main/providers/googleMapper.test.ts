@@ -26,8 +26,58 @@ describe('mapGoogleEvent', () => {
       timeZone: 'Europe/Zurich',
       recurrence: null,
       status: 'confirmed',
-      updatedAt: undefined
+      updatedAt: undefined,
+      seriesId: undefined,
+      showAs: 'busy',
+      private: false,
+      reminderMinutes: null,
+      categories: []
     })
+  })
+
+  it('liest Anzeigen als, Privat, Erinnerung und Kategorien', () => {
+    const base = { id: 'x', start: { date: '2026-11-17' }, end: { date: '2026-11-18' } }
+    expect(
+      mapGoogleEvent(
+        {
+          ...base,
+          transparency: 'transparent',
+          visibility: 'private',
+          reminders: { useDefault: false, overrides: [{ method: 'popup', minutes: 10 }] },
+          extendedProperties: { private: { easyCategories: '["Rote Kategorie"]' } }
+        },
+        'UTC'
+      )
+    ).toMatchObject({
+      showAs: 'free',
+      private: true,
+      reminderMinutes: 10,
+      categories: ['Rote Kategorie']
+    })
+  })
+
+  it('nimmt die Standard-Erinnerung des Kalenders und merkt sich «abwesend»', () => {
+    const base = { id: 'x', start: { date: '2026-11-17' }, end: { date: '2026-11-18' } }
+    const event = mapGoogleEvent(
+      {
+        ...base,
+        reminders: { useDefault: true },
+        extendedProperties: { private: { easyShowAs: 'oof' } }
+      },
+      'UTC',
+      [{ method: 'popup', minutes: 30 }]
+    )
+    expect(event).toMatchObject({ reminderMinutes: 30, showAs: 'oof' })
+    // Hat jemand den Termin in Google auf «frei» gestellt, gilt das.
+    const changed = mapGoogleEvent(
+      {
+        ...base,
+        transparency: 'transparent',
+        extendedProperties: { private: { easyShowAs: 'oof' } }
+      },
+      'UTC'
+    )
+    expect(changed?.showAs).toBe('free')
   })
 
   it('erkennt ganztägige Termine und behält das exklusive Ende', () => {
@@ -125,6 +175,23 @@ describe('toGoogleBody', () => {
     })
     expect(body.start).toEqual({ date: '2026-12-24', dateTime: null, timeZone: null })
     expect(body.recurrence).toEqual(['RRULE:FREQ=YEARLY'])
+  })
+
+  it('schreibt Zusatzfelder nur, wenn sie mitkommen', () => {
+    expect(
+      toGoogleBody({
+        ...base,
+        showAs: 'oof',
+        private: true,
+        reminderMinutes: null,
+        categories: ['A']
+      })
+    ).toMatchObject({
+      transparency: 'opaque',
+      visibility: 'private',
+      reminders: { useDefault: false, overrides: [] },
+      extendedProperties: { private: { easyShowAs: 'oof', easyCategories: '["A"]' } }
+    })
   })
 
   it('lässt bei einem einzelnen Vorkommen die Serie in Ruhe', () => {

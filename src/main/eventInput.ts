@@ -1,4 +1,5 @@
-import type { NormalizedEvent } from '../shared/types'
+import { SHOW_AS_VALUES } from '../shared/types'
+import type { EventExtras, NormalizedEvent, ShowAs } from '../shared/types'
 import { SERIES_INSTANCE } from './providers/types'
 
 const DATE = /^\d{4}-\d{2}-\d{2}$/
@@ -67,6 +68,54 @@ export function parseEventInput(input: unknown): NormalizedEvent {
     allDay: raw.allDay,
     timeZone,
     recurrence,
-    status: 'confirmed'
+    status: raw.showAs === 'tentative' ? 'tentative' : 'confirmed',
+    ...parseExtras(raw)
   }
+}
+
+/** Google und Outlook erlauben Erinnerungen bis vier Wochen vorher. */
+export const MAX_REMINDER_MINUTES = 40_320
+const MAX_CATEGORIES = 25
+
+/**
+ * Prüft die Zusatzfelder eines Termins. Was fehlt, bleibt weg, damit es
+ * beim Anbieter unverändert bleibt.
+ */
+export function parseExtras(raw: Record<string, unknown>): EventExtras {
+  const extras: EventExtras = {}
+  if (raw.showAs !== undefined) {
+    if (!SHOW_AS_VALUES.includes(raw.showAs as ShowAs)) throw new Error('Ungültiges «Anzeigen als»')
+    extras.showAs = raw.showAs as ShowAs
+  }
+  if (raw.private !== undefined) {
+    if (typeof raw.private !== 'boolean') throw new Error('private muss true oder false sein')
+    extras.private = raw.private
+  }
+  if (raw.reminderMinutes !== undefined) {
+    const minutes = raw.reminderMinutes
+    if (
+      minutes !== null &&
+      (typeof minutes !== 'number' ||
+        !Number.isInteger(minutes) ||
+        minutes < 0 ||
+        minutes > MAX_REMINDER_MINUTES)
+    ) {
+      throw new Error('Ungültige Erinnerung')
+    }
+    extras.reminderMinutes = minutes
+  }
+  if (raw.categories !== undefined) {
+    if (!Array.isArray(raw.categories) || raw.categories.length > MAX_CATEGORIES) {
+      throw new Error('Ungültige Kategorien')
+    }
+    const names = raw.categories.map((name) => {
+      // Komma und Semikolon trennen in Outlook die Kategorien.
+      if (typeof name !== 'string' || !name.trim() || name.length > 60 || /[,;]/.test(name)) {
+        throw new Error('Ungültiger Name einer Kategorie')
+      }
+      return name.trim()
+    })
+    extras.categories = [...new Set(names)]
+  }
+  return extras
 }

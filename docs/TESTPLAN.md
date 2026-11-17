@@ -27,6 +27,11 @@ Ausführen mit `npm test`.
 | Umschrift       | Notizen nach ASCII, Umlaute bleiben beim Abgleich auf der anderen Seite erhalten                                                                 | ✅     |
 | Einstellungen   | Vorgaben, gültige und ungültige Werte, Einstellungen pro Kalender                                                                                | ✅     |
 | Assistent       | Kalenderblatt, Antwort des Modells prüfen und umwandeln, Rückfragen, Wahl des Modells, Gespräch mit nachgebautem Ollama                          | ✅     |
+| Zusatzfelder    | Anzeigen als, privat, Erinnerung, Kategorien bei Google, Graph und lokalem Outlook lesen und schreiben, Eingabeprüfung, nicht im Abgleich        | ✅     |
+| Erinnerungen    | Fällige Erinnerungen, ganztägige Termine, nichts doppelt, nichts Veraltetes, Text der Mitteilung                                                 | ✅     |
+| Serien-Editor   | RRULE bauen und lesen (Intervall, Wochentage, n-ter Wochentag, Anzahl, Enddatum), Beschreibung als Satz                                          | ✅     |
+| Suche           | Mehrere Wörter, Gross/klein, Ort, Notiz und Kategorien                                                                                           | ✅     |
+| Einstellungen   | Ansicht (Arbeitszeit, Arbeitstage, Wochenbeginn, Zeitraster) und Kategorien prüfen                                                               | ✅     |
 | Mapper          | Google ↔ Graph: Titel, Ort, Beschreibung                                                                                                         | ⬜     |
 | Mapper          | Zeitzonen                                                                                                                                        | ⬜     |
 | Mapper          | Ganztägige Termine                                                                                                                               | ⬜     |
@@ -69,8 +74,23 @@ Diese Fälle werden an der gestarteten App geprüft, ohne echte Konten.
 | A-29 | «Assistent» ohne Ollama                                                     | Spalte zeigt eine Anleitung, Senden ist gesperrt                                                 | ✅                                               |
 | A-30 | Assistent: «morgen 14 Uhr Zahnarzt»                                         | Vorschlag mit richtigem Tag, Zeit und Kalender                                                   | ✅ Vorschlag geprüft, «Eintragen» nicht gedrückt |
 | A-31 | Assistent: unklare Nachricht («Kino mit Lea»)                               | Rückfrage statt Eintrag, die Antwort darauf ergibt den Vorschlag                                 | ✅                                               |
+| A-32 | Ansicht «Arbeitswoche» und «Liste»                                          | Arbeitswoche zeigt nur die Arbeitstage, die Liste alle Termine des Monats                        | ✅ Demo                                          |
+| A-33 | Tag im Datumsnavigator anklicken, Ctrl+G mit Datum                          | Der Kalender springt dorthin, der kleine Monat zieht mit                                         | ✅ Demo                                          |
+| A-34 | Suche nach «review», Treffer anklicken                                      | Trefferliste statt Kalender, Klick springt zum Termin und zeigt die Details                      | ✅ Demo                                          |
+| A-35 | Termin mit der Maus auf einen anderen Tag ziehen                            | Der Termin wird gespeichert, Zusatzfelder bleiben                                                | ✅ Demo                                          |
+| A-36 | Neuer Termin: wöchentlich, Wochentage, Anzeigen als, Erinnerung, Kategorie  | Felder erscheinen, der Termin hat alle Angaben                                                   | ✅ Demo                                          |
+| A-37 | Termin in einen anderen Kalender verschieben                                | Er steht im neuen Kalender und ist im alten weg                                                  | ✅ Demo                                          |
+| A-38 | «Serie bearbeiten» und «Serie löschen» bei Google und Outlook               | Die ganze Serie ändert sich bzw. verschwindet                                                    | ⬜ braucht Testkalender                          |
+| A-39 | Erinnerung an einen Google-Termin                                           | Windows-Mitteilung zur eingestellten Zeit, Klick öffnet den Termin                               | ⬜                                               |
+| A-40 | Zusatzfelder in Google und Outlook schreiben                                | Anzeigen als, privat, Erinnerung und Kategorien stehen beim Anbieter                             | ⬜ braucht Testkalender                          |
 | A-22 | Fenster schliessen mit «im Hintergrund weiterlaufen»                        | Die App bleibt im Infobereich, ein Klick auf das Symbol öffnet sie wieder                        | ⬜                                               |
 | A-23 | «Mit Windows starten» einschalten, neu anmelden                             | Die App startet ohne Fenster im Infobereich                                                      | ⬜                                               |
+
+### 2026-11-17 · Version 0.13.0
+
+- `npm test`: 145 von 145 Tests bestanden. `npm run typecheck` und `npm run lint` ohne Fehler.
+- A-32 bis A-37 in der Entwicklungsversion mit Demo-Daten und eigenem, leerem Datenordner geprüft (echte Einstellungen unberührt).
+- Brückenskript lesend gegen das lokale Outlook: 20 Termine mit den neuen Feldern (Erinnerung, Anzeigen als). Geschrieben wurde nichts.
 
 ### 2026-11-17 · Version 0.12.1
 

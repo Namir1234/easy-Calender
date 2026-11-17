@@ -6,6 +6,8 @@ export interface ProviderEvent extends NormalizedEvent {
   id: string
   /** Letzte Änderung beim Anbieter (ISO 8601). Entscheidet bei Konflikten im Sync. */
   updatedAt?: string
+  /** Bei einem einzelnen Vorkommen: die ID der ganzen Serie */
+  seriesId?: string
 }
 
 /** Gemeinsame Schnittstelle für alle Kalender-Anbieter. */

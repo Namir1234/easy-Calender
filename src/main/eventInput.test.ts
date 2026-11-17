@@ -65,3 +65,40 @@ describe('parseEventInput', () => {
     expect(() => parseEventInput({ ...timed, recurrence: 'DROP TABLE' })).toThrow()
   })
 })
+
+describe('parseEventInput: Zusatzfelder', () => {
+  it('übernimmt gültige Zusatzfelder', () => {
+    expect(
+      parseEventInput({
+        ...timed,
+        showAs: 'tentative',
+        private: true,
+        reminderMinutes: 15,
+        categories: [' Schule ', 'Schule', 'Sport']
+      })
+    ).toMatchObject({
+      status: 'tentative',
+      showAs: 'tentative',
+      private: true,
+      reminderMinutes: 15,
+      categories: ['Schule', 'Sport']
+    })
+  })
+
+  it('lässt fehlende Zusatzfelder weg und erlaubt «keine Erinnerung»', () => {
+    const event = parseEventInput({ ...timed, reminderMinutes: null })
+    expect(event.reminderMinutes).toBeNull()
+    expect(event).not.toHaveProperty('showAs')
+    expect(event).not.toHaveProperty('categories')
+  })
+
+  it('lehnt Ungültiges ab', () => {
+    expect(() => parseEventInput({ ...timed, showAs: 'weg' })).toThrow()
+    expect(() => parseEventInput({ ...timed, private: 'ja' })).toThrow()
+    expect(() => parseEventInput({ ...timed, reminderMinutes: -5 })).toThrow()
+    expect(() => parseEventInput({ ...timed, reminderMinutes: 1.5 })).toThrow()
+    expect(() => parseEventInput({ ...timed, reminderMinutes: 50_000 })).toThrow()
+    expect(() => parseEventInput({ ...timed, categories: 'Schule' })).toThrow()
+    expect(() => parseEventInput({ ...timed, categories: ['A,B'] })).toThrow()
+  })
+})

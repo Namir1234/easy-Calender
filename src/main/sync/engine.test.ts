@@ -107,6 +107,29 @@ describe('syncPair', () => {
     expect(links.links).toHaveLength(2)
   })
 
+  it('gleicht Erinnerung, Anzeigen als, Privat und Kategorien nicht ab', async () => {
+    const { a, b, run } = setup()
+    const source = a.add({
+      title: 'Zahnarzt',
+      showAs: 'oof',
+      private: true,
+      reminderMinutes: 30,
+      categories: ['Rot']
+    })
+    await run()
+    const [mirrored] = await b.list()
+    expect(mirrored.title).toBe('Zahnarzt')
+    expect(mirrored).not.toHaveProperty('showAs')
+    expect(mirrored).not.toHaveProperty('categories')
+
+    // Ändert sich nur ein Zusatzfeld, gibt es nichts abzugleichen.
+    const writes = a.writes + b.writes
+    a.edit(source.id, { reminderMinutes: 5, categories: [] })
+    const result = await run()
+    expect(result.updated).toBe(0)
+    expect(a.writes + b.writes).toBe(writes)
+  })
+
   it('tut beim zweiten Lauf nichts mehr (keine Schleife)', async () => {
     const { a, b, run } = setup()
     a.add({ title: 'Zahnarzt' })

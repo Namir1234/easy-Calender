@@ -11,7 +11,7 @@ alle Termine **bidirektional** synchronisiert und sie in einer einzigen Ansicht 
 
 ![Status](https://img.shields.io/badge/Status-l%C3%A4uft%20mit%20echten%20Konten-brightgreen?style=for-the-badge)
 ![Plattform](https://img.shields.io/badge/Plattform-Windows-0078D4?style=for-the-badge)
-![Version](https://img.shields.io/badge/Version-0.12.1-lightgrey?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-0.13.0-lightgrey?style=for-the-badge)
 
 ![Electron](https://img.shields.io/badge/Electron-2B2E3A?style=flat-square&logo=electron&logoColor=9FEAF9)
 ![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white)
@@ -38,7 +38,7 @@ alle Termine **bidirektional** synchronisiert und sie in einer einzigen Ansicht 
 ---
 
 > [!NOTE]
-> **Projektstatus:** Alle sieben Etappen sind gebaut (Version 0.12.1). Google und Outlook sind verbunden, der Abgleich hat die Tests an zwei echten Testkalendern bestanden.
+> **Projektstatus:** Alle sieben Etappen sind gebaut (Version 0.13.0, mit den Kalenderfunktionen von Outlook). Google und Outlook sind verbunden, der Abgleich hat die Tests an zwei echten Testkalendern bestanden.
 > Outlook läuft über das lokal installierte Outlook (classic). Den aktuellen Stand und die offenen Punkte findest du im [Arbeitsjournal](docs/JOURNAL.md).
 
 ## 💡 Worum geht es?
@@ -67,6 +67,8 @@ Das ist das Ziel der App. Was davon schon gebaut ist, zeigt die [Roadmap](#-road
 | ⚖️  | **Konfliktlösung**         | Wurden beide Seiten geändert, gewinnt die neuere Änderung. Das steht danach im Sync-Log.   |
 | 🔐  | **Sichere Tokens**         | Verschlüsselt gespeichert über Electron `safeStorage` (Windows DPAPI).                     |
 | 📌  | **Läuft im Tray**          | Der Sync läuft weiter, auch wenn das Fenster minimiert ist.                                |
+| 🧭  | **Wie in Outlook**         | Arbeitswoche, Liste, Datumsnavigator, Suche, Ziehen mit der Maus, Tastenkürzel, Drucken.   |
+| 🏷️  | **Termin-Optionen**        | Erinnerung, «Anzeigen als», privat, farbige Kategorien, Serien mit Intervall und Ende.     |
 
 <div align="center">
 <img src="docs/screenshots/monat-dunkel.png" alt="Monatsansicht im dunklen Modus" width="820">
@@ -209,6 +211,7 @@ Die Details zu Datenmodell, Event-Modell und Sync-Algorithmus stehen in [docs/AR
 - [x] **Abnahme:** manuelle Sync-Tests M-1 bis M-5 mit zwei Testkalendern ([Testplan](docs/TESTPLAN.md))
 - [x] **Extra:** Einstellungen pro Kalender (Farbe, entfernen, nur ganztägig)
 - [x] **Extra:** Assistent zum Eintragen per Chat, mit lokalem Modell über Ollama
+- [x] **Extra:** Kalenderfunktionen von Outlook (Ansichten, Suche, Erinnerungen, Kategorien, Serien, siehe [Journal](docs/JOURNAL.md))
 - [ ] **Extra:** Handy-Version als Web-App
 - [ ] **Extra:** Personen zu Terminen einladen
 
@@ -245,6 +248,7 @@ Die Schritt-für-Schritt-Anleitung steht in [docs/SETUP.md](docs/SETUP.md).
 
 - **Polling statt Push:** Webhooks bräuchten einen öffentlich erreichbaren Server. Der Sync läuft deshalb nur, solange die App offen ist. Im Tray minimiert reicht.
 - **Keine Teilnehmer und Einladungen:** Sie werden nicht gespiegelt, um ungewollte Einladungsmails zu vermeiden. Gespiegelt werden Titel, Zeit, Ort, Beschreibung und Wiederholung.
+- **Zusatzfelder bleiben pro Seite:** Erinnerung, «Anzeigen als», privat und Kategorien zeigt und schreibt die App, gleicht sie aber nicht ab (E-019).
 - **Datenbank in der Cloud:** Der Sync-Zustand liegt in Supabase. Die App braucht dafür Internet, was der Sync ohnehin voraussetzt. Tokens von Google und Microsoft bleiben auf dem Gerät.
 
 ## 📚 Dokumentation

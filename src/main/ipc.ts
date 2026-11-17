@@ -14,10 +14,11 @@ import type {
 } from '../shared/types'
 import type { AccountService } from './accounts'
 import { AssistantService, parseTurns } from './assistant/service'
-import { parseDateRange } from './dateRange'
+import { parseDateRange, type DayRange } from './dateRange'
 import type { StoreContext } from './db'
 import { parseEventInput } from './eventInput'
-import type { CalendarProvider } from './providers/types'
+import { SERIES_INSTANCE, type CalendarProvider } from './providers/types'
+import { matchesSearch } from './search'
 import { parseCalendarOptions, parseSettings } from './settings'
 import type { SyncService } from './sync/service'
 
@@ -29,6 +30,65 @@ export interface AppContext extends StoreContext {
 export interface SettingsAccess {
   get(): Settings
   set(settings: Settings): Settings
+}
+
+/** Was ausserhalb der API wissen muss, dass sich Termine geändert haben. */
+export interface IpcHooks {
+  onEventsChanged(): void
+}
+
+/** Höchstens so viele Treffer liefert die Suche. */
+const MAX_SEARCH_RESULTS = 300
+
+/** Ergänzt einen Kalender um das, was auf diesem Gerät für ihn eingestellt ist. */
+export function withOptions(calendar: Calendar, settings: Settings): Calendar {
+  const options = settings.calendars[calendar.id] ?? {}
+  return {
+    ...calendar,
+    color: options.color ?? calendar.color,
+    hidden: Boolean(options.hidden),
+    allDayOnly: Boolean(options.allDayOnly)
+  }
+}
+
+/**
+ * Lädt die Termine aller sichtbaren Kalender. Fällt ein Kalender aus (kein
+ * Netz, Anmeldung abgelaufen), werden die anderen trotzdem geliefert.
+ *
+ * @param include welche Kalender abgefragt werden; ohne Angabe alle sichtbaren
+ */
+export async function loadVisibleEvents(
+  context: AppContext,
+  settings: Settings,
+  range: DayRange,
+  include: (calendar: Calendar, account: Account) => boolean = () => true
+): Promise<EventsResult> {
+  const { store, accounts } = context
+  const [accountList, calendars] = await Promise.all([store.listAccounts(), store.listCalendars()])
+  const accountById = new Map(accountList.map((account) => [account.id, account]))
+
+  const events: CalendarEvent[] = []
+  const problems: string[] = []
+  await Promise.all(
+    calendars
+      .map((calendar) => withOptions(calendar, settings))
+      .filter((calendar) => calendar.visible && !calendar.hidden)
+      .map(async (calendar) => {
+        try {
+          const account = accountById.get(calendar.accountId)
+          if (!account || !include(calendar, account)) return
+          const loaded = await accounts.providerFor(account).listEvents(calendar.remoteId, range)
+          for (const event of loaded) {
+            if (calendar.allDayOnly && !event.allDay) continue
+            events.push({ ...event, calendarId: calendar.id })
+          }
+        } catch (error) {
+          const reason = error instanceof Error ? error.message : String(error)
+          problems.push(`${calendar.name}: ${reason}`)
+        }
+      })
+  )
+  return { events, problems }
 }
 
 function requireId(value: unknown, what: string): string {
@@ -43,7 +103,17 @@ function requireId(value: unknown, what: string): string {
  * verbunden, darum warten alle Handler zuerst auf `ready`.
  * Alles, was vom Renderer kommt, wird hier geprüft.
  */
-export function registerIpc(ready: Promise<AppContext>, settings: SettingsAccess): void {
+export function registerIpc(
+  ready: Promise<AppContext>,
+  settings: SettingsAccess,
+  hooks: IpcHooks
+): void {
+  /** Nach einer Änderung: bald abgleichen und Erinnerungen neu laden. */
+  const changed = async (): Promise<void> => {
+    ;(await ready).sync.runSoon()
+    hooks.onEventsChanged()
+  }
+
   /** Sucht zu einem Kalender der App den Anbieter und die ID beim Anbieter. */
   async function target(
     calendarId: unknown,
@@ -65,23 +135,12 @@ export function registerIpc(ready: Promise<AppContext>, settings: SettingsAccess
     return { calendar, provider: accounts.providerFor(account) }
   }
 
-  /** Ergänzt einen Kalender um das, was auf diesem Gerät für ihn eingestellt ist. */
-  const withOptions = (calendar: Calendar): Calendar => {
-    const options = settings.get().calendars[calendar.id] ?? {}
-    return {
-      ...calendar,
-      color: options.color ?? calendar.color,
-      hidden: Boolean(options.hidden),
-      allDayOnly: Boolean(options.allDayOnly)
-    }
-  }
-
   // Der Assistent trägt nur in Kalender ein, die in der App sichtbar sind.
   const assistant = new AssistantService({
     listAccounts: async () => (await ready).store.listAccounts(),
     listCalendars: async () =>
       (await (await ready).store.listCalendars())
-        .map(withOptions)
+        .map((calendar) => withOptions(calendar, settings.get()))
         .filter((calendar) => calendar.visible && !calendar.hidden)
   })
 
@@ -130,7 +189,7 @@ export function registerIpc(ready: Promise<AppContext>, settings: SettingsAccess
 
   ipcMain.handle('calendars:list', async (): Promise<Calendar[]> => {
     const { store } = await ready
-    return (await store.listCalendars()).map(withOptions)
+    return (await store.listCalendars()).map((calendar) => withOptions(calendar, settings.get()))
   })
 
   ipcMain.handle(
@@ -170,38 +229,77 @@ export function registerIpc(ready: Promise<AppContext>, settings: SettingsAccess
 
   ipcMain.handle('events:list', async (_event, input: unknown): Promise<EventsResult> => {
     const range = parseDateRange(input)
-    const { store, accounts } = await ready
-    const [accountList, calendars] = await Promise.all([
-      store.listAccounts(),
-      store.listCalendars()
-    ])
-    const accountById = new Map(accountList.map((account) => [account.id, account]))
-
-    // Fällt ein Kalender aus (kein Netz, Anmeldung abgelaufen), werden die
-    // anderen trotzdem angezeigt. Ausgeblendete Kalender werden nicht abgefragt.
-    const events: CalendarEvent[] = []
-    const problems: string[] = []
-    await Promise.all(
-      calendars
-        .map(withOptions)
-        .filter((calendar) => calendar.visible && !calendar.hidden)
-        .map(async (calendar) => {
-          try {
-            const account = accountById.get(calendar.accountId)
-            if (!account) return
-            const loaded = await accounts.providerFor(account).listEvents(calendar.remoteId, range)
-            for (const event of loaded) {
-              if (calendar.allDayOnly && !event.allDay) continue
-              events.push({ ...event, calendarId: calendar.id })
-            }
-          } catch (error) {
-            const reason = error instanceof Error ? error.message : String(error)
-            problems.push(`${calendar.name}: ${reason}`)
-          }
-        })
-    )
-    return { events, problems }
+    return loadVisibleEvents(await ready, settings.get(), range)
   })
+
+  ipcMain.handle(
+    'events:search',
+    async (_event, query: unknown, input: unknown): Promise<EventsResult> => {
+      if (typeof query !== 'string' || !query.trim() || query.length > 200) {
+        throw new Error('Der Suchbegriff muss 1 bis 200 Zeichen lang sein')
+      }
+      const range = parseDateRange(input)
+      const result = await loadVisibleEvents(await ready, settings.get(), range)
+      const events = result.events
+        .filter((event) => event.status !== 'cancelled' && matchesSearch(event, query))
+        .sort((a, b) => Date.parse(a.start) - Date.parse(b.start))
+        .slice(0, MAX_SEARCH_RESULTS)
+      return { events, problems: result.problems }
+    }
+  )
+
+  ipcMain.handle(
+    'events:get',
+    async (_event, calendarId: unknown, eventId: unknown): Promise<CalendarEvent | null> => {
+      const id = requireId(eventId, 'Termin-ID')
+      const { calendar, provider } = await target(calendarId)
+      const event = await provider.getEvent(calendar.remoteId, id)
+      return event ? { ...event, calendarId: calendar.id } : null
+    }
+  )
+
+  ipcMain.handle(
+    'events:move',
+    async (
+      _event,
+      fromCalendarId: unknown,
+      eventId: unknown,
+      toCalendarId: unknown,
+      input: unknown
+    ): Promise<CalendarEvent> => {
+      const id = requireId(eventId, 'Termin-ID')
+      const event = parseEventInput(input)
+      const from = await target(fromCalendarId)
+      const to = await target(toCalendarId)
+      if (from.calendar.id === to.calendar.id) {
+        throw new Error('Der Termin ist schon in diesem Kalender')
+      }
+      const original = await from.provider.getEvent(from.calendar.remoteId, id)
+      if (!original) throw new Error('Den Termin gibt es nicht mehr')
+      if (original.recurrence === SERIES_INSTANCE) {
+        throw new Error(
+          'Ein einzelner Termin einer Serie lässt sich nicht verschieben. Verschiebe die ganze Serie.'
+        )
+      }
+      // Erst anlegen, dann löschen: Geht etwas schief, ist der Termin doppelt statt weg.
+      const created = await to.provider.createEvent(to.calendar.remoteId, {
+        ...event,
+        recurrence: original.recurrence
+      })
+      try {
+        await from.provider.deleteEvent(from.calendar.remoteId, id)
+      } catch (error) {
+        const reason = error instanceof Error ? error.message : String(error)
+        throw new Error(
+          `Der Termin steht jetzt in «${to.calendar.name}», liess sich in «${from.calendar.name}» aber nicht löschen: ${reason}`,
+          { cause: error }
+        )
+      } finally {
+        await changed()
+      }
+      return { ...created, calendarId: to.calendar.id }
+    }
+  )
 
   ipcMain.handle(
     'events:create',
@@ -209,7 +307,7 @@ export function registerIpc(ready: Promise<AppContext>, settings: SettingsAccess
       const event = parseEventInput(input)
       const { calendar, provider } = await target(calendarId)
       const created = await provider.createEvent(calendar.remoteId, event)
-      ;(await ready).sync.runSoon()
+      await changed()
       return { ...created, calendarId: calendar.id }
     }
   )
@@ -226,7 +324,7 @@ export function registerIpc(ready: Promise<AppContext>, settings: SettingsAccess
       const event = parseEventInput(input)
       const { calendar, provider } = await target(calendarId)
       const updated = await provider.updateEvent(calendar.remoteId, id, event)
-      ;(await ready).sync.runSoon()
+      await changed()
       return { ...updated, calendarId: calendar.id }
     }
   )
@@ -237,7 +335,7 @@ export function registerIpc(ready: Promise<AppContext>, settings: SettingsAccess
       const id = requireId(eventId, 'Termin-ID')
       const { calendar, provider } = await target(calendarId)
       await provider.deleteEvent(calendar.remoteId, id)
-      ;(await ready).sync.runSoon()
+      await changed()
     }
   )
 
@@ -269,6 +367,7 @@ export function registerIpc(ready: Promise<AppContext>, settings: SettingsAccess
   ipcMain.handle('settings:get', (): Settings => settings.get())
 
   ipcMain.handle('settings:set', (_event, input: unknown): Settings => {
+    hooks.onEventsChanged()
     // Die Einstellungen der Kalender haben ihren eigenen Weg und bleiben hier unberührt.
     return settings.set({ ...parseSettings(input), calendars: settings.get().calendars })
   })

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import type {
   Account,
   Calendar,
@@ -9,12 +9,17 @@ import type {
   Settings
 } from '../../shared/types'
 import CalendarList from './components/CalendarList'
-import CalendarView from './components/CalendarView'
+import { toLocalDate, VIEWS } from './calendarViews'
+import CalendarView, { type CalendarHandle, type VisibleRange } from './components/CalendarView'
 import EventDetails, { type AnchorRect } from './components/EventDetails'
 import AssistantPanel from './components/AssistantPanel'
 import EventForm, { type FormTarget } from './components/EventForm'
+import MiniMonth from './components/MiniMonth'
+import SearchResults from './components/SearchResults'
+import SettingsPanel from './components/SettingsPanel'
 import StatusBadge from './components/StatusBadge'
 import SyncPanel from './components/SyncPanel'
+import { addDays, parseLocal } from './dates'
 import { useColorScheme } from './useColorScheme'
 
 /** Electron stellt Fehlern aus dem Main-Prozess einen technischen Vorspann voran. */
@@ -25,8 +30,28 @@ function errorMessage(error: unknown): string {
 
 type Provider = 'google' | 'microsoft'
 
+/** Gesucht wird ein halbes Jahr zurück und ein Jahr voraus. */
+const SEARCH_DAYS_BACK = 182
+const SEARCH_DAYS_AHEAD = 365
+
+/** Ein Popover ohne Termin im Kalender erscheint in der Fenstermitte. */
+function centerAnchor(): AnchorRect {
+  const x = window.innerWidth / 2 - 160
+  const y = window.innerHeight / 3
+  return { top: y, bottom: y, left: x, right: x }
+}
+
+/** Ob der Fokus in einem Eingabefeld steht. Dort gehören die Tasten dem Feld. */
+function typing(target: EventTarget | null): boolean {
+  const element = target as HTMLElement | null
+  return Boolean(element?.closest('input, textarea, select, [contenteditable="true"]'))
+}
+
 function App(): React.JSX.Element {
   const colorScheme = useColorScheme()
+  const calendarRef = useRef<CalendarHandle>(null)
+  const searchRef = useRef<HTMLInputElement>(null)
+  const gotoRef = useRef<HTMLFormElement>(null)
   const [status, setStatus] = useState<DbStatus | null>(null)
   const [accounts, setAccounts] = useState<Account[]>([])
   const [calendars, setCalendars] = useState<Calendar[]>([])
@@ -40,6 +65,12 @@ function App(): React.JSX.Element {
   )
   const [form, setForm] = useState<FormTarget | null>(null)
   const [assistantOpen, setAssistantOpen] = useState(false)
+  const [visible, setVisibleRange] = useState<VisibleRange | null>(null)
+  const [query, setQuery] = useState('')
+  const [search, setSearch] = useState<{ query: string; results: CalendarEvent[] | null } | null>(
+    null
+  )
+  const [gotoOpen, setGotoOpen] = useState(false)
   /** Zählt hoch, wenn die Termine neu geladen werden sollen. */
   const [reloadKey, setReloadKey] = useState(0)
 
@@ -183,6 +214,7 @@ function App(): React.JSX.Element {
   const closeDetails = useCallback(() => setSelected(null), [])
   const closeForm = useCallback(() => setForm(null), [])
   const showError = useCallback((message: string) => setError(errorMessage(message)), [])
+  const print = useCallback(() => window.print(), [])
 
   const startCreate = useCallback((start: Date, end: Date, allDay: boolean) => {
     setSelected(null)
@@ -191,16 +223,11 @@ function App(): React.JSX.Element {
 
   /** Öffnet einen Vorschlag des Assistenten im normalen Formular. */
   const editProposal = useCallback((calendarId: string, input: EventInput) => {
-    const parse = (value: string): Date => {
-      if (value.includes('T')) return new Date(value)
-      const [year, month, day] = value.split('-').map(Number)
-      return new Date(year, month - 1, day)
-    }
     setSelected(null)
     setForm({
       kind: 'create',
-      start: parse(input.start),
-      end: parse(input.end),
+      start: parseLocal(input.start),
+      end: parseLocal(input.end),
       allDay: input.allDay,
       draft: {
         title: input.title,
@@ -211,11 +238,68 @@ function App(): React.JSX.Element {
     })
   }, [])
 
-  const createNow = (): void => {
+  const createNow = useCallback((): void => {
     // Vorgabe: die nächste volle Stunde, eine Stunde lang.
     const start = new Date()
     start.setHours(start.getHours() + 1, 0, 0, 0)
     startCreate(start, new Date(start.getTime() + 3_600_000), false)
+  }, [startCreate])
+
+  /** Springt im Kalender zu einem Tag und schliesst eine allfällige Suche. */
+  const gotoDate = useCallback((date: Date) => {
+    setSearch(null)
+    // Erst nach dem Wechsel von der Suche zurück gibt es den Kalender wieder.
+    requestAnimationFrame(() => calendarRef.current?.gotoDate(date))
+  }, [])
+
+  // Klick auf eine Erinnerung: zum Termin springen und ihn zeigen.
+  useEffect(
+    () =>
+      window.api.onReminderOpened((event) => {
+        gotoDate(parseLocal(event.start))
+        setSelected({ event, anchor: centerAnchor() })
+      }),
+    [gotoDate]
+  )
+
+  const runSearch = (event: React.FormEvent): void => {
+    event.preventDefault()
+    const text = query.trim()
+    if (!text) return
+    setSelected(null)
+    setSearch({ query: text, results: null })
+    const today = new Date()
+    const ranges = [
+      { start: toLocalDate(addDays(today, -SEARCH_DAYS_BACK)), end: toLocalDate(today) },
+      { start: toLocalDate(today), end: toLocalDate(addDays(today, SEARCH_DAYS_AHEAD)) }
+    ]
+    Promise.all(ranges.map((range) => window.api.searchEvents(text, range)))
+      .then((parts) => {
+        const seen = new Set<string>()
+        const results = parts
+          .flatMap((part) => part.events)
+          .filter((entry) => {
+            const key = `${entry.calendarId}|${entry.id}|${entry.start}`
+            if (seen.has(key)) return false
+            seen.add(key)
+            return true
+          })
+          .sort((a, b) => parseLocal(a.start).getTime() - parseLocal(b.start).getTime())
+        const problems = [...new Set(parts.flatMap((part) => part.problems))]
+        if (problems.length > 0) {
+          setError(`Nicht alle Kalender wurden durchsucht. ${problems.join(' · ')}`)
+        }
+        setSearch((current) => (current?.query === text ? { query: text, results } : current))
+      })
+      .catch((searchError) => {
+        setError(errorMessage(searchError))
+        setSearch(null)
+      })
+  }
+
+  const openSearchResult = (event: CalendarEvent): void => {
+    gotoDate(parseLocal(event.start))
+    setSelected({ event, anchor: centerAnchor() })
   }
 
   const editSelected = (): void => {
@@ -224,17 +308,69 @@ function App(): React.JSX.Element {
     setSelected(null)
   }
 
-  const deleteSelected = (): void => {
+  /** Lädt die ganze Serie zu einem Vorkommen und öffnet sie im Formular. */
+  const editSeries = (): void => {
+    if (!selected?.event.seriesId) return
+    const { event } = selected
+    setSelected(null)
+    window.api
+      .getEvent(event.calendarId, event.seriesId!)
+      .then((master) => {
+        if (!master) throw new Error('Die Serie gibt es nicht mehr.')
+        setForm({ kind: 'edit', event: master })
+      })
+      .catch((loadError) => setError(errorMessage(loadError)))
+  }
+
+  /** Öffnet einen neuen Termin mit allem vom gewählten, wie «Kopieren» in Outlook. */
+  const duplicateSelected = (): void => {
+    if (!selected) return
+    const { event } = selected
+    setSelected(null)
+    setForm({
+      kind: 'create',
+      start: parseLocal(event.start),
+      end: parseLocal(event.end),
+      allDay: event.allDay,
+      draft: {
+        title: event.title,
+        calendarId: event.calendarId,
+        location: event.location,
+        description: event.description,
+        showAs: event.showAs,
+        private: event.private,
+        reminderMinutes: event.reminderMinutes,
+        categories: event.categories
+      }
+    })
+  }
+
+  const deleteSelected = useCallback((): void => {
     if (!selected) return
     const { event } = selected
     const sure = window.confirm(
-      `«${event.title}» löschen?${event.recurrence ? '\n\nGelöscht wird nur dieser eine Termin der Serie.' : ''}`
+      `«${event.title}» löschen?${event.recurrence === 'SERIE' ? '\n\nGelöscht wird nur dieser eine Termin der Serie.' : ''}`
     )
     if (!sure) return
     setSelected(null)
     setError(null)
     window.api
       .deleteEvent(event.calendarId, event.id)
+      .then(reloadEvents)
+      .catch((deleteError) => setError(errorMessage(deleteError)))
+  }, [selected, reloadEvents])
+
+  const deleteSeries = (): void => {
+    if (!selected?.event.seriesId) return
+    const { event } = selected
+    const sure = window.confirm(
+      `Die ganze Serie «${event.title}» löschen?\n\nAlle Termine der Serie verschwinden, auch die vergangenen.`
+    )
+    if (!sure) return
+    setSelected(null)
+    setError(null)
+    window.api
+      .deleteEvent(event.calendarId, event.seriesId!)
       .then(reloadEvents)
       .catch((deleteError) => setError(errorMessage(deleteError)))
   }
@@ -247,10 +383,53 @@ function App(): React.JSX.Element {
       .catch((saveError) => setError(errorMessage(saveError)))
   }
 
+  // Das «Gehe zu Datum»-Popover öffnen.
+  useEffect(() => {
+    const popover = gotoRef.current
+    if (gotoOpen && popover && !popover.matches(':popover-open')) {
+      popover.showPopover()
+      popover.querySelector('input')?.focus()
+    }
+  }, [gotoOpen])
+
+  // Tastenkürzel wie in Outlook.
+  useEffect(() => {
+    const handleKey = (event: KeyboardEvent): void => {
+      const ctrl = event.ctrlKey || event.metaKey
+      const key = event.key.toLowerCase()
+      if (ctrl && event.altKey && /^[1-5]$/.test(event.key)) {
+        event.preventDefault()
+        setSearch(null)
+        const view = VIEWS[Number(event.key) - 1].name
+        requestAnimationFrame(() => calendarRef.current?.changeView(view))
+      } else if (ctrl && !event.altKey && key === 'n') {
+        event.preventDefault()
+        createNow()
+      } else if (ctrl && (key === 'e' || key === 'f')) {
+        event.preventDefault()
+        searchRef.current?.focus()
+        searchRef.current?.select()
+      } else if (ctrl && key === 'g') {
+        event.preventDefault()
+        setGotoOpen(true)
+      } else if (ctrl && key === 'p') {
+        event.preventDefault()
+        window.print()
+      } else if (!ctrl && !typing(event.target) && !form) {
+        if (event.key === 'Delete' && selected) deleteSelected()
+        else if (event.altKey && event.key === 'ArrowLeft') calendarRef.current?.prev()
+        else if (event.altKey && event.key === 'ArrowRight') calendarRef.current?.next()
+      }
+    }
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  }, [createNow, deleteSelected, form, selected])
+
   const selectedCalendar = selected
     ? calendars.find((calendar) => calendar.id === selected.event.calendarId)
     : undefined
   const onlyDemo = accounts.length > 0 && accounts.every((account) => account.provider === 'demo')
+  const categories = settings?.categories ?? []
 
   return (
     <div className={assistantOpen ? 'app with-assistant' : 'app'}>
@@ -263,6 +442,7 @@ function App(): React.JSX.Element {
             className="button button-strong"
             onClick={createNow}
             disabled={!calendars.some((calendar) => !calendar.hidden)}
+            title="Ctrl+N"
           >
             Neuer Termin
           </button>
@@ -274,9 +454,34 @@ function App(): React.JSX.Element {
           >
             Assistent
           </button>
+          <form className="search-form" role="search" onSubmit={runSearch}>
+            <input
+              ref={searchRef}
+              type="search"
+              value={query}
+              onChange={(event) => {
+                setQuery(event.target.value)
+                if (!event.target.value) setSearch(null)
+              }}
+              placeholder="Termine suchen"
+              aria-label="Termine suchen (Ctrl+E)"
+              maxLength={200}
+            />
+          </form>
         </div>
 
         <div className="sidebar-scroll">
+          {visible && settings && (
+            <MiniMonth
+              current={visible.current}
+              rangeStart={visible.start}
+              rangeEnd={visible.end}
+              firstDay={settings.view.firstDay}
+              weekNumbers={settings.view.weekNumbers}
+              onPick={gotoDate}
+            />
+          )}
+
           {onlyDemo && (
             <p className="demo-note">
               Das sind Beispieldaten. Verbinde unten ein Konto, um deine eigenen Kalender zu sehen.
@@ -338,31 +543,7 @@ function App(): React.JSX.Element {
             onError={showError}
           />
 
-          {settings && (
-            <section className="settings" aria-label="Einstellungen">
-              <h2 className="section-title">Einstellungen</h2>
-              <label className="check">
-                <input
-                  type="checkbox"
-                  checked={settings.autostart}
-                  onChange={(event) =>
-                    saveSettings({ ...settings, autostart: event.target.checked })
-                  }
-                />
-                <span>Mit Windows starten</span>
-              </label>
-              <label className="check">
-                <input
-                  type="checkbox"
-                  checked={settings.closeToTray}
-                  onChange={(event) =>
-                    saveSettings({ ...settings, closeToTray: event.target.checked })
-                  }
-                />
-                <span>Beim Schliessen im Hintergrund weiterlaufen</span>
-              </label>
-            </section>
-          )}
+          {settings && <SettingsPanel settings={settings} onChange={saveSettings} />}
         </div>
 
         <StatusBadge status={status} />
@@ -377,14 +558,32 @@ function App(): React.JSX.Element {
             </button>
           </div>
         )}
-        <CalendarView
-          calendars={calendars}
-          colorScheme={colorScheme}
-          reloadKey={reloadKey}
-          onSelect={selectEvent}
-          onCreate={startCreate}
-          onError={showError}
-        />
+        {search ? (
+          <SearchResults
+            query={search.query}
+            results={search.results}
+            calendars={calendars}
+            onOpen={openSearchResult}
+            onClose={() => setSearch(null)}
+          />
+        ) : (
+          settings && (
+            <CalendarView
+              ref={calendarRef}
+              calendars={calendars}
+              categories={categories}
+              view={settings.view}
+              colorScheme={colorScheme}
+              reloadKey={reloadKey}
+              onSelect={selectEvent}
+              onCreate={startCreate}
+              onChanged={reloadEvents}
+              onRangeChange={setVisibleRange}
+              onPrint={print}
+              onError={showError}
+            />
+          )
+        )}
       </main>
 
       {assistantOpen && (
@@ -397,12 +596,16 @@ function App(): React.JSX.Element {
 
       {selected && (
         <EventDetails
-          key={selected.event.id}
+          key={`${selected.event.calendarId}|${selected.event.id}`}
           event={selected.event}
           calendar={selectedCalendar}
+          categories={categories}
           anchor={selected.anchor}
           onEdit={editSelected}
+          onEditSeries={editSeries}
+          onDuplicate={duplicateSelected}
           onDelete={deleteSelected}
+          onDeleteSeries={deleteSeries}
           onClose={closeDetails}
         />
       )}
@@ -412,12 +615,44 @@ function App(): React.JSX.Element {
           key={form.kind === 'edit' ? form.event.id : form.start.getTime()}
           target={form}
           calendars={calendars.filter((calendar) => !calendar.hidden)}
+          categories={categories}
           onSaved={() => {
             setForm(null)
             reloadEvents()
           }}
           onClose={closeForm}
         />
+      )}
+
+      {gotoOpen && (
+        <form
+          ref={gotoRef}
+          popover="auto"
+          className="goto-form"
+          aria-label="Gehe zu Datum"
+          onToggle={(event) => {
+            if ((event.nativeEvent as ToggleEvent).newState === 'closed') setGotoOpen(false)
+          }}
+          onSubmit={(event) => {
+            event.preventDefault()
+            const value = new FormData(event.currentTarget).get('date')
+            if (typeof value === 'string' && value) gotoDate(parseLocal(value))
+            setGotoOpen(false)
+          }}
+        >
+          <label className="field">
+            <span>Gehe zu Datum</span>
+            <input
+              type="date"
+              name="date"
+              defaultValue={toLocalDate(visible?.current ?? new Date())}
+              required
+            />
+          </label>
+          <button type="submit" className="button button-strong">
+            Anzeigen
+          </button>
+        </form>
       )}
     </div>
   )

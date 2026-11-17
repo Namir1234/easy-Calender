@@ -45,6 +45,10 @@ function Describe($item, $occurrenceId) {
     endDate    = $item.End.ToString('yyyy-MM-dd')
     busy       = [int]$item.BusyStatus
     meeting    = [int]$item.MeetingStatus
+    sensitivity = [int]$item.Sensitivity
+    reminderSet = [bool]$item.ReminderSet
+    reminderMinutes = [int]$item.ReminderMinutesBeforeStart
+    categories = [string]$item.Categories
     occurrence = [bool]$occurrenceId
     pattern    = $pattern
     modified   = Utc $item.LastModificationTime.ToUniversalTime()
@@ -74,6 +78,22 @@ function Apply($item, $event) {
   $item.Subject = [string]$event.subject
   $item.Body = [string]$event.body
   $item.Location = [string]$event.location
+  # Zusatzfelder nur setzen, wenn sie mitkommen. Sonst bleiben sie, wie sie sind.
+  if ($null -ne $event.busy) { $item.BusyStatus = [int]$event.busy }
+  if ($null -ne $event.sensitivity) { $item.Sensitivity = [int]$event.sensitivity }
+  if ($null -ne $event.reminderMinutes) {
+    if ([int]$event.reminderMinutes -lt 0) {
+      $item.ReminderSet = $false
+    } else {
+      $item.ReminderSet = $true
+      $item.ReminderMinutesBeforeStart = [int]$event.reminderMinutes
+    }
+  }
+  if ($null -ne $event.categories) {
+    # Outlook trennt Kategorien mit dem Listentrennzeichen von Windows.
+    $separator = [System.Globalization.CultureInfo]::CurrentCulture.TextInfo.ListSeparator
+    $item.Categories = (@($event.categories) -join "$separator ")
+  }
   if ($event.allDay) {
     $item.AllDayEvent = $true
     $item.Start = [datetime]::ParseExact($event.startDate, 'yyyy-MM-dd', $null)

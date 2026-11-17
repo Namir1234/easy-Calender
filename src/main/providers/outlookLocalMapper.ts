@@ -1,4 +1,4 @@
-import type { NormalizedEvent } from '../../shared/types'
+import type { NormalizedEvent, ShowAs } from '../../shared/types'
 import { toAscii } from '../text'
 import { graphToRrule, rruleToGraph, type GraphRecurrence } from './microsoftRecurrence'
 import { SERIES_INSTANCE, seriesRule, type ProviderEvent } from './types'
@@ -36,6 +36,12 @@ export interface OutlookItem {
   busy: number
   /** 5 und 7 heissen «abgesagt» */
   meeting: number
+  /** 2 heisst «privat» */
+  sensitivity?: number
+  reminderSet?: boolean
+  reminderMinutes?: number
+  /** Durch Komma oder Semikolon getrennt */
+  categories?: string
   occurrence: boolean
   pattern: OutlookPattern | null
   modified: string
@@ -49,6 +55,10 @@ const TYPES: Array<[number, GraphRecurrence['pattern']['type']]> = [
   [5, 'absoluteYearly'],
   [6, 'relativeYearly']
 ]
+/** BusyStatus im Objektmodell von Outlook: 0 frei, 1 mit Vorbehalt, 2 gebucht, 3 abwesend, 4 woanders tätig */
+const BUSY: ShowAs[] = ['free', 'tentative', 'busy', 'oof', 'workingElsewhere']
+const SENSITIVITY_PRIVATE = 2
+
 const DAY_NAMES = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
 const INDEX_NAMES = ['first', 'second', 'third', 'fourth', 'last']
 
@@ -105,6 +115,7 @@ export function rruleToPattern(rule: string, startDate: string): OutlookPattern 
 /** Wandelt einen Termin aus dem lokalen Outlook ins normalisierte Modell um. */
 export function mapOutlookItem(item: OutlookItem, timeZone: string): ProviderEvent | null {
   if (!item.id) return null
+  const [entryId] = item.id.split('@')
   let recurrence: string | null = null
   if (item.occurrence) {
     recurrence = SERIES_INSTANCE
@@ -128,7 +139,15 @@ export function mapOutlookItem(item: OutlookItem, timeZone: string): ProviderEve
         : item.busy === 1
           ? 'tentative'
           : 'confirmed',
-    updatedAt: item.modified
+    updatedAt: item.modified,
+    seriesId: item.occurrence ? entryId : undefined,
+    showAs: BUSY[item.busy] ?? 'busy',
+    private: item.sensitivity === SENSITIVITY_PRIVATE,
+    reminderMinutes: item.reminderSet ? (item.reminderMinutes ?? 15) : null,
+    categories: (item.categories ?? '')
+      .split(/[,;]/)
+      .map((name) => name.trim())
+      .filter(Boolean)
   }
 }
 
@@ -154,6 +173,17 @@ export function toOutlookItem(event: NormalizedEvent): Record<string, unknown> {
     recurrence: rule ? 'set' : event.recurrence === null ? 'none' : 'keep',
     pattern: rule
       ? rruleToPattern(rule, event.allDay ? event.start.slice(0, 10) : localDate(event.start))
-      : null
+      : null,
+    // Fehlt ein Zusatzfeld, lässt das Skript es in Outlook unverändert.
+    busy: event.showAs === undefined ? null : BUSY.indexOf(event.showAs),
+    sensitivity: event.private === undefined ? null : event.private ? SENSITIVITY_PRIVATE : 0,
+    // -1 heisst «keine Erinnerung»
+    reminderMinutes:
+      event.reminderMinutes === undefined
+        ? null
+        : event.reminderMinutes === null
+          ? -1
+          : event.reminderMinutes,
+    categories: event.categories ?? null
   }
 }

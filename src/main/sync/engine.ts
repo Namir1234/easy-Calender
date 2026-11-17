@@ -44,10 +44,24 @@ export interface SyncResult {
 /** Mehr als so viele Löschungen auf einmal gelten als verdächtig. */
 const MAX_DELETES = 15
 
+/**
+ * Der Termin ohne die Angaben des Anbieters. Abgeglichen werden nur Titel,
+ * Zeit, Ort, Notiz und Wiederholung. Erinnerung, «Anzeigen als», Privat und
+ * Kategorien bleiben auf jeder Seite, wie sie sind (E-019).
+ */
 function plain(event: ProviderEvent): NormalizedEvent {
   const copy: Partial<ProviderEvent> = { ...event }
-  delete copy.id
-  delete copy.updatedAt
+  for (const key of [
+    'id',
+    'updatedAt',
+    'seriesId',
+    'showAs',
+    'private',
+    'reminderMinutes',
+    'categories'
+  ] as const) {
+    delete copy[key]
+  }
   return copy as NormalizedEvent
 }
 

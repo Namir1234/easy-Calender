@@ -1,5 +1,7 @@
 import { useEffect, useLayoutEffect, useRef } from 'react'
-import type { Calendar, CalendarEvent } from '../../../shared/types'
+import type { Calendar, CalendarEvent, Category } from '../../../shared/types'
+import { describeReminder, parseLocal, SHOW_AS_LABELS } from '../dates'
+import { describeRule } from '../recurrence'
 
 /** Die Position des angeklickten Termins im Fenster. */
 export interface AnchorRect {
@@ -12,9 +14,13 @@ export interface AnchorRect {
 interface Props {
   event: CalendarEvent
   calendar: Calendar | undefined
+  categories: Category[]
   anchor: AnchorRect
   onEdit(): void
+  onEditSeries(): void
+  onDuplicate(): void
   onDelete(): void
+  onDeleteSeries(): void
   onClose(): void
 }
 
@@ -28,17 +34,6 @@ const DATE_FORMAT = new Intl.DateTimeFormat('de-CH', {
   year: 'numeric'
 })
 const TIME_FORMAT = new Intl.DateTimeFormat('de-CH', { hour: '2-digit', minute: '2-digit' })
-
-/**
- * Liest einen Zeitpunkt für die Anzeige in der lokalen Zeit. Ein reines
- * Datum (`YYYY-MM-DD`) würde `new Date` als UTC lesen, darum wird es hier
- * von Hand zerlegt.
- */
-function parseLocal(value: string): Date {
-  if (value.includes('T')) return new Date(value)
-  const [year, month, day] = value.split('-').map(Number)
-  return new Date(year, month - 1, day)
-}
 
 /** Datum und Uhrzeit als zwei Zeilen, damit nichts mitten in der Zeit umbricht. */
 function formatWhen(event: CalendarEvent): string[] {
@@ -72,12 +67,20 @@ function formatWhen(event: CalendarEvent): string[] {
 function EventDetails({
   event,
   calendar,
+  categories,
   anchor,
   onEdit,
+  onEditSeries,
+  onDuplicate,
   onDelete,
+  onDeleteSeries,
   onClose
 }: Props): React.JSX.Element {
   const popoverRef = useRef<HTMLDivElement>(null)
+  const instance = event.recurrence === 'SERIE'
+  const series = Boolean(event.recurrence)
+  // Die ganze Serie lässt sich nur bearbeiten, wenn der Anbieter sie nennt.
+  const canHandleSeries = instance && Boolean(event.seriesId)
 
   // Öffnen und neben dem Termin platzieren: rechts davon, sonst links,
   // und immer ganz innerhalb des Fensters.
@@ -105,6 +108,14 @@ function EventDetails({
     popover.addEventListener('toggle', handleToggle)
     return () => popover.removeEventListener('toggle', handleToggle)
   }, [onClose])
+
+  const categoryColor = new Map(
+    categories.map((category) => [category.name.toLowerCase(), category.color])
+  )
+  const seriesText =
+    event.recurrence && !instance
+      ? describeRule(event.recurrence, parseLocal(event.start))
+      : 'Termin einer Serie'
 
   return (
     <div
@@ -141,28 +152,73 @@ function EventDetails({
             <dd>{event.location}</dd>
           </>
         )}
+        {series && (
+          <>
+            <dt>Serie</dt>
+            <dd>{seriesText}</dd>
+          </>
+        )}
+        {event.showAs && (
+          <>
+            <dt>Anzeigen als</dt>
+            <dd>
+              {SHOW_AS_LABELS[event.showAs]}
+              {event.private ? ', privat' : ''}
+            </dd>
+          </>
+        )}
+        {event.reminderMinutes !== undefined && (
+          <>
+            <dt>Erinnerung</dt>
+            <dd>{describeReminder(event.reminderMinutes)}</dd>
+          </>
+        )}
+        {event.categories && event.categories.length > 0 && (
+          <>
+            <dt>Kategorien</dt>
+            <dd className="category-list">
+              {event.categories.map((name) => (
+                <span key={name} className="category-chip">
+                  <span
+                    className="calendar-swatch"
+                    style={{ background: categoryColor.get(name.toLowerCase()) ?? 'transparent' }}
+                    aria-hidden="true"
+                  />
+                  {name}
+                </span>
+              ))}
+            </dd>
+          </>
+        )}
         {event.description && (
           <>
             <dt>Notiz</dt>
-            <dd>{event.description}</dd>
-          </>
-        )}
-        {event.recurrence && (
-          <>
-            <dt>Serie</dt>
-            <dd>wiederholt sich</dd>
+            <dd className="event-note">{event.description}</dd>
           </>
         )}
       </dl>
 
       <div className="details-actions">
         <button type="button" className="button" onClick={onEdit}>
-          Bearbeiten
+          {instance ? 'Diesen bearbeiten' : 'Bearbeiten'}
+        </button>
+        <button type="button" className="button" onClick={onDuplicate}>
+          Duplizieren
         </button>
         <button type="button" className="button" onClick={onDelete}>
-          Löschen
+          {instance ? 'Diesen löschen' : 'Löschen'}
         </button>
       </div>
+      {canHandleSeries && (
+        <div className="details-actions details-series">
+          <button type="button" className="button" onClick={onEditSeries}>
+            Serie bearbeiten
+          </button>
+          <button type="button" className="button" onClick={onDeleteSeries}>
+            Serie löschen
+          </button>
+        </div>
+      )}
     </div>
   )
 }

@@ -1,13 +1,24 @@
-import { app, clipboard, Menu, nativeImage, shell, Tray, BrowserWindow } from 'electron'
+import {
+  app,
+  clipboard,
+  Menu,
+  nativeImage,
+  Notification,
+  shell,
+  Tray,
+  BrowserWindow
+} from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import outlookScript from '../../resources/outlook.ps1?asset'
-import type { Settings } from '../shared/types'
+import type { CalendarEvent, Settings } from '../shared/types'
 import { AccountService } from './accounts'
 import { readGoogleConfig, readMicrosoftConfig } from './config'
 import { initStore } from './db'
-import { registerIpc, type AppContext } from './ipc'
+import { toDayNumber } from './dateRange'
+import { loadVisibleEvents, registerIpc, type AppContext } from './ipc'
+import { ReminderService } from './reminders'
 import { OutlookBridge, powershellRunner } from './providers/outlookLocal'
 import { createEncryptedStorage } from './secureStorage'
 import { loadSettings, saveSettings } from './settings'
@@ -20,6 +31,29 @@ let mainWindow: BrowserWindow | null = null
 let tray: Tray | null = null
 let quitting = false
 let settings: Settings
+/** Mitteilungen brauchen einen Verweis, sonst räumt der Garbage Collector sie samt Klick weg. */
+const notifications = new Set<Notification>()
+
+/** Zeigt eine Erinnerung. Ein Klick holt das Fenster nach vorn und öffnet den Termin. */
+function showReminder(event: CalendarEvent, text: string): void {
+  if (!Notification.isSupported()) return
+  const notification = new Notification({ title: event.title, body: text, icon })
+  notifications.add(notification)
+  notification.on('click', () => {
+    showWindow()
+    mainWindow?.webContents.send('reminder:opened', event)
+  })
+  notification.on('close', () => notifications.delete(notification))
+  notification.show()
+}
+
+/** Heute als `YYYY-MM-DD` in lokaler Zeit */
+function localToday(offsetDays = 0): string {
+  const date = new Date()
+  date.setDate(date.getDate() + offsetDays)
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  return `${date.getFullYear()}-${month}-${String(date.getDate()).padStart(2, '0')}`
+}
 
 function createWindow(show: boolean): void {
   const window = new BrowserWindow({
@@ -159,15 +193,37 @@ if (!app.requestSingleInstanceLock()) {
       return { ...context, accounts, sync }
     })
 
-    registerIpc(ready, {
-      get: () => settings,
-      set: (next) => {
-        settings = next
-        saveSettings(settingsFile, settings)
-        applyAutostart(settings.autostart)
-        return settings
+    // Outlook erinnert selbst an seine Termine. Google tut das auf dem PC nur
+    // im offenen Browser, darum übernimmt die App das für Google (E-019).
+    const reminders = new ReminderService({
+      enabled: () => settings.reminders,
+      notify: showReminder,
+      load: async () => {
+        const range = { startDay: toDayNumber(localToday(-1)), endDay: toDayNumber(localToday(3)) }
+        const result = await loadVisibleEvents(
+          await ready,
+          settings,
+          range,
+          (_calendar, account) => account.provider !== 'microsoft'
+        )
+        return result.events
       }
     })
+    void ready.then(() => reminders.start())
+
+    registerIpc(
+      ready,
+      {
+        get: () => settings,
+        set: (next) => {
+          settings = next
+          saveSettings(settingsFile, settings)
+          applyAutostart(settings.autostart)
+          return settings
+        }
+      },
+      { onEventsChanged: () => void reminders.refresh() }
+    )
 
     createTray(() => void ready.then(({ sync }) => sync.run()))
     createWindow(!process.argv.includes(HIDDEN_FLAG))

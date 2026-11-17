@@ -146,3 +146,11 @@ Wichtige technische Entscheidungen mit Begründung. Neue Entscheidungen kommen u
 **Preis:** Ollama muss installiert sein und läuft im Hintergrund. Das Modell braucht 2 bis 3 GB Arbeitsspeicher, eine Antwort kann ein paar Sekunden dauern. Ein kleines Modell versteht nicht jede Formulierung. Darum wird nie ohne Bestätigung eingetragen.
 
 **Nachtrag 0.12.1:** Der Test mit dem echten Modell zeigte, dass es Tage erfindet und Kalender falsch wählt. Seither entscheidet die App selbst, was sie prüfen kann: Kalender (über Namen und Konto), ob ein Wann genannt ist, ob Wochentag, Uhrzeit und Titel zur Nachricht passen. Das Modell liefert nur noch den Vorschlag, den die App prüft.
+
+## E-019: Outlook-Funktionen ohne Abgleich der Zusatzfelder
+
+**Entscheidung:** Erinnerung, «Anzeigen als», privat und Kategorien liest und schreibt die App bei jedem Anbieter, gleicht sie aber nicht zwischen den Kalendern ab. Fehlt ein Feld beim Schreiben, bleibt es beim Anbieter unverändert. Die App erinnert nur an Google-Termine mit einer Windows-Mitteilung; Outlook erinnert selbst an seine Termine.
+
+**Begründung:** Namir wünschte alle Funktionen des Outlook-Kalenders. Die Zusatzfelder in den Abgleich zu nehmen, hätte die Fingerabdrücke aller bestehenden Verknüpfungen verändert und beim nächsten Lauf jeden Termin neu geschrieben. Ausserdem kennt Google weder «abwesend» noch Kategorien: Die App merkt sie sich dort in privaten Eigenschaften des Termins (`extendedProperties.private`). Würde die App auch an Outlook-Termine erinnern, käme jede Erinnerung doppelt.
+
+**Preis:** Ein gespiegelter Termin hat auf der anderen Seite die Vorgaben des Anbieters (z. B. 15 Minuten Erinnerung), nicht die Werte des Originals. Teilnehmer, Einladungen, Teams-Besprechungen, Räume, Anlagen und das Teilen von Kalendern sind nicht gebaut: Sie würden E-Mails an andere verschicken oder Rechte vergeben und brauchen eine eigene Entscheidung.

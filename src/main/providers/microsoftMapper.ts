@@ -1,4 +1,5 @@
-import type { NormalizedEvent } from '../../shared/types'
+import { SHOW_AS_VALUES } from '../../shared/types'
+import type { EventExtras, NormalizedEvent, ShowAs } from '../../shared/types'
 import { graphToRrule, rruleToGraph, type GraphRecurrence } from './microsoftRecurrence'
 import { SERIES_INSTANCE, seriesRule, type ProviderEvent } from './types'
 
@@ -22,6 +23,12 @@ export interface GraphEvent {
   type?: string | null
   recurrence?: GraphRecurrence | null
   lastModifiedDateTime?: string | null
+  seriesMasterId?: string | null
+  /** `normal`, `personal`, `private` oder `confidential` */
+  sensitivity?: string | null
+  isReminderOn?: boolean | null
+  reminderMinutesBeforeStart?: number | null
+  categories?: string[] | null
 }
 
 /**
@@ -58,8 +65,26 @@ export function mapGraphEvent(event: GraphEvent, timeZone: string): ProviderEven
       : event.showAs === 'tentative'
         ? 'tentative'
         : 'confirmed',
-    updatedAt: event.lastModifiedDateTime ?? undefined
+    updatedAt: event.lastModifiedDateTime ?? undefined,
+    seriesId: event.seriesMasterId ?? undefined,
+    showAs: SHOW_AS_VALUES.includes(event.showAs as ShowAs) ? (event.showAs as ShowAs) : 'busy',
+    private: event.sensitivity === 'private' || event.sensitivity === 'confidential',
+    reminderMinutes: event.isReminderOn ? (event.reminderMinutesBeforeStart ?? 15) : null,
+    categories: event.categories ?? []
   }
+}
+
+/** Die Zusatzfelder in der Form, die Graph erwartet. Fehlende Felder bleiben weg. */
+function extrasBody(extras: EventExtras): Record<string, unknown> {
+  const body: Record<string, unknown> = {}
+  if (extras.showAs !== undefined) body.showAs = extras.showAs
+  if (extras.private !== undefined) body.sensitivity = extras.private ? 'private' : 'normal'
+  if (extras.reminderMinutes !== undefined) {
+    body.isReminderOn = extras.reminderMinutes !== null
+    if (extras.reminderMinutes !== null) body.reminderMinutesBeforeStart = extras.reminderMinutes
+  }
+  if (extras.categories !== undefined) body.categories = extras.categories
+  return body
 }
 
 /** Die Uhrzeit eines Zeitpunkts in einer Zeitzone, als `YYYY-MM-DDTHH:mm:ss`. */
@@ -104,6 +129,7 @@ export function toGraphBody(event: NormalizedEvent): Record<string, unknown> {
       ? { recurrence: rruleToGraph(rule, start.dateTime.slice(0, 10)) }
       : event.recurrence === null
         ? { recurrence: null }
-        : {})
+        : {}),
+    ...extrasBody(event)
   }
 }

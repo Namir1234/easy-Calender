@@ -30,6 +30,9 @@ Alle Farben sind als CSS-Variablen in [`main.css`](../src/renderer/src/assets/ma
 Regeln:
 
 - Die Oberfläche selbst nutzt kein Violett, keine Verläufe, kein Leuchten und keinen Glas-Effekt. Kalender dürfen jede Farbe haben.
+- Kategorien färben den Termin wie in Outlook: Hat ein Termin eine Kategorie, trägt er deren Farbe, sonst die des Kalenders.
+- «Anzeigen als» folgt den Mustern von Outlook: frei hell mit Farbbalken, mit Vorbehalt schraffiert, abwesend mit violetter Linie unten (Information, keine Dekoration), woanders tätig gepunktet.
+- Privat und Serie zeigen kleine Zeichen oben rechts im Termin (Schloss, Pfeile). Sie tragen Information und sind darum erlaubt.
 - Text erreicht mindestens einen Kontrast von 4.5:1 zum Hintergrund.
 - Kalenderfarben müssen mit weisser Schrift lesbar sein (mindestens 4.5:1).
 

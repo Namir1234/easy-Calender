@@ -19,6 +19,7 @@ interface Template {
   description?: string
   /** `[von, bis]` als `HH:mm`. Fehlt die Angabe, ist der Termin ganztägig. */
   time?: [string, string]
+  categories?: string[]
   recurrence: string
   matches(day: DayInfo): boolean
 }
@@ -86,6 +87,7 @@ const TEMPLATES: Record<string, Template[]> = {
       key: 'abgabe',
       title: 'Abgabe Projektarbeit',
       description: 'Dokumentation und Code einreichen',
+      categories: ['Rote Kategorie'],
       ...monthly(20)
     }
   ],
@@ -96,6 +98,7 @@ const TEMPLATES: Record<string, Template[]> = {
       title: 'Sprint Review',
       location: 'Sitzungszimmer 2',
       time: ['14:00', '15:00'],
+      categories: ['Blaue Kategorie'],
       ...everySecondWeek(5)
     }
   ]
@@ -142,7 +145,11 @@ export class DemoProvider implements CalendarProvider {
           allDay,
           timeZone: TIME_ZONE,
           recurrence: template.recurrence,
-          status: 'confirmed'
+          status: 'confirmed',
+          showAs: 'busy',
+          private: false,
+          reminderMinutes: allDay ? null : 15,
+          categories: template.categories ?? []
         })
       }
     }
@@ -178,7 +185,14 @@ export class DemoProvider implements CalendarProvider {
     event: NormalizedEvent
   ): Promise<ProviderEvent> {
     this.requireOwn(eventId)
-    const updated = { ...event, recurrence: null, id: eventId }
+    // Wie bei den echten Anbietern bleiben Zusatzfelder, die nicht mitkommen, erhalten.
+    const previous = this.own.get(eventId)!.event
+    const kept = Object.fromEntries(
+      (['showAs', 'private', 'reminderMinutes', 'categories'] as const)
+        .filter((key) => event[key] === undefined)
+        .map((key) => [key, previous[key]])
+    )
+    const updated = { ...event, ...kept, recurrence: null, id: eventId }
     this.own.set(eventId, { calendar: calendarRemoteId, event: updated })
     return { ...updated }
   }

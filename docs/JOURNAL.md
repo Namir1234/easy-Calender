@@ -6,12 +6,64 @@ Laufendes Protokoll des Projekts. Der neuste Eintrag steht oben.
 
 ## Aktueller Stand
 
-|                     |                                                                                                                                   |
-| ------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| **Etappe**          | Alle sieben Etappen sind gebaut und mit echten Konten geprüft. Version 0.12.1: Assistent mit echtem Modell geprüft und verbessert |
-| **Als Nächstes**    | Handy-Version als Web-App. Danach: Personen einladen                                                                              |
-| **Blockiert durch** | –                                                                                                                                 |
-| **Offen bei Namir** | Welche echten Kalender abgeglichen werden sollen. Wo die Stundenpläne liegen                                                      |
+|                     |                                                                                                                        |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| **Etappe**          | Alle sieben Etappen sind gebaut und mit echten Konten geprüft. Version 0.13.0: Kalenderfunktionen von Outlook          |
+| **Als Nächstes**    | Zusatzfelder und Serien an Testkalendern prüfen (A-38, A-40). Dann Handy-Version als Web-App, danach Personen einladen |
+| **Blockiert durch** | –                                                                                                                      |
+| **Offen bei Namir** | Welche echten Kalender abgeglichen werden sollen. Wo die Stundenpläne liegen                                           |
+
+---
+
+## 2026-11-17 · Kalenderfunktionen von Outlook (Version 0.13.0)
+
+Namirs Wunsch: «Der Kalender soll alle Funktionen haben, die Outlook Kalender auch hat.»
+
+**Gemacht**
+
+Ansichten und Navigation:
+
+- Ansichten wie in Outlook: Tag, Arbeitswoche, Woche, Monat und Liste. Die App merkt sich die letzte Ansicht.
+- Datumsnavigator: kleiner Monat oben in der Seitenleiste, mit Kalenderwochen. Ein Klick springt zum Tag.
+- Kalenderwochen im grossen Kalender, Klick auf ein Datum öffnet den Tag.
+- Kalenderoptionen: Arbeitstage, Arbeitszeit (hervorgehoben, dort beginnt die Ansicht), erster Tag der Woche, Zeitraster von 5 bis 60 Minuten.
+- Suche über Titel, Ort, Notiz und Kategorien, ein halbes Jahr zurück und ein Jahr voraus. Die Treffer stehen als Liste anstelle des Kalenders.
+- Drucken (Knopf oder Ctrl+P): nur der Kalender, ohne Seitenleiste.
+- Tastenkürzel wie in Outlook: Ctrl+N neuer Termin, Ctrl+E oder Ctrl+F Suche, Ctrl+G gehe zu Datum, Ctrl+Alt+1 bis 5 Ansichten, Entf löscht den gewählten Termin, Alt+Pfeil blättert.
+
+Termine:
+
+- Mit der Maus verschieben und in der Länge ändern. Bei einer Serie ändert sich nur dieses Vorkommen.
+- «Anzeigen als» (frei, mit Vorbehalt, gebucht, abwesend, woanders tätig), «Privat», Erinnerung und farbige Kategorien. Vorgaben wie in Outlook: mit Uhrzeit «gebucht» und 15 Minuten, ganztägig «frei» und 18 Stunden.
+- Kategorien lassen sich in den Einstellungen anlegen, umbenennen, einfärben und entfernen. Der Termin trägt die Farbe seiner ersten Kategorie.
+- Serien wie im Outlook-Dialog: täglich, wöchentlich mit Wochentagen, monatlich am Datum oder am n-ten Wochentag, jährlich; alle n Tage/Wochen/Monate/Jahre; Ende nie, nach Anzahl oder am Datum. Die Details beschreiben die Serie als Satz.
+- Bei einem Termin einer Serie: «Diesen bearbeiten/löschen» und «Serie bearbeiten/löschen».
+- «Duplizieren» öffnet einen neuen Termin mit allen Angaben.
+- Beim Bearbeiten lässt sich der Kalender wechseln. Die App legt den Termin im neuen Kalender an und löscht ihn erst danach im alten.
+- Erinnerungen der App als Windows-Mitteilung für Google-Termine (Outlook erinnert selbst). Klick öffnet den Termin. Abschaltbar in den Einstellungen.
+
+Bei den Anbietern (E-019): Google über `transparency`, `visibility`, `reminders` und private Eigenschaften, Graph über `showAs`, `sensitivity`, `isReminderOn` und `categories`, das lokale Outlook über `BusyStatus`, `Sensitivity`, `ReminderSet` und `Categories`. Der Abgleich bleibt, wie er war.
+
+**Geprüft**
+
+- 145 Unit-Tests bestanden (neu: Zusatzfelder bei allen drei Anbietern, Erinnerungen, Serien-Editor, Suche, Einstellungen, Abgleich ohne Zusatzfelder).
+- In der Entwicklungsversion mit Demo-Daten, in einem eigenen leeren Datenordner: Ansichten, Datumsnavigator, Ctrl+G, Ctrl+Alt+4/5, Suche mit Treffer öffnen, Formular mit Serie und Zusatzfeldern, Verschieben per Maus, Verschieben in einen anderen Kalender.
+- Brückenskript lesend gegen das lokale Outlook: Die neuen Felder kommen an.
+
+**Aufgefallen**
+
+- Port 9333 belegt die installierte App (Debug-Port). Für Tests der Entwicklungsversion darum einen anderen Port nehmen.
+- Der Demo-Anbieter ersetzte beim Ändern den ganzen Termin und verlor so die Zusatzfelder. Jetzt bleiben sie wie bei den echten Anbietern erhalten.
+
+**Nicht geprüft**
+
+- Schreiben der Zusatzfelder, «Serie bearbeiten/löschen» und Verschieben in einen anderen Kalender an echten Google- und Outlook-Kalendern (A-38, A-40). Dafür sollen die Sync-Test-Kalender dienen, ich habe nicht in echte Kalender geschrieben.
+- Eine echte Erinnerung als Windows-Mitteilung (A-39).
+
+**Bewusst nicht gebaut**
+
+- Teilnehmer, Besprechungsanfragen, Zu-/Absagen, Terminplanungs-Assistent, Teams-Besprechungen und Räume: Sie verschicken E-Mails an andere. Das ist der offene Punkt «Personen einladen».
+- Kalender teilen und veröffentlichen, Anlagen, Wetter, zweite Zeitzone, Zeitzone pro Termin, Planungsansicht mehrerer Personen.
 
 ---
 

@@ -38,8 +38,63 @@ describe('mapOutlookItem', () => {
       timeZone: 'Europe/Zurich',
       recurrence: null,
       status: 'confirmed',
-      updatedAt: '2026-11-01T10:00:00Z'
+      updatedAt: '2026-11-01T10:00:00Z',
+      seriesId: undefined,
+      showAs: 'busy',
+      private: false,
+      reminderMinutes: null,
+      categories: []
     })
+  })
+
+  it('liest Anzeigen als, Privat, Erinnerung, Kategorien und die Serie', () => {
+    const event = mapOutlookItem(
+      {
+        ...item,
+        id: 'ABC@2026-11-17T08:00:00Z',
+        occurrence: true,
+        busy: 3,
+        sensitivity: 2,
+        reminderSet: true,
+        reminderMinutes: 30,
+        categories: 'Rote Kategorie; Blaue Kategorie'
+      },
+      'UTC'
+    )
+    expect(event).toMatchObject({
+      seriesId: 'ABC',
+      showAs: 'oof',
+      private: true,
+      reminderMinutes: 30,
+      categories: ['Rote Kategorie', 'Blaue Kategorie']
+    })
+  })
+
+  it('schreibt Zusatzfelder nur, wenn sie mitkommen', () => {
+    const base = {
+      title: 'x',
+      start: '2026-11-17T08:00:00.000Z',
+      end: '2026-11-17T09:00:00.000Z',
+      allDay: false,
+      timeZone: 'UTC',
+      recurrence: null,
+      status: 'confirmed' as const
+    }
+    expect(toOutlookItem(base)).toMatchObject({
+      busy: null,
+      sensitivity: null,
+      reminderMinutes: null,
+      categories: null
+    })
+    expect(
+      toOutlookItem({
+        ...base,
+        showAs: 'workingElsewhere',
+        private: true,
+        reminderMinutes: null,
+        categories: ['A']
+      })
+    ).toMatchObject({ busy: 4, sensitivity: 2, reminderMinutes: -1, categories: ['A'] })
   })
 
   it('erkennt ganztägige Termine, Vorkommen, Absagen und Serien', () => {

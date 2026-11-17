@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron'
-import type { AppApi } from '../shared/types'
+import type { AppApi, CalendarEvent } from '../shared/types'
 
 // Die einzige Verbindung zwischen Oberfläche und Main-Prozess.
 // Der Renderer bekommt nur diese Funktionen, kein `ipcRenderer` und kein Node.
@@ -23,6 +23,16 @@ const api: AppApi = {
   updateEvent: (calendarId, eventId, input) =>
     ipcRenderer.invoke('events:update', calendarId, eventId, input),
   deleteEvent: (calendarId, eventId) => ipcRenderer.invoke('events:delete', calendarId, eventId),
+  getEvent: (calendarId, eventId) => ipcRenderer.invoke('events:get', calendarId, eventId),
+  moveEvent: (fromCalendarId, eventId, toCalendarId, input) =>
+    ipcRenderer.invoke('events:move', fromCalendarId, eventId, toCalendarId, input),
+  searchEvents: (query, range) => ipcRenderer.invoke('events:search', query, range),
+  onReminderOpened: (listener) => {
+    const handler = (_event: Electron.IpcRendererEvent, event: CalendarEvent): void =>
+      listener(event)
+    ipcRenderer.on('reminder:opened', handler)
+    return () => ipcRenderer.removeListener('reminder:opened', handler)
+  },
   listSyncPairs: () => ipcRenderer.invoke('sync:listPairs'),
   addSyncPair: (googleCalendarId, msCalendarId) =>
     ipcRenderer.invoke('sync:addPair', googleCalendarId, msCalendarId),

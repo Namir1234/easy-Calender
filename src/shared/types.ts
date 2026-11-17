@@ -34,11 +34,43 @@ export interface CalendarOptions {
 
 export type EventStatus = 'confirmed' | 'tentative' | 'cancelled'
 
+/** Wie der Termin die Zeit belegt, wie «Anzeigen als» in Outlook. */
+export type ShowAs = 'free' | 'tentative' | 'busy' | 'oof' | 'workingElsewhere'
+
+export const SHOW_AS_VALUES: readonly ShowAs[] = [
+  'free',
+  'tentative',
+  'busy',
+  'oof',
+  'workingElsewhere'
+]
+
+/**
+ * Felder, die die App anzeigt und schreibt, die aber nicht abgeglichen werden.
+ * Fehlt ein Feld beim Schreiben, bleibt es beim Anbieter, wie es ist.
+ */
+export interface EventExtras {
+  showAs?: ShowAs
+  /** Privat: Wer den Kalender geteilt bekommt, sieht nur «beschäftigt». */
+  private?: boolean
+  /** Erinnerung in Minuten vor Beginn, `null` heisst keine Erinnerung */
+  reminderMinutes?: number | null
+  /** Namen der Kategorien, wie in Outlook */
+  categories?: string[]
+}
+
+/** Eine Kategorie mit Farbe, wie die farbigen Kategorien in Outlook. */
+export interface Category {
+  name: string
+  /** `#rrggbb` */
+  color: string
+}
+
 /**
  * Das normalisierte Event-Modell. Beide Anbieter werden darauf abgebildet,
  * gesynct wird nur diese Teilmenge an Feldern.
  */
-export interface NormalizedEvent {
+export interface NormalizedEvent extends EventExtras {
   title: string
   description?: string
   location?: string
@@ -59,10 +91,12 @@ export interface NormalizedEvent {
 export interface CalendarEvent extends NormalizedEvent {
   id: string
   calendarId: string
+  /** Bei einem einzelnen Vorkommen: die ID der ganzen Serie beim Anbieter */
+  seriesId?: string
 }
 
 /** Was die Oberfläche beim Erstellen oder Ändern eines Termins schickt. */
-export interface EventInput {
+export interface EventInput extends EventExtras {
   title: string
   description?: string
   location?: string
@@ -125,6 +159,26 @@ export interface Settings {
   closeToTray: boolean
   /** Einstellungen pro Kalender, nach der ID des Kalenders in der App */
   calendars: Record<string, CalendarOptions>
+  /** Die App erinnert mit einer Windows-Mitteilung an Google-Termine. */
+  reminders: boolean
+  view: ViewSettings
+  /** Farbige Kategorien für Termine */
+  categories: Category[]
+}
+
+/** Wie der Kalender angezeigt wird, wie die Kalenderoptionen in Outlook. */
+export interface ViewSettings {
+  /** Erster Tag der Woche: 0 Sonntag, 1 Montag, 6 Samstag */
+  firstDay: number
+  /** Arbeitstage als Wochentage (0 Sonntag … 6 Samstag) */
+  workDays: number[]
+  /** Arbeitszeit als `HH:mm` */
+  workStart: string
+  workEnd: string
+  /** Zeitraster in Minuten */
+  slotMinutes: number
+  /** Kalenderwochen anzeigen */
+  weekNumbers: boolean
 }
 
 export interface DateRange {
@@ -172,6 +226,19 @@ export interface AppApi {
   createEvent(calendarId: string, input: EventInput): Promise<CalendarEvent>
   updateEvent(calendarId: string, eventId: string, input: EventInput): Promise<CalendarEvent>
   deleteEvent(calendarId: string, eventId: string): Promise<void>
+  /** Ein einzelner Termin, z. B. die ganze Serie zu einem Vorkommen. `null`, wenn es ihn nicht gibt. */
+  getEvent(calendarId: string, eventId: string): Promise<CalendarEvent | null>
+  /** Verschiebt einen Termin in einen anderen Kalender: dort neu anlegen, hier löschen. */
+  moveEvent(
+    fromCalendarId: string,
+    eventId: string,
+    toCalendarId: string,
+    input: EventInput
+  ): Promise<CalendarEvent>
+  /** Sucht in Titel, Ort und Notiz aller sichtbaren Kalender. */
+  searchEvents(query: string, range: DateRange): Promise<EventsResult>
+  /** Meldet, wenn eine Erinnerung angeklickt wurde. Liefert eine Funktion zum Abmelden. */
+  onReminderOpened(listener: (event: CalendarEvent) => void): () => void
   listSyncPairs(): Promise<SyncPair[]>
   addSyncPair(googleCalendarId: string, msCalendarId: string): Promise<SyncPair>
   removeSyncPair(pairId: string): Promise<void>

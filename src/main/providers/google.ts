@@ -3,7 +3,7 @@ import type { OAuth2Client } from 'google-auth-library'
 import type { NormalizedEvent } from '../../shared/types'
 import { toDateString, type DayRange } from '../dateRange'
 import type { RemoteCalendar } from '../db/store'
-import { mapGoogleEvent, normalizeColor, toGoogleBody } from './googleMapper'
+import { mapGoogleEvent, normalizeColor, toGoogleBody, type GoogleReminder } from './googleMapper'
 import type { CalendarProvider, ProviderEvent } from './types'
 
 const DEFAULT_COLOR = '#2563a8'
@@ -25,6 +25,8 @@ function isGone(error: unknown): boolean {
 /** Liest und schreibt Kalender und Termine eines Google-Kontos (Calendar API v3). */
 export class GoogleProvider implements CalendarProvider {
   private readonly api: calendar_v3.Calendar
+  /** Die Standard-Erinnerungen je Kalender, wie Google sie beim Auflisten mitliefert */
+  private readonly defaultReminders = new Map<string, GoogleReminder[]>()
 
   constructor(auth: OAuth2Client) {
     this.api = calendar({ version: 'v3', auth })
@@ -71,11 +73,13 @@ export class GoogleProvider implements CalendarProvider {
         pageToken
       })
       const timeZone = data.timeZone ?? 'UTC'
+      const defaults = data.defaultReminders ?? []
+      this.defaultReminders.set(calendarRemoteId, defaults)
       for (const item of data.items ?? []) {
         // Ohne Auflösung liefert Google Serien als Ganzes und dazu ihre
         // Ausnahmen. Die Ausnahmen werden nicht einzeln abgeglichen.
         if (!expand && item.recurringEventId) continue
-        const event = mapGoogleEvent(item, timeZone)
+        const event = mapGoogleEvent(item, timeZone, defaults)
         if (event && event.status !== 'cancelled') events.push(event)
       }
       pageToken = data.nextPageToken ?? undefined
@@ -96,7 +100,11 @@ export class GoogleProvider implements CalendarProvider {
   async getEvent(calendarRemoteId: string, eventId: string): Promise<ProviderEvent | null> {
     try {
       const { data } = await this.api.events.get({ calendarId: calendarRemoteId, eventId })
-      const event = mapGoogleEvent(data, data.start?.timeZone ?? 'UTC')
+      const event = mapGoogleEvent(
+        data,
+        data.start?.timeZone ?? 'UTC',
+        this.defaultReminders.get(calendarRemoteId)
+      )
       return event && event.status !== 'cancelled' ? event : null
     } catch (error) {
       if (isGone(error)) return null
@@ -109,7 +117,7 @@ export class GoogleProvider implements CalendarProvider {
       calendarId: calendarRemoteId,
       requestBody: toGoogleBody(event)
     })
-    return this.written(data, event)
+    return this.written(calendarRemoteId, data, event)
   }
 
   async updateEvent(
@@ -122,7 +130,7 @@ export class GoogleProvider implements CalendarProvider {
       eventId,
       requestBody: toGoogleBody(event)
     })
-    return this.written(data, event)
+    return this.written(calendarRemoteId, data, event)
   }
 
   async deleteEvent(calendarRemoteId: string, eventId: string): Promise<void> {
@@ -134,8 +142,12 @@ export class GoogleProvider implements CalendarProvider {
     }
   }
 
-  private written(data: calendar_v3.Schema$Event, sent: NormalizedEvent): ProviderEvent {
-    const event = mapGoogleEvent(data, sent.timeZone)
+  private written(
+    calendarRemoteId: string,
+    data: calendar_v3.Schema$Event,
+    sent: NormalizedEvent
+  ): ProviderEvent {
+    const event = mapGoogleEvent(data, sent.timeZone, this.defaultReminders.get(calendarRemoteId))
     if (!event) throw new Error('Google hat den gespeicherten Termin nicht zurückgegeben')
     return event
   }

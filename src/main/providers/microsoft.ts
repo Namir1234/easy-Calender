@@ -8,7 +8,8 @@ const GRAPH = 'https://graph.microsoft.com/v1.0'
 const DEFAULT_COLOR = '#0f6cbd'
 const MAX_PAGES = 30
 const FIELDS =
-  'id,subject,body,location,start,end,isAllDay,isCancelled,showAs,type,recurrence,lastModifiedDateTime'
+  'id,subject,body,location,start,end,isAllDay,isCancelled,showAs,type,recurrence,lastModifiedDateTime,' +
+  'seriesMasterId,sensitivity,isReminderOn,reminderMinutesBeforeStart,categories'
 
 // Zeiten immer in UTC, Notizen als reiner Text, und IDs, die sich nicht
 // ändern, wenn ein Termin verschoben wird.

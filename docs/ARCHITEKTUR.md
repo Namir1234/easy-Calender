@@ -54,17 +54,23 @@ Die aktuelle Struktur steht im [README](../README.md#-architektur). Geplant und 
 
 Beide Anbieter werden auf ein gemeinsames Modell abgebildet:
 
-| Feld           | Bedeutung                                                               |
-| -------------- | ----------------------------------------------------------------------- |
-| `title`        | Titel des Termins                                                       |
-| `description`  | Beschreibung                                                            |
-| `location`     | Ort                                                                     |
-| `start`, `end` | Beginn und Ende. Ganztägig als Datum, sonst als Zeitpunkt nach ISO 8601 |
-| `allDay`       | Ganztägiger Termin                                                      |
-| `timeZone`     | Zeitzone                                                                |
-| `recurrence`   | Wiederholung als RRULE                                                  |
-| `attendees?`   | Teilnehmer (optional, wird in v1 nicht gespiegelt)                      |
-| `status`       | Status, z. B. bestätigt oder abgesagt                                   |
+| Feld               | Bedeutung                                                               |
+| ------------------ | ----------------------------------------------------------------------- |
+| `title`            | Titel des Termins                                                       |
+| `description`      | Beschreibung                                                            |
+| `location`         | Ort                                                                     |
+| `start`, `end`     | Beginn und Ende. Ganztägig als Datum, sonst als Zeitpunkt nach ISO 8601 |
+| `allDay`           | Ganztägiger Termin                                                      |
+| `timeZone`         | Zeitzone                                                                |
+| `recurrence`       | Wiederholung als RRULE                                                  |
+| `attendees?`       | Teilnehmer (optional, wird in v1 nicht gespiegelt)                      |
+| `status`           | Status, z. B. bestätigt oder abgesagt                                   |
+| `showAs?`          | «Anzeigen als»: frei, mit Vorbehalt, gebucht, abwesend, woanders tätig  |
+| `private?`         | Privat                                                                  |
+| `reminderMinutes?` | Erinnerung in Minuten vor Beginn, `null` heisst keine                   |
+| `categories?`      | Namen der Kategorien                                                    |
+
+Die vier Felder mit `?` zeigt und schreibt die App, abgeglichen werden sie nicht (E-019). Google kennt nur «frei» und «gebucht»: Die genaue Angabe und die Kategorien stehen dort in `extendedProperties.private` (`easyShowAs`, `easyCategories`). Ein einzelnes Vorkommen einer Serie trägt zusätzlich `seriesId`, die ID der ganzen Serie. So lassen sich in der App «Serie bearbeiten» und «Serie löschen» anbieten.
 
 Gesynct wird nur diese definierte Teilmenge an Feldern. So geht nichts verloren, nur weil ein Feld beim anderen Anbieter kein Gegenstück hat.
 

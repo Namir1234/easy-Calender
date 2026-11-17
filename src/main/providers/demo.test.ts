@@ -63,3 +63,29 @@ describe('DemoProvider', () => {
     expect(await provider.listEvents('gibt-es-nicht', WEEK)).toEqual([])
   })
 })
+
+describe('DemoProvider: Zusatzfelder', () => {
+  it('behält beim Ändern Zusatzfelder, die nicht mitkommen', async () => {
+    const provider = new DemoProvider()
+    const base = {
+      title: 'x',
+      start: '2026-11-17T08:00:00.000Z',
+      end: '2026-11-17T09:00:00.000Z',
+      allDay: false,
+      timeZone: 'UTC',
+      recurrence: null,
+      status: 'confirmed' as const
+    }
+    const created = await provider.createEvent('demo-privat', {
+      ...base,
+      showAs: 'free',
+      categories: ['A']
+    })
+    const updated = await provider.updateEvent('demo-privat', created.id, {
+      ...base,
+      title: 'y',
+      categories: []
+    })
+    expect(updated).toMatchObject({ title: 'y', showAs: 'free', categories: [] })
+  })
+})

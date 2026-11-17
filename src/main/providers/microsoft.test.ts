@@ -30,7 +30,37 @@ describe('mapGraphEvent', () => {
       timeZone: 'Europe/Zurich',
       recurrence: null,
       status: 'confirmed',
-      updatedAt: '2026-11-01T10:00:00Z'
+      updatedAt: '2026-11-01T10:00:00Z',
+      seriesId: undefined,
+      showAs: 'busy',
+      private: false,
+      reminderMinutes: null,
+      categories: []
+    })
+  })
+
+  it('liest Anzeigen als, Privat, Erinnerung, Kategorien und die Serie', () => {
+    const event = mapGraphEvent(
+      {
+        id: 'x',
+        start: { dateTime: '2026-11-17T08:00:00' },
+        end: { dateTime: '2026-11-17T09:00:00' },
+        type: 'occurrence',
+        seriesMasterId: 'master',
+        showAs: 'oof',
+        sensitivity: 'private',
+        isReminderOn: true,
+        reminderMinutesBeforeStart: 30,
+        categories: ['Rote Kategorie']
+      },
+      'UTC'
+    )
+    expect(event).toMatchObject({
+      seriesId: 'master',
+      showAs: 'oof',
+      private: true,
+      reminderMinutes: 30,
+      categories: ['Rote Kategorie']
     })
   })
 
@@ -82,6 +112,24 @@ describe('toGraphBody', () => {
   }
 
   it('schickt die Uhrzeit in der Zeitzone des Termins', () => {
+    expect(
+      toGraphBody({
+        ...base,
+        showAs: 'free',
+        private: true,
+        reminderMinutes: null,
+        categories: ['A']
+      })
+    ).toMatchObject({
+      showAs: 'free',
+      sensitivity: 'private',
+      isReminderOn: false,
+      categories: ['A']
+    })
+    expect(toGraphBody({ ...base, reminderMinutes: 10 })).toMatchObject({
+      isReminderOn: true,
+      reminderMinutesBeforeStart: 10
+    })
     expect(toGraphBody(base)).toEqual({
       subject: 'Zahnarzt',
       body: { contentType: 'text', content: '' },
