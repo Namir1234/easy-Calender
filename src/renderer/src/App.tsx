@@ -1,5 +1,12 @@
 import { useCallback, useEffect, useState } from 'react'
-import type { Account, Calendar, CalendarEvent, DbStatus, Settings } from '../../shared/types'
+import type {
+  Account,
+  Calendar,
+  CalendarEvent,
+  CalendarOptions,
+  DbStatus,
+  Settings
+} from '../../shared/types'
 import CalendarList from './components/CalendarList'
 import CalendarView from './components/CalendarView'
 import EventDetails, { type AnchorRect } from './components/EventDetails'
@@ -125,6 +132,48 @@ function App(): React.JSX.Element {
   )
 
   const reloadEvents = useCallback(() => setReloadKey((current) => current + 1), [])
+
+  const setCalendarOptions = useCallback((calendar: Calendar, options: CalendarOptions) => {
+    // Sofort anzeigen, damit die Farbwahl flüssig bleibt.
+    setCalendars((current) =>
+      current.map((entry) =>
+        entry.id === calendar.id
+          ? {
+              ...entry,
+              color: options.color ?? entry.color,
+              hidden: Boolean(options.hidden),
+              allDayOnly: Boolean(options.allDayOnly)
+            }
+          : entry
+      )
+    )
+    window.api
+      .setCalendarOptions(calendar.id, options)
+      .then(() => {
+        // Die Farbe ändert die Termine nicht, alles andere schon.
+        if (
+          Boolean(options.hidden) !== Boolean(calendar.hidden) ||
+          Boolean(options.allDayOnly) !== Boolean(calendar.allDayOnly)
+        ) {
+          setReloadKey((current) => current + 1)
+        }
+      })
+      .catch((saveError) => setError(errorMessage(saveError)))
+  }, [])
+
+  const createCalendar = useCallback(
+    async (account: Account, name: string) => {
+      setError(null)
+      try {
+        await window.api.createCalendar(account.id, name)
+        await loadAccounts()
+      } catch (createError) {
+        setError(errorMessage(createError))
+        throw createError
+      }
+    },
+    [loadAccounts]
+  )
   const selectEvent = useCallback((event: CalendarEvent, anchor: AnchorRect) => {
     setSelected({ event, anchor })
   }, [])
@@ -188,7 +237,7 @@ function App(): React.JSX.Element {
             type="button"
             className="button button-strong"
             onClick={createNow}
-            disabled={calendars.length === 0}
+            disabled={!calendars.some((calendar) => !calendar.hidden)}
           >
             Neuer Termin
           </button>
@@ -206,6 +255,8 @@ function App(): React.JSX.Element {
             calendars={calendars}
             loading={loading}
             onToggle={setVisible}
+            onOptions={setCalendarOptions}
+            onCreate={createCalendar}
             onRemove={removeAccount}
           />
 
@@ -319,7 +370,7 @@ function App(): React.JSX.Element {
         <EventForm
           key={form.kind === 'edit' ? form.event.id : form.start.getTime()}
           target={form}
-          calendars={calendars}
+          calendars={calendars.filter((calendar) => !calendar.hidden)}
           onSaved={() => {
             setForm(null)
             reloadEvents()

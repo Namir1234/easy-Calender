@@ -249,6 +249,100 @@ p {
   white-space: nowrap;
 }
 
+/* Zeile eines Kalenders mit dem Knopf für seine Einstellungen */
+
+.calendar-row {
+  display: flex;
+  align-items: center;
+}
+
+.calendar-row .calendar-item {
+  flex: 1;
+  min-width: 0;
+}
+
+.calendar-more {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--ink-faint);
+  font-size: 13px;
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+
+.calendar-more:hover,
+.calendar-more[aria-expanded='true'] {
+  background: var(--hover);
+  color: var(--ink);
+}
+
+.calendar-options {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 2px 0 8px 34px;
+  font-size: 13px;
+}
+
+.calendar-options .link-button,
+.new-calendar + .link-button {
+  align-self: flex-start;
+  margin-left: -8px;
+}
+
+.option-color {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 28px;
+  cursor: pointer;
+}
+
+.option-color input {
+  width: 32px;
+  height: 22px;
+  padding: 0;
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+  background: none;
+  cursor: pointer;
+}
+
+.new-calendar {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px;
+}
+
+.hidden-calendars {
+  padding: 0 8px;
+  font-size: 13px;
+  color: var(--ink-muted);
+}
+
+.hidden-calendars summary {
+  min-height: 28px;
+  cursor: pointer;
+}
+
+.hidden-calendars ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hidden-calendars li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
 /* Aktionen */
 
 .button {

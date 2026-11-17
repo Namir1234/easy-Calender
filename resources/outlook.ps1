@@ -128,6 +128,15 @@ try {
       $data = @{ stores = $stores }
     }
 
+    'createCalendar' {
+      $root = $ns.GetStoreFromID($request.storeId).GetDefaultFolder($OL_FOLDER_CALENDAR)
+      foreach ($sub in $root.Folders) {
+        if ($sub.Name -eq [string]$request.name) { throw 'Einen Kalender mit diesem Namen gibt es schon.' }
+      }
+      $created = $root.Folders.Add([string]$request.name, $OL_FOLDER_CALENDAR)
+      $data = @{ id = $created.EntryID; name = [string]$created.Name }
+    }
+
     'list' {
       $folder = $ns.GetFolderFromID($request.folderId, $request.storeId)
       $style = [System.Globalization.DateTimeStyles]::RoundtripKind

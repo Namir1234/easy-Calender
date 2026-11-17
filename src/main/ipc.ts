@@ -15,7 +15,7 @@ import { parseDateRange } from './dateRange'
 import type { StoreContext } from './db'
 import { parseEventInput } from './eventInput'
 import type { CalendarProvider } from './providers/types'
-import { parseSettings } from './settings'
+import { parseCalendarOptions, parseSettings } from './settings'
 import type { SyncService } from './sync/service'
 
 export interface AppContext extends StoreContext {
@@ -62,6 +62,17 @@ export function registerIpc(ready: Promise<AppContext>, settings: SettingsAccess
     return { calendar, provider: accounts.providerFor(account) }
   }
 
+  /** Ergänzt einen Kalender um das, was auf diesem Gerät für ihn eingestellt ist. */
+  const withOptions = (calendar: Calendar): Calendar => {
+    const options = settings.get().calendars[calendar.id] ?? {}
+    return {
+      ...calendar,
+      color: options.color ?? calendar.color,
+      hidden: Boolean(options.hidden),
+      allDayOnly: Boolean(options.allDayOnly)
+    }
+  }
+
   ipcMain.handle('app:status', async (): Promise<DbStatus> => (await ready).status)
 
   ipcMain.handle('accounts:list', async (): Promise<Account[]> => {
@@ -101,8 +112,33 @@ export function registerIpc(ready: Promise<AppContext>, settings: SettingsAccess
 
   ipcMain.handle('calendars:list', async (): Promise<Calendar[]> => {
     const { store } = await ready
-    return store.listCalendars()
+    return (await store.listCalendars()).map(withOptions)
   })
+
+  ipcMain.handle(
+    'calendars:setOptions',
+    async (_event, calendarId: unknown, input: unknown): Promise<void> => {
+      const { calendar } = await target(calendarId)
+      const options = parseCalendarOptions(input)
+      const current = settings.get()
+      const calendars = { ...current.calendars }
+      if (Object.keys(options).length > 0) calendars[calendar.id] = options
+      else delete calendars[calendar.id]
+      settings.set({ ...current, calendars })
+    }
+  )
+
+  ipcMain.handle(
+    'calendars:create',
+    async (_event, accountId: unknown, name: unknown): Promise<void> => {
+      const id = requireId(accountId, 'Konto-ID')
+      if (typeof name !== 'string' || !name.trim() || name.length > 60) {
+        throw new Error('Der Name muss 1 bis 60 Zeichen lang sein')
+      }
+      const { accounts } = await ready
+      await accounts.createCalendar(id, name.trim())
+    }
+  )
 
   ipcMain.handle(
     'calendars:setVisible',
@@ -129,13 +165,17 @@ export function registerIpc(ready: Promise<AppContext>, settings: SettingsAccess
     const problems: string[] = []
     await Promise.all(
       calendars
-        .filter((calendar) => calendar.visible)
+        .map(withOptions)
+        .filter((calendar) => calendar.visible && !calendar.hidden)
         .map(async (calendar) => {
           try {
             const account = accountById.get(calendar.accountId)
             if (!account) return
             const loaded = await accounts.providerFor(account).listEvents(calendar.remoteId, range)
-            for (const event of loaded) events.push({ ...event, calendarId: calendar.id })
+            for (const event of loaded) {
+              if (calendar.allDayOnly && !event.allDay) continue
+              events.push({ ...event, calendarId: calendar.id })
+            }
           } catch (error) {
             const reason = error instanceof Error ? error.message : String(error)
             problems.push(`${calendar.name}: ${reason}`)
@@ -211,6 +251,7 @@ export function registerIpc(ready: Promise<AppContext>, settings: SettingsAccess
   ipcMain.handle('settings:get', (): Settings => settings.get())
 
   ipcMain.handle('settings:set', (_event, input: unknown): Settings => {
-    return settings.set(parseSettings(input))
+    // Die Einstellungen der Kalender haben ihren eigenen Weg und bleiben hier unberührt.
+    return settings.set({ ...parseSettings(input), calendars: settings.get().calendars })
   })
 }

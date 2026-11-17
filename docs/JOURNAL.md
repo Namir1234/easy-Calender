@@ -6,12 +6,40 @@ Laufendes Protokoll des Projekts. Der neuste Eintrag steht oben.
 
 ## Aktueller Stand
 
-|                     |                                                                                                                                                                         |
-| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Etappe**          | Alle sieben Etappen sind gebaut und mit echten Konten geprüft (Version 0.10.2). Der Abgleich Google ↔ Outlook hat die Tests M-1 bis M-5 an zwei Testkalendern bestanden |
-| **Als Nächstes**    | Namir entscheidet, welche echten Kalender er abgleichen will. Offene Punkte: A-14, A-20, A-22, A-23, M-6                                                                |
-| **Blockiert durch** | nichts                                                                                                                                                                  |
-| **Offen bei Namir** | Entscheiden, ob das Noser-Konto in der App bleiben soll                                                                                                                 |
+|                     |                                                                                                                          |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| **Etappe**          | Alle sieben Etappen sind gebaut und mit echten Konten geprüft. Version 0.11.0 bringt Einstellungen pro Kalender          |
+| **Als Nächstes**    | Namirs Wünsche vom 17.11.: Chatbot zum Eintragen von Terminen, Personen einladen. Beides braucht noch seine Entscheidung |
+| **Blockiert durch** | nichts                                                                                                                   |
+| **Offen bei Namir** | Für den Chatbot: API-Schlüssel und Einverständnis mit den Kosten. Welche echten Kalender abgeglichen werden sollen       |
+
+---
+
+## 2026-11-17 · Einstellungen pro Kalender (Version 0.11.0)
+
+Namirs Wunsch: Die vielen mitgelieferten Kalender (Feiertage, Familie, Claude, Sync-Test) sollen weg, eigene Kalender sollen sich anlegen und einfärben lassen, vom Noser-Kalender sollen nur ganztägige Termine erscheinen.
+
+**Gemacht**
+
+- Jeder Kalender hat in der Seitenleiste einen Knopf «···» mit drei Einstellungen: Farbe, «Nur ganztägige Termine zeigen» und «Aus der App entfernen».
+- «Entfernen» heisst: Der Kalender verschwindet aus der App, bei Google oder Outlook bleibt er bestehen. Unter «Entfernte Kalender» lässt er sich zurückholen. Gelöscht wird beim Anbieter nichts.
+- In Outlook-Konten gibt es «Neuer Kalender». Er wird als leerer Kalender im Konto angelegt.
+- Die Einstellungen liegen in `settings.json` auf dem Gerät, nicht in Supabase. So braucht es keine Änderung am Datenbankschema.
+- Auf Namirs Wunsch eingestellt: Feiertage (vier Kalender), Familie, Claude und beide Sync-Test sind aus der App entfernt. Vom Noser-Kalender erscheinen nur ganztägige Termine.
+
+**Geprüft** (installierte App)
+
+- 92 Unit-Tests bestanden.
+- Nach dem Einstellen zeigt die Seitenleiste noch sechs Kalender und «Entfernte Kalender (8)». Der Noser-Kalender liefert 14 Termine, keiner mit Uhrzeit.
+
+**Nicht geprüft**
+
+- «Neuer Kalender» in der installierten App (die Funktion dahinter lief beim Anlegen des Testkalenders), Farbe ändern über die Oberfläche.
+
+**Offen**
+
+- Neue Kalender in Google: Dafür reicht die Berechtigung der App nicht. Es bräuchte eine zusätzliche Zustimmung bei Google.
+- Chatbot und Einladungen: noch nicht gebaut, siehe «Aktueller Stand».
 
 ---
 

@@ -89,6 +89,12 @@ export class OutlookBridge {
     return next
   }
 
+  /** Legt im Konto des angegebenen Kalenders einen neuen, leeren Kalender an. */
+  async createCalendar(siblingRemoteId: string, name: string): Promise<void> {
+    const [storeId] = siblingRemoteId.split(SEPARATOR)
+    await this.call({ op: 'createCalendar', storeId, name })
+  }
+
   /** Alle Konten des lokalen Outlook, die einen Kalender haben. */
   async listStores(): Promise<OutlookStore[]> {
     const data = await this.call<{

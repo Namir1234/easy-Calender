@@ -105,6 +105,22 @@ export class AccountService {
     }
   }
 
+  /** Legt in einem Konto des lokalen Outlook einen neuen, leeren Kalender an. */
+  async createCalendar(accountId: string, name: string): Promise<void> {
+    const { store, outlook } = this.options
+    const account = (await store.listAccounts()).find((entry) => entry.id === accountId)
+    if (!account) throw new Error('Konto nicht gefunden')
+    if (account.provider !== 'microsoft' || !this.isLocalOutlook(account.email)) {
+      throw new Error('Neue Kalender lassen sich im Moment nur in Outlook anlegen')
+    }
+    const existing = (await store.listCalendars()).find((entry) => entry.accountId === accountId)
+    if (!existing)
+      throw new Error('Dieses Konto hat keinen Kalender, neben dem ein neuer Platz hat')
+    await outlook.createCalendar(existing.remoteId, name)
+    const calendars = await this.listRemoteCalendars('microsoft', account.email)
+    await store.saveAccount({ provider: 'microsoft', email: account.email, calendars })
+  }
+
   private isLocalOutlook(email: string): boolean {
     return this.options.tokens.getItem(localKey(email)) !== null
   }

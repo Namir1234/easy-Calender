@@ -15,6 +15,9 @@ const api: AppApi = {
   listCalendars: () => ipcRenderer.invoke('calendars:list'),
   setCalendarVisible: (calendarId, visible) =>
     ipcRenderer.invoke('calendars:setVisible', calendarId, visible),
+  setCalendarOptions: (calendarId, options) =>
+    ipcRenderer.invoke('calendars:setOptions', calendarId, options),
+  createCalendar: (accountId, name) => ipcRenderer.invoke('calendars:create', accountId, name),
   listEvents: (range) => ipcRenderer.invoke('events:list', range),
   createEvent: (calendarId, input) => ipcRenderer.invoke('events:create', calendarId, input),
   updateEvent: (calendarId, eventId, input) =>
