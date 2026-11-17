@@ -46,9 +46,9 @@ Diese Fälle werden an der gestarteten App geprüft, ohne echte Konten.
 | A-8  | App mit Supabase-Zugangsdaten starten                 | Status «Supabase verbunden», Demo-Daten liegen in der Datenbank                                  | ✅                 |
 | A-9  | Installer bauen und die paketierte App starten        | `dist/easy-calender-0.1.0-setup.exe` entsteht, die App läuft                                     | ✅                 |
 | A-10 | «Google-Konto verbinden» ohne Zugangsdaten in `.env`  | Verständliche Fehlermeldung, die App läuft weiter                                                | ✅                 |
-| A-11 | Google-Konto verbinden                                | Browser öffnet die Anmeldung, danach erscheinen die Google-Kalender, die Demo-Daten verschwinden | ⬜                 |
-| A-12 | Termine eines Google-Kalenders anzeigen               | Termine stehen zur richtigen Zeit im Kalender, ganztägige oben                                   | ⬜                 |
-| A-13 | App neu starten mit verbundenem Google-Konto          | Kalender und Termine sind ohne neue Anmeldung da                                                 | ⬜                 |
+| A-11 | Google-Konto verbinden                                | Browser öffnet die Anmeldung, danach erscheinen die Google-Kalender, die Demo-Daten verschwinden | ✅                 |
+| A-12 | Termine eines Google-Kalenders anzeigen               | Termine stehen zur richtigen Zeit im Kalender, ganztägige oben                                   | ✅                 |
+| A-13 | App neu starten mit verbundenem Google-Konto          | Kalender und Termine sind ohne neue Anmeldung da                                                 | ✅                 |
 | A-14 | Google-Konto entfernen                                | Kalender verschwinden, bleibt kein Konto, kommen die Demo-Daten zurück                           | ⬜                 |
 | A-15 | Installer ausführen                                   | App ist installiert, Verknüpfungen auf Desktop und im Startmenü, App startet                     | ✅                 |
 | A-16 | Während der Anmeldung «Link kopieren» und «Abbrechen» | Link liegt in der Zwischenablage, nach dem Abbruch ist der Knopf wieder frei                     | ✅                 |
@@ -59,6 +59,11 @@ Diese Fälle werden an der gestarteten App geprüft, ohne echte Konten.
 | A-21 | Microsoft-Konto verbinden                             | Browser öffnet die Anmeldung, danach erscheinen die Outlook-Kalender                             | ⬜                 |
 | A-22 | Fenster schliessen mit «im Hintergrund weiterlaufen»  | Die App bleibt im Infobereich, ein Klick auf das Symbol öffnet sie wieder                        | ⬜                 |
 | A-23 | «Mit Windows starten» einschalten, neu anmelden       | Die App startet ohne Fenster im Infobereich                                                      | ⬜                 |
+
+### 2026-11-17 · Version 0.9.0 mit echtem Google-Konto
+
+- A-11 bis A-13 bestanden: Konto verbunden, sechs Kalender, 35 Termine geladen, nach einem Neustart ohne neue Anmeldung wieder da.
+- **Nicht geprüft:** A-14, A-20 bis A-23, Schreiben in einen Google-Kalender, M-1 bis M-6.
 
 ### 2026-11-16 · Version 0.9.0
 

@@ -38,8 +38,8 @@ alle Termine **bidirektional** synchronisiert und sie in einer einzigen Ansicht 
 ---
 
 > [!NOTE]
-> **Projektstatus:** Alle sieben Etappen sind geschrieben (Version 0.9.0). Geprüft ist die App bisher mit Beispieldaten und durch Unit-Tests.
-> Die Prüfung mit echten Google- und Microsoft-Konten steht noch aus. Den aktuellen Stand findest du im [Arbeitsjournal](docs/JOURNAL.md).
+> **Projektstatus:** Alle sieben Etappen sind geschrieben (Version 0.9.0). Google ist mit einem echten Konto geprüft.
+> Microsoft und der Abgleich sind erst durch Unit-Tests abgedeckt. Den aktuellen Stand findest du im [Arbeitsjournal](docs/JOURNAL.md).
 
 ## 💡 Worum geht es?
 
@@ -200,7 +200,7 @@ Die Details zu Datenmodell, Event-Modell und Sync-Algorithmus stehen in [docs/AR
 
 - [x] **Etappe 0:** Plan, README und Dokumentation
 - [x] **Etappe 1:** Grundgerüst (Projekt, Supabase-Datenschicht, IPC, FullCalendar-UI mit Demo-Daten)
-- [x] **Etappe 2:** Google-Login, Kalender lesen und anzeigen _(Code fertig, Prüfung mit echtem Konto offen)_
+- [x] **Etappe 2:** Google-Login, Kalender lesen und anzeigen _(mit echtem Konto geprüft)_
 - [x] **Etappe 3:** Microsoft-Login, Kalender lesen und anzeigen _(Code fertig, Prüfung offen)_
 - [x] **Etappe 4:** Termine in der App erstellen, bearbeiten und löschen _(mit Beispieldaten geprüft)_
 - [x] **Etappe 5:** Sync-Engine (Loop-Schutz, Konflikte, Löschungen) _(Unit-Tests, Prüfung mit echten Kalendern offen)_

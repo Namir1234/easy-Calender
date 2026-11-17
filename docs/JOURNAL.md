@@ -6,12 +6,31 @@ Laufendes Protokoll des Projekts. Der neuste Eintrag steht oben.
 
 ## Aktueller Stand
 
-|                     |                                                                                                                                |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| **Etappe**          | Alle sieben Etappen sind geschrieben (Version 0.9.0). Mit echten Konten geprüft ist noch nichts davon                          |
-| **Als Nächstes**    | Google-Konto verbinden, App bei Microsoft registrieren, dann den Abgleich mit zwei Testkalendern prüfen (Testplan M-1 bis M-6) |
-| **Blockiert durch** | Die Anmeldungen im Browser kann nur Namir abschliessen. Für Microsoft fehlt die Anwendungs-ID in `.env`                        |
-| **Offen bei Namir** | Google-Anmeldung abschliessen, Azure-Registrierung (siehe [SETUP.md](SETUP.md))                                                |
+|                     |                                                                                                                                      |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| **Etappe**          | Alle sieben Etappen sind geschrieben (Version 0.9.0). Google ist mit dem echten Konto geprüft, Microsoft und der Abgleich noch nicht |
+| **Als Nächstes**    | App bei Microsoft registrieren, Outlook verbinden, dann den Abgleich mit zwei Testkalendern prüfen (Testplan M-1 bis M-6)            |
+| **Blockiert durch** | Für Microsoft fehlt die Anwendungs-ID in `.env`                                                                                      |
+| **Offen bei Namir** | Azure-Registrierung (siehe [SETUP.md](SETUP.md))                                                                                     |
+
+---
+
+## 2026-11-17 · Google mit echtem Konto geprüft
+
+**Gemacht**
+
+- Namir hat sein Google-Konto in der installierten Version 0.9.0 verbunden. Diesmal ist das Token gespeichert.
+
+**Geprüft** (an der laufenden App, nur lesend)
+
+- Ein Google-Konto, sechs Kalender mit ihren Google-Farben. Die Beispielkonten sind verschwunden.
+- 35 Termine im Zeitraum von 30 Tagen zurück bis 60 Tage voraus, davon 29 ganztägig. Zeiten kommen mit Zeitverschiebung an, keine doppelten IDs, keine Fehlermeldung.
+- Nach einem Neustart der App sind Konto, Kalender und Termine ohne neue Anmeldung da.
+
+**Nicht geprüft**
+
+- Termine in einem Google-Kalender erstellen, ändern und löschen. Das würde in Namirs echten Kalender schreiben und braucht seinen Auftrag.
+- Google-Konto entfernen (A-14), Microsoft, Abgleich.
 
 ---
 
