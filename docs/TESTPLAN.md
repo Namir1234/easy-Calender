@@ -24,6 +24,7 @@ Ausführen mit `npm test`.
 | Graph-Mapper    | Outlook-Termine lesen und schreiben, Uhrzeit in der Zeitzone des Termins                                                                         | ✅     |
 | Serien          | RRULE ↔ Graph-Format hin und zurück, Ablehnen nicht abbildbarer Regeln                                                                           | ✅     |
 | Lokales Outlook | Mapper, Serien ↔ Outlook-Muster, Brücke zum PowerShell-Skript (mit Attrappe)                                                                     | ✅     |
+| Umschrift       | Notizen nach ASCII, Umlaute bleiben beim Abgleich auf der anderen Seite erhalten                                                                 | ✅     |
 | Mapper          | Google ↔ Graph: Titel, Ort, Beschreibung                                                                                                         | ⬜     |
 | Mapper          | Zeitzonen                                                                                                                                        | ⬜     |
 | Mapper          | Ganztägige Termine                                                                                                                               | ⬜     |
@@ -61,6 +62,12 @@ Diese Fälle werden an der gestarteten App geprüft, ohne echte Konten.
 | A-24 | Brückenskript lesend gegen das lokale Outlook         | Konten, Kalender und Termine kommen richtig an                                                   | ✅                 |
 | A-22 | Fenster schliessen mit «im Hintergrund weiterlaufen»  | Die App bleibt im Infobereich, ein Klick auf das Symbol öffnet sie wieder                        | ⬜                 |
 | A-23 | «Mit Windows starten» einschalten, neu anmelden       | Die App startet ohne Fenster im Infobereich                                                      | ⬜                 |
+
+### 2026-11-17 · Version 0.10.2
+
+- `npm test`: 89 von 89 Tests bestanden. `npm run typecheck` und `npm run lint` ohne Befund.
+- M-1 bis M-5 an zwei Testkalendern «Sync-Test» bestanden, dazu ganztägige Termine und die Prüfung auf Ping-Pong nach jedem Schritt. Die Testkalender sind danach wieder leer.
+- **Nicht geprüft:** M-6 als eigener Schritt, A-14, A-20, A-22, A-23.
 
 ### 2026-11-17 · Version 0.10.1
 
@@ -102,11 +109,11 @@ Diese Fälle werden an der gestarteten App geprüft, ohne echte Konten.
 
 | Nr. | Schritt                                                         | Erwartetes Ergebnis                                                           | Status |
 | --- | --------------------------------------------------------------- | ----------------------------------------------------------------------------- | ------ |
-| M-1 | Termin in Google erstellen                                      | Nach dem Sync in Outlook vorhanden                                            | ⬜     |
-| M-2 | Diesen Termin in Outlook ändern                                 | Änderung in Google sichtbar, kein Ping-Pong im Log                            | ⬜     |
-| M-3 | Termin in Google löschen                                        | In Outlook gelöscht                                                           | ⬜     |
-| M-4 | Wöchentliche Serie erstellen und eine Einzelinstanz verschieben | Serie gespiegelt. Die verschobene Einzelinstanz wird nicht übertragen (E-015) | ⬜     |
-| M-5 | Beide Seiten offline ändern, dann syncen                        | Neuere Änderung gewinnt, Eintrag im Log                                       | ⬜     |
+| M-1 | Termin in Google erstellen                                      | Nach dem Sync in Outlook vorhanden                                            | ✅     |
+| M-2 | Diesen Termin in Outlook ändern                                 | Änderung in Google sichtbar, kein Ping-Pong im Log                            | ✅     |
+| M-3 | Termin in Google löschen                                        | In Outlook gelöscht                                                           | ✅     |
+| M-4 | Wöchentliche Serie erstellen und eine Einzelinstanz verschieben | Serie gespiegelt. Die verschobene Einzelinstanz wird nicht übertragen (E-015) | ✅     |
+| M-5 | Beide Seiten offline ändern, dann syncen                        | Neuere Änderung gewinnt, Eintrag im Log                                       | ✅     |
 | M-6 | App neu starten                                                 | Keine Duplikate                                                               | ⬜     |
 
 ## Testprotokoll

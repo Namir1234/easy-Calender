@@ -6,12 +6,44 @@ Laufendes Protokoll des Projekts. Der neuste Eintrag steht oben.
 
 ## Aktueller Stand
 
-|                     |                                                                                                                                                             |
-| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Etappe**          | Alle sieben Etappen sind geschrieben (Version 0.10.1). Google und Outlook sind verbunden und lesend geprüft. Schreiben und Abgleich sind noch nicht geprüft |
-| **Als Nächstes**    | Je einen Kalender «Sync-Test» in Google und Outlook anlegen, als Paar verbinden, Testplan M-1 bis M-6                                                       |
-| **Blockiert durch** | nichts                                                                                                                                                      |
-| **Offen bei Namir** | Testkalender anlegen. Entscheiden, ob das Noser-Konto in der App bleiben soll                                                                               |
+|                     |                                                                                                                                                                         |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Etappe**          | Alle sieben Etappen sind gebaut und mit echten Konten geprüft (Version 0.10.2). Der Abgleich Google ↔ Outlook hat die Tests M-1 bis M-5 an zwei Testkalendern bestanden |
+| **Als Nächstes**    | Namir entscheidet, welche echten Kalender er abgleichen will. Offene Punkte: A-14, A-20, A-22, A-23, M-6                                                                |
+| **Blockiert durch** | nichts                                                                                                                                                                  |
+| **Offen bei Namir** | Doppelten Google-Kalender «Sync-Test» löschen. Entscheiden, ob das Noser-Konto in der App bleiben soll                                                                  |
+
+---
+
+## 2026-11-17 · Abgleich an echten Kalendern geprüft (Version 0.10.2)
+
+**Vorbereitet**
+
+- Namir hatte gemeldet, die Testkalender seien angelegt. Sie fehlten. Auf seinen Auftrag habe ich sie angelegt: «Sync-Test» im BMZ-Konto über das lokale Outlook, «Sync-Test» in Google über die Kalender-Seite im Browser.
+- Dabei ist in Google ein zweiter, gleichnamiger Kalender entstanden, weil der erste Klick scheinbar nichts tat. Er ist leer und kann gelöscht werden.
+
+**Geprüft** (installierte App, nur die zwei Testkalender, am Schluss wieder leer)
+
+- M-1: Termin in Google erstellt, erscheint in Outlook mit Titel, Zeit, Ort und Notiz.
+- M-2: In Outlook geändert, Änderung kommt in Google an.
+- Ganztägiger Termin von Outlook nach Google, mit richtigem Beginn und Ende.
+- M-4: Wöchentliche Serie von Google nach Outlook, vier Termine im Wochenabstand.
+- M-3: In Google gelöscht, verschwindet in Outlook.
+- M-5: Beide Seiten geändert, die jüngere Änderung gewinnt.
+- Nach jedem Schritt ein zweiter Lauf: «Alles auf dem gleichen Stand», kein Ping-Pong.
+
+**Gefunden und behoben**
+
+- Outlook verfälscht Umlaute in der Notiz beim Speichern: Aus «äöü» wird «äöü» plus Zeichenmüll. Titel und Ort sind nicht betroffen, das Lesen auch nicht. Das ist ein Fehler dieser Outlook-Version (16.0.20527). Vier andere Schreibwege (RTF, HTML, MAPI-Eigenschaft, Texteditor) lässt Outlook von aussen nicht zu.
+- Lösung (E-017): Notizen gehen nur mit ASCII nach Outlook («Zuerich»). Kommt eine solche Notiz beim Abgleich zurück, behält Google seine Fassung mit Umlauten.
+
+**Aufgefallen**
+
+- Der Versuch mit dem Texteditor hat Outlook zum Absturz gebracht. Es startet beim nächsten Zugriff wieder. Dieser Weg wird nicht verwendet.
+
+**Nicht geprüft**
+
+- M-6 (Neustart ohne Duplikate) als eigener Schritt, Ausnahmen einer Serie (bewusst nicht abgeglichen), A-14, A-20, A-22, A-23.
 
 ---
 
