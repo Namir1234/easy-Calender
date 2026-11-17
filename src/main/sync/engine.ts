@@ -1,5 +1,6 @@
 import type { NormalizedEvent } from '../../shared/types'
 import type { ProviderEvent } from '../providers/types'
+import { sameInAscii } from '../text'
 import { contentHash, identityHash } from './hash'
 
 /** Eine Seite eines Kalenderpaars: ein Kalender bei einem Anbieter. */
@@ -48,6 +49,23 @@ function plain(event: ProviderEvent): NormalizedEvent {
   delete copy.id
   delete copy.updatedAt
   return copy as NormalizedEvent
+}
+
+/**
+ * Der Termin der Quelle, wie er auf die Zielseite geschrieben wird. Hat die
+ * Quelle die Notiz nur in umschriebener Form («Zuerich» statt «Zürich»),
+ * bleibt die Notiz des Ziels stehen. So verliert Google keine Umlaute, nur
+ * weil der Termin in Outlook angefasst wurde.
+ */
+function forTarget(source: ProviderEvent, target: ProviderEvent): NormalizedEvent {
+  const event = plain(source)
+  if (
+    source.description !== target.description &&
+    sameInAscii(source.description, target.description)
+  ) {
+    event.description = target.description
+  }
+  return event
 }
 
 function reason(error: unknown): string {
@@ -116,10 +134,10 @@ export async function syncPair(a: SyncSide, b: SyncSide, links: LinkStore): Prom
         }
         const source = changedA && changedB ? newer(eventA, eventB) : changedA ? 'a' : 'b'
         if (source === 'a') {
-          const written = await b.update(link.bId, plain(eventA))
+          const written = await b.update(link.bId, forTarget(eventA, eventB))
           await links.save({ ...link, aHash: hashA, bHash: contentHash(written) })
         } else {
-          const written = await a.update(link.aId, plain(eventB))
+          const written = await a.update(link.aId, forTarget(eventB, eventA))
           await links.save({ ...link, aHash: contentHash(written), bHash: hashB })
         }
         result.updated++

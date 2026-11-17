@@ -264,6 +264,29 @@ describe('syncPair', () => {
     expect(b.titles()).toEqual(['Gut'])
   })
 
+  it('behält Umlaute in der Notiz, wenn die andere Seite sie nur umschrieben kennt', async () => {
+    const { a, b, run } = setup()
+    // Diese Seite speichert Notizen nur in ASCII, wie das lokale Outlook.
+    const fold = (text?: string): string | undefined => text?.replaceAll('ü', 'ue')
+    const create = b.create.bind(b)
+    const update = b.update.bind(b)
+    b.create = (event) => create({ ...event, description: fold(event.description) })
+    b.update = (id, event) => update(id, { ...event, description: fold(event.description) })
+    const event = a.add({ title: 'Ausflug', description: 'Treffpunkt Zürich' })
+    await run()
+    const twin = [...b.events.values()][0]
+    expect(twin.description).toBe('Treffpunkt Zuerich')
+
+    b.edit(twin.id, { title: 'Ausflug verschoben' })
+    await run()
+
+    expect(a.events.get(event.id)).toMatchObject({
+      title: 'Ausflug verschoben',
+      description: 'Treffpunkt Zürich'
+    })
+    expect((await run()).updated).toBe(0)
+  })
+
   it('überträgt Serien mit ihrer Regel', async () => {
     const { a, b, run } = setup()
     a.add({ title: 'Training', recurrence: 'FREQ=WEEKLY;BYDAY=TU,TH' })

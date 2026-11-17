@@ -117,6 +117,20 @@ describe('toOutlookItem', () => {
     })
     expect(toOutlookItem({ ...base, recurrence: 'SERIE' }).recurrence).toBe('keep')
   })
+
+  it('schreibt die Notiz nur mit ASCII, Titel und Ort bleiben unverändert', () => {
+    const sent = toOutlookItem({
+      ...base,
+      title: 'Zürich',
+      location: 'Café',
+      description: 'Grüsse aus Zürich, «café» für 5 €'
+    })
+    expect(sent).toMatchObject({
+      subject: 'Zürich',
+      location: 'Café',
+      body: 'Gruesse aus Zuerich, "cafe" fuer 5 EUR'
+    })
+  })
 })
 
 describe('OutlookBridge und OutlookLocalProvider', () => {

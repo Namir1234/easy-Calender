@@ -1,4 +1,5 @@
 import type { NormalizedEvent } from '../../shared/types'
+import { toAscii } from '../text'
 import { graphToRrule, rruleToGraph, type GraphRecurrence } from './microsoftRecurrence'
 import { SERIES_INSTANCE, seriesRule, type ProviderEvent } from './types'
 
@@ -141,7 +142,8 @@ export function toOutlookItem(event: NormalizedEvent): Record<string, unknown> {
   }
   return {
     subject: event.title,
-    body: event.description ?? '',
+    // Outlook verfälscht Umlaute in der Notiz beim Speichern, darum nur ASCII (E-017).
+    body: toAscii(event.description ?? ''),
     location: event.location ?? '',
     allDay: event.allDay,
     startUtc: event.allDay ? null : new Date(event.start).toISOString(),

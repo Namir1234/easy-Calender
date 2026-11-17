@@ -20,6 +20,7 @@ Wichtige technische Entscheidungen mit Begründung. Neue Entscheidungen kommen u
 | [E-014](#e-014-abgleich-über-listen-und-fingerabdrücke)               | 2026-11-16 | Abgleich über Listen und Fingerabdrücke                | gilt   |
 | [E-015](#e-015-serien-als-ganzes-ohne-ausnahmen)                      | 2026-11-16 | Serien als Ganzes, ohne Ausnahmen                      | gilt   |
 | [E-016](#e-016-outlook-über-das-lokal-installierte-outlook)           | 2026-11-17 | Outlook über das lokal installierte Outlook            | gilt   |
+| [E-017](#e-017-notizen-gehen-nur-mit-ascii-nach-outlook)              | 2026-11-17 | Notizen gehen nur mit ASCII nach Outlook               | gilt   |
 
 ---
 
@@ -126,3 +127,11 @@ Wichtige technische Entscheidungen mit Begründung. Neue Entscheidungen kommen u
 **Begründung:** Graph verlangt eine App-Registrierung bei Microsoft. TBZ und BMZ sperren diese für Lernende, und auch die Zustimmung zu fremden Apps kann gesperrt sein. Das lokale Outlook ist schon angemeldet und braucht weder Registrierung noch Freigabe.
 
 **Preis:** Es geht nur unter Windows mit Outlook (classic) und eingerichtetem Konto, nicht mit dem «neuen Outlook». Der Abgleich läuft nur, wenn der Rechner an ist. Outlook wird dafür im Hintergrund gestartet. Kalender haben keine eigene Farbe aus Outlook.
+
+## E-017: Notizen gehen nur mit ASCII nach Outlook
+
+**Entscheidung:** Beim Schreiben ins lokale Outlook wird die Notiz eines Termins nach ASCII umgeschrieben: «Zürich» wird «Zuerich», «café» wird «cafe», «€» wird «EUR». Titel und Ort bleiben unverändert. Beim Abgleich gilt: Unterscheiden sich zwei Notizen nur durch diese Umschrift, behält die Zielseite ihre eigene Fassung.
+
+**Begründung:** Outlook (classic) in der geprüften Version 16.0.20527 verfälscht Nicht-ASCII-Zeichen, wenn die Notiz über das Objektmodell gesetzt wird: Hinter jeder Folge solcher Zeichen entsteht Zeichenmüll. Andere Schreibwege (RTF, HTML, MAPI-Eigenschaft) nimmt Outlook von aussen nicht an. Eine lesbare Umschrift ist besser als Zeichenmüll. Die Regel beim Abgleich verhindert, dass Google seine Umlaute verliert, wenn ein Termin in Outlook angefasst wird.
+
+**Preis:** In Outlook stehen Notizen ohne Umlaute. Wird eine Notiz in Outlook inhaltlich geändert, wandert sie in dieser Form nach Google.
