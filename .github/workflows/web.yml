@@ -1,0 +1,57 @@
+# Baut die Handy-Version (web/) und veröffentlicht sie auf GitHub Pages:
+# https://namir1234.github.io/easy-Calender/
+name: Handy-Version
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'web/**'
+      - 'src/shared/**'
+      - 'src/main/providers/googleMapper.ts'
+      - 'src/main/providers/types.ts'
+      - 'src/renderer/src/components/EventForm.tsx'
+      - 'src/renderer/src/useColorScheme.ts'
+      - 'src/renderer/src/assets/main.css'
+      - 'package-lock.json'
+      - '.github/workflows/web.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      # Ohne Skripte: Electron und die Desktop-Werkzeuge braucht die Web-App nicht.
+      - run: npm ci --ignore-scripts
+      - run: npx vitest run web
+      - run: npm run web:build
+        env:
+          # Optional als Repository-Variable. Sonst gilt die ID aus web/src/config.ts.
+          WEB_GOOGLE_CLIENT_ID: ${{ vars.WEB_GOOGLE_CLIENT_ID }}
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: out-web
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

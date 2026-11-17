@@ -165,6 +165,17 @@ Schreibt die App einen Termin nach Outlook, sieht Outlook ihn danach vielleicht 
 - Regeln, die Outlook nicht kennt, werden nicht übertragen und in der App gemeldet.
 - In der Anzeige sind Serien in einzelne Termine aufgelöst. Wird dort einer geändert oder gelöscht, betrifft das nur diesen einen.
 
+## Handy-Version (Web-App)
+
+`web/` ist eine eigene kleine App ohne Server (E-019):
+
+- **Anmeldung:** Google Identity Services, Token-Modell (`web/src/google/auth.ts`). Das Zugriffs-Token liegt eine Stunde lang im `localStorage` des Browsers.
+- **Daten:** `GoogleCalendarApi` (`web/src/google/api.ts`) spricht per `fetch` mit der Calendar API und verwendet dieselbe Umwandlung wie die Desktop-App (`src/main/providers/googleMapper.ts`).
+- **Oberfläche:** `MobileCalendar` (FullCalendar mit Liste, Tag, Monat), Blätter von unten für Details und Kalender. Das Formular `EventForm` kommt aus der Desktop-App. Es ruft `window.api.createEvent` und `updateEvent` auf, die Web-App stellt diese zwei Aufrufe bereit.
+- **Einstellungen:** Sichtbarkeit und Farbe pro Kalender im `localStorage`, nur auf diesem Gerät.
+- **Offline-Start:** Ein Service Worker hält die App-Dateien bereit. Termine werden nicht zwischengespeichert.
+- **Veröffentlichung:** `.github/workflows/web.yml` testet, baut nach `out-web/` und stellt auf GitHub Pages.
+
 ## Sicherheit
 
 - Tokens liegen verschlüsselt im Electron `safeStorage` (Windows DPAPI), nie in Supabase und nie im Klartext auf der Festplatte.
@@ -173,3 +184,4 @@ Schreibt die App einen Termin nach Outlook, sieht Outlook ihn danach vielleicht 
 - Der Renderer hat über `contextBridge` nur Zugriff auf eine schmale, definierte API.
 - Google-Anmeldung über OAuth 2.0 «Desktop app» mit Loopback-Redirect und PKCE.
 - Microsoft-Anmeldung als öffentlicher Client mit PKCE und ohne Secret, Authority `common` für private Konten sowie Schul- und Firmenkonten.
+- Web-App: Content-Security-Policy erlaubt nur eigene Dateien und Google. Nur Umgebungsvariablen mit `WEB_` kommen in den Build, die Werte der Desktop-App (Client-Secret, Supabase) nie.

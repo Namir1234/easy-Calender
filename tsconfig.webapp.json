@@ -1,0 +1,9 @@
+{
+  "extends": "@electron-toolkit/tsconfig/tsconfig.web.json",
+  "include": ["web/src/**/*", "src/preload/*.d.ts"],
+  "compilerOptions": {
+    "composite": true,
+    "jsx": "react-jsx",
+    "types": ["vite/client"]
+  }
+}

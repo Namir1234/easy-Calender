@@ -22,6 +22,7 @@ Wichtige technische Entscheidungen mit Begründung. Neue Entscheidungen kommen u
 | [E-016](#e-016-outlook-über-das-lokal-installierte-outlook)           | 2026-11-17 | Outlook über das lokal installierte Outlook            | gilt   |
 | [E-017](#e-017-notizen-gehen-nur-mit-ascii-nach-outlook)              | 2026-11-17 | Notizen gehen nur mit ASCII nach Outlook               | gilt   |
 | [E-018](#e-018-assistent-mit-lokalem-modell-über-ollama)              | 2026-11-17 | Assistent mit lokalem Modell über Ollama               | gilt   |
+| [E-019](#e-019-handy-version-als-web-app-ohne-server)                 | 2026-11-17 | Handy-Version als Web-App ohne Server                  | gilt   |
 
 ---
 
@@ -146,3 +147,16 @@ Wichtige technische Entscheidungen mit Begründung. Neue Entscheidungen kommen u
 **Preis:** Ollama muss installiert sein und läuft im Hintergrund. Das Modell braucht 2 bis 3 GB Arbeitsspeicher, eine Antwort kann ein paar Sekunden dauern. Ein kleines Modell versteht nicht jede Formulierung. Darum wird nie ohne Bestätigung eingetragen.
 
 **Nachtrag 0.12.1:** Der Test mit dem echten Modell zeigte, dass es Tage erfindet und Kalender falsch wählt. Seither entscheidet die App selbst, was sie prüfen kann: Kalender (über Namen und Konto), ob ein Wann genannt ist, ob Wochentag, Uhrzeit und Titel zur Nachricht passen. Das Modell liefert nur noch den Vorschlag, den die App prüft.
+
+## E-019: Handy-Version als Web-App ohne Server
+
+**Entscheidung:** Die Handy-Version ist eine Web-App (`web/`), die man auf den Home-Bildschirm legt. Sie spricht im Browser direkt mit der Google Calendar API und meldet sich mit Google Identity Services an (Token-Modell, ohne Client-Secret). Veröffentlicht wird sie auf GitHub Pages.
+
+**Begründung:** Eine echte iPhone-App braucht einen Mac mit Xcode und, um dauerhaft auf dem Handy zu bleiben, ein Apple-Entwicklerkonto (99 $ im Jahr). Die Web-App läuft auf iPhone und Android, kostet nichts und teilt Formular, Farben und die Umwandlung der Termine mit der Desktop-App. Ohne eigenen Server gehen die Termine nur zwischen Handy und Google hin und her. GitHub Pages ist gratis, weil das Repository öffentlich ist.
+
+**Preis:**
+
+- Outlook (classic) läuft nur auf dem PC. Auf dem Handy erscheinen Outlook-Termine nur über den Abgleich mit Google, also wenn easy-Calender auf dem PC läuft.
+- Das Token gilt eine Stunde. Danach braucht es einen Tipp auf «Wieder anmelden». Einen dauerhaften Zugang (Refresh-Token) gäbe es nur mit einem Server, der das Client-Secret hält.
+- Kein Assistent auf dem Handy, weil Ollama auf dem PC läuft.
+- Für die Web-App braucht es einen eigenen Google-Client vom Typ «Webanwendung». Die Client-ID ist öffentlich, Google lässt sie nur von den eingetragenen Adressen aus zu.
