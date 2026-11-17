@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest'
-import { systemPrompt, toReply, type AssistantCalendar } from './interpret'
+import {
+  calendarNamedIn,
+  mainCalendar,
+  mentionsWhen,
+  mismatch,
+  systemPrompt,
+  toReply,
+  type AssistantCalendar
+} from './interpret'
 import { OllamaClient, pickModel } from './ollama'
 import { AssistantService, parseTurns } from './service'
 
@@ -158,5 +166,140 @@ describe('AssistantService', () => {
     const reply = await service(down).ask([{ role: 'user', text: 'x' }])
     expect(reply).toEqual({ kind: 'problem', text: expect.stringContaining('Ollama läuft nicht') })
     expect(await service(down).status()).toMatchObject({ ready: false })
+  })
+
+  it('fragt nach, wenn die Nachricht nicht sagt, wann (das Modell hat geraten)', async () => {
+    const fake = (async (url: string) =>
+      new Response(
+        JSON.stringify(
+          url.endsWith('/api/tags')
+            ? { models: [{ name: 'qwen2.5:3b' }] }
+            : { message: { content: JSON.stringify(answer) } }
+        ),
+        { status: 200 }
+      )) as typeof fetch
+    const reply = await service(fake).ask([{ role: 'user', text: 'Zahnarzt' }])
+    expect(reply).toEqual({ kind: 'question', text: 'Wann ist «Zahnarzt»?' })
+  })
+
+  it('ersetzt eine ausufernde Rückfrage des Modells durch eine eigene', async () => {
+    const rambling = {
+      ...answer,
+      action: 'ask',
+      question: 'Bitte geben Sie den Tag ein (YYYY-MM-DD). Ohne Uhrzeit: allDay true …'
+    }
+    const fake = (async (url: string) =>
+      new Response(
+        JSON.stringify(
+          url.endsWith('/api/tags')
+            ? { models: [{ name: 'qwen2.5:3b' }] }
+            : { message: { content: JSON.stringify(rambling) } }
+        ),
+        { status: 200 }
+      )) as typeof fetch
+    expect(await service(fake).ask([{ role: 'user', text: 'Kino mit Lea' }])).toEqual({
+      kind: 'question',
+      text: 'Wann ist das? Sag mir Tag und Uhrzeit.'
+    })
+    expect(await service(fake).ask([{ role: 'user', text: 'Kino am Freitag' }])).toEqual({
+      kind: 'question',
+      text: 'Kannst du mir noch etwas mehr dazu sagen?'
+    })
+  })
+})
+
+describe('mainCalendar', () => {
+  it('nimmt den Google-Hauptkalender, sonst «Kalender», Geburtstage zuletzt', () => {
+    const list = (...names: Array<[string, string]>): AssistantCalendar[] =>
+      names.map(([name, account], i) => ({ key: `k${i}`, id: name, name, account }))
+    expect(
+      mainCalendar(
+        list(['Geburtstage', 'a@x.ch'], ['Kalender', 'a@x.ch'], ['ich@gmail.com', 'ich@gmail.com'])
+      )?.id
+    ).toBe('ich@gmail.com')
+    expect(mainCalendar(list(['Geburtstage', 'a@x.ch'], ['Kalender', 'a@x.ch']))?.id).toBe(
+      'Kalender'
+    )
+    expect(mainCalendar(list(['Feiertage', 'a@x.ch'], ['Familie', 'a@x.ch']))?.id).toBe('Familie')
+  })
+})
+
+describe('mismatch', () => {
+  // Donnerstag, 19. November 2026, 17:00 bis 18:00 Ortszeit
+  const thursday = {
+    title: 'Coiffeur',
+    start: new Date(2026, 10, 19, 17, 0).toISOString(),
+    end: new Date(2026, 10, 19, 18, 0).toISOString(),
+    allDay: false,
+    timeZone: 'Europe/Zurich',
+    recurrence: null
+  }
+
+  it('lässt einen passenden Vorschlag durch', () => {
+    expect(mismatch(thursday, ['Coiffeur', 'Donnerstag 17 Uhr'])).toBeNull()
+    expect(mismatch(thursday, ['Donnerstag um 17:00 zum Coiffeur'])).toBeNull()
+    expect(mismatch(thursday, ['Coiffeur am Donnerstag um 5 Uhr'])).toBeNull()
+  })
+
+  it('fragt nach bei falschem Wochentag, falscher Uhrzeit oder erfundenem Titel', () => {
+    expect(mismatch(thursday, ['Coiffeur Dienstag 17 Uhr'])).toContain('Dienstag')
+    expect(mismatch(thursday, ['Coiffeur Donnerstag 14 Uhr'])).toContain('Uhr')
+    expect(mismatch({ ...thursday, title: 'Termin' }, ['Donnerstag 17 Uhr'])).toBe(
+      'Was soll ich eintragen?'
+    )
+  })
+
+  it('prüft Tag und Zeit an der letzten Nachricht, die welche nennt', () => {
+    expect(mismatch(thursday, ['Dienstag 9 Uhr', 'nein, Donnerstag 17 Uhr Coiffeur'])).toBeNull()
+    expect(mismatch(thursday, ['Coiffeur Donnerstag 17 Uhr', 'mit Lea'])).toBeNull()
+  })
+
+  it('akzeptiert einen längeren Titel aus einem genannten Wort', () => {
+    expect(
+      mismatch({ ...thursday, title: 'Coiffeurtermin' }, ['Donnerstag 17 Uhr Coiffeur'])
+    ).toBeNull()
+  })
+})
+
+describe('mentionsWhen', () => {
+  it('erkennt Tag- und Zeitangaben', () => {
+    expect(mentionsWhen(['morgen Zahnarzt'])).toBe(true)
+    expect(mentionsWhen(['Zahnarzt 14 Uhr'])).toBe(true)
+    expect(mentionsWhen(['Ausflug am Freitag'])).toBe(true)
+    expect(mentionsWhen(['Zahnarzt'])).toBe(false)
+    expect(mentionsWhen(['Kino mit Lea'])).toBe(false)
+  })
+})
+
+describe('calendarNamedIn', () => {
+  const list: AssistantCalendar[] = [
+    { key: 'k1', id: 'privat', name: 'Privat', account: 'ich@gmail.com' },
+    { key: 'k2', id: 'bms', name: 'Schule BMS', account: 'ich@gmail.com' },
+    { key: 'k3', id: 'noser', name: 'Kalender', account: 'ich@noseryoung.ch' }
+  ]
+  const named = (text: string): string | undefined => calendarNamedIn([text], list)?.id
+
+  it('findet den Kalender über seinen Namen', () => {
+    expect(named('Freitag Ausflug im Schulkalender')).toBe('bms')
+    expect(named('Prüfung BMS am Montag')).toBe('bms')
+  })
+
+  it('findet den Kalender über die Domain des Kontos', () => {
+    expect(named('Montag arbeiten bei Noser')).toBe('noser')
+  })
+
+  it('nimmt bei mehreren Kalendern desselben Kontos den Hauptkalender', () => {
+    const outlook: AssistantCalendar[] = [
+      { key: 'k1', id: 'geb', name: 'Geburtstage', account: 'ich@noseryoung.ch' },
+      { key: 'k2', id: 'haupt', name: 'Kalender', account: 'ich@noseryoung.ch' },
+      { key: 'k3', id: 'bms-geb', name: 'Geburtstage', account: 'ich@bms.ch' }
+    ]
+    expect(calendarNamedIn(['Montag arbeiten bei Noser'], outlook)?.id).toBe('haupt')
+  })
+
+  it('nennt keinen, wenn nichts passt; «Kalender» und gmail zählen nicht', () => {
+    expect(named('morgen Mittagessen mit Mama')).toBeUndefined()
+    expect(named('in den Kalender eintragen')).toBeUndefined()
+    expect(named('gmail')).toBeUndefined()
   })
 })

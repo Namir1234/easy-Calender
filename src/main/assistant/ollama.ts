@@ -16,6 +16,9 @@ type Fetch = typeof fetch
 /** Eine Meldung, die direkt in der Oberfläche stehen kann. */
 export class OllamaError extends Error {}
 
+/** Das Modell hat kein gültiges JSON geliefert (meist hängen geblieben). */
+export class UnreadableAnswer extends OllamaError {}
+
 /** Spricht mit dem lokal installierten Ollama. */
 export class OllamaClient {
   constructor(
@@ -61,12 +64,14 @@ export class OllamaClient {
       format: schema,
       stream: false,
       // Kein Würfeln: Gleiche Eingabe, gleiche Antwort.
-      options: { temperature: 0 }
+      // Höchstens so viele Tokens: Kleine Modelle bleiben sonst manchmal
+      // in einer Schleife hängen, bis die Zeit abläuft.
+      options: { temperature: 0, num_predict: 300 }
     })
     try {
       return JSON.parse(data.message?.content ?? '')
     } catch {
-      throw new OllamaError('Das Modell hat keine lesbare Antwort gegeben. Versuch es nochmals.')
+      throw new UnreadableAnswer('Das habe ich nicht verstanden. Schreib es bitte etwas anders.')
     }
   }
 }

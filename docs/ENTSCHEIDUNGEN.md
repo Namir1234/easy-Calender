@@ -144,3 +144,5 @@ Wichtige technische Entscheidungen mit Begründung. Neue Entscheidungen kommen u
 **Begründung:** Namir wollte keine laufenden Kosten. Die API von Anthropic kostet pro Anfrage, Copilot bietet fremden Apps keinen Zugang, und Gratis-Kontingente von Cloud-Anbietern verwenden die Eingaben oft zum Training. Ein lokales Modell kostet nichts, und Termine verlassen den Rechner nicht. Für das Eintragen einfacher Termine reicht ein kleines Modell, wenn die App ihm das Rechnen mit Daten abnimmt (Kalenderblatt im Prompt) und seine Antwort streng prüft.
 
 **Preis:** Ollama muss installiert sein und läuft im Hintergrund. Das Modell braucht 2 bis 3 GB Arbeitsspeicher, eine Antwort kann ein paar Sekunden dauern. Ein kleines Modell versteht nicht jede Formulierung. Darum wird nie ohne Bestätigung eingetragen.
+
+**Nachtrag 0.12.1:** Der Test mit dem echten Modell zeigte, dass es Tage erfindet und Kalender falsch wählt. Seither entscheidet die App selbst, was sie prüfen kann: Kalender (über Namen und Konto), ob ein Wann genannt ist, ob Wochentag, Uhrzeit und Titel zur Nachricht passen. Das Modell liefert nur noch den Vorschlag, den die App prüft.

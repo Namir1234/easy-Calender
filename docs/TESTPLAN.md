@@ -38,39 +38,44 @@ Ausführen mit `npm test`.
 
 Diese Fälle werden an der gestarteten App geprüft, ohne echte Konten.
 
-| Nr.  | Schritt                                                                     | Erwartetes Ergebnis                                                                              | Status                           |
-| ---- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ | -------------------------------- |
-| A-1  | App starten ohne `.env`                                                     | Vier Demo-Kalender, Status «Demo-Daten», keine Fehler in der Konsole                             | ✅                               |
-| A-2  | Kalender in der Seitenleiste abwählen                                       | Seine Termine verschwinden, die Einstellung bleibt nach Neuladen                                 | ✅                               |
-| A-3  | Zwischen Monat, Woche und Tag wechseln                                      | Termine werden für den neuen Zeitraum geladen                                                    | ✅                               |
-| A-4  | Termin anklicken, dann Escape                                               | Popover mit Details öffnet neben dem Termin und schliesst wieder                                 | ✅                               |
-| A-5  | Windows auf hell bzw. dunkel stellen                                        | Die App folgt der Einstellung                                                                    | ✅                               |
-| A-6  | Ungültige Eingaben über die IPC-API schicken                                | Der Main-Prozess lehnt sie mit einer Fehlermeldung ab                                            | ✅                               |
-| A-7  | In der Oberfläche auf Node zugreifen                                        | Nicht möglich, nur `window.api` ist vorhanden                                                    | ✅                               |
-| A-8  | App mit Supabase-Zugangsdaten starten                                       | Status «Supabase verbunden», Demo-Daten liegen in der Datenbank                                  | ✅                               |
-| A-9  | Installer bauen und die paketierte App starten                              | `dist/easy-calender-0.1.0-setup.exe` entsteht, die App läuft                                     | ✅                               |
-| A-10 | «Google-Konto verbinden» ohne Zugangsdaten in `.env`                        | Verständliche Fehlermeldung, die App läuft weiter                                                | ✅                               |
-| A-11 | Google-Konto verbinden                                                      | Browser öffnet die Anmeldung, danach erscheinen die Google-Kalender, die Demo-Daten verschwinden | ✅                               |
-| A-12 | Termine eines Google-Kalenders anzeigen                                     | Termine stehen zur richtigen Zeit im Kalender, ganztägige oben                                   | ✅                               |
-| A-13 | App neu starten mit verbundenem Google-Konto                                | Kalender und Termine sind ohne neue Anmeldung da                                                 | ✅                               |
-| A-14 | Google-Konto entfernen                                                      | Kalender verschwinden, bleibt kein Konto, kommen die Demo-Daten zurück                           | ⬜                               |
-| A-15 | Installer ausführen                                                         | App ist installiert, Verknüpfungen auf Desktop und im Startmenü, App startet                     | ✅                               |
-| A-16 | Während der Anmeldung «Link kopieren» und «Abbrechen»                       | Link liegt in der Zwischenablage, nach dem Abbruch ist der Knopf wieder frei                     | ✅                               |
-| A-17 | Termin erstellen über «Neuer Termin»                                        | Formular öffnet sich, nach dem Speichern steht der Termin im Kalender                            | ✅ (Beispieldaten)               |
-| A-18 | Im Formular das Ende vor den Beginn setzen                                  | Meldung im Formular, nichts wird gespeichert                                                     | ✅                               |
-| A-19 | Termin anklicken, «Bearbeiten», Titel ändern                                | Der Termin trägt den neuen Titel                                                                 | ✅ (Beispieldaten)               |
-| A-20 | Termin anklicken, «Löschen»                                                 | Nach der Rückfrage ist der Termin weg                                                            | ⬜                               |
-| A-21 | «Outlook verbinden»                                                         | Ohne Anmeldung erscheinen die Konten und Kalender aus Outlook (classic)                          | ✅                               |
-| A-24 | Brückenskript lesend gegen das lokale Outlook                               | Konten, Kalender und Termine kommen richtig an                                                   | ✅                               |
-| A-25 | Kalender «Aus der App entfernen» und unter «Entfernte Kalender» zurückholen | Kalender und seine Termine verschwinden bzw. kommen zurück, beim Anbieter ändert sich nichts     | ✅ (entfernen), ⬜ (zurückholen) |
-| A-26 | «Nur ganztägige Termine zeigen»                                             | Termine mit Uhrzeit dieses Kalenders verschwinden                                                | ✅                               |
-| A-27 | Farbe eines Kalenders ändern                                                | Häkchen und Termine tragen die neue Farbe, auch nach einem Neustart                              | ⬜                               |
-| A-28 | «Neuer Kalender» in einem Outlook-Konto                                     | Der Kalender erscheint in der App und in Outlook                                                 | ⬜                               |
-| A-29 | «Assistent» ohne Ollama                                                     | Spalte zeigt eine Anleitung, Senden ist gesperrt                                                 | ✅                               |
-| A-30 | Assistent: «morgen 14 Uhr Zahnarzt»                                         | Vorschlag mit richtigem Tag und Zeit, nach «Eintragen» steht der Termin im Kalender              | ⬜                               |
-| A-31 | Assistent: unklare Nachricht («Zahnarzt»)                                   | Rückfrage statt Eintrag                                                                          | ⬜                               |
-| A-22 | Fenster schliessen mit «im Hintergrund weiterlaufen»                        | Die App bleibt im Infobereich, ein Klick auf das Symbol öffnet sie wieder                        | ⬜                               |
-| A-23 | «Mit Windows starten» einschalten, neu anmelden                             | Die App startet ohne Fenster im Infobereich                                                      | ⬜                               |
+| Nr.  | Schritt                                                                     | Erwartetes Ergebnis                                                                              | Status                                           |
+| ---- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------ |
+| A-1  | App starten ohne `.env`                                                     | Vier Demo-Kalender, Status «Demo-Daten», keine Fehler in der Konsole                             | ✅                                               |
+| A-2  | Kalender in der Seitenleiste abwählen                                       | Seine Termine verschwinden, die Einstellung bleibt nach Neuladen                                 | ✅                                               |
+| A-3  | Zwischen Monat, Woche und Tag wechseln                                      | Termine werden für den neuen Zeitraum geladen                                                    | ✅                                               |
+| A-4  | Termin anklicken, dann Escape                                               | Popover mit Details öffnet neben dem Termin und schliesst wieder                                 | ✅                                               |
+| A-5  | Windows auf hell bzw. dunkel stellen                                        | Die App folgt der Einstellung                                                                    | ✅                                               |
+| A-6  | Ungültige Eingaben über die IPC-API schicken                                | Der Main-Prozess lehnt sie mit einer Fehlermeldung ab                                            | ✅                                               |
+| A-7  | In der Oberfläche auf Node zugreifen                                        | Nicht möglich, nur `window.api` ist vorhanden                                                    | ✅                                               |
+| A-8  | App mit Supabase-Zugangsdaten starten                                       | Status «Supabase verbunden», Demo-Daten liegen in der Datenbank                                  | ✅                                               |
+| A-9  | Installer bauen und die paketierte App starten                              | `dist/easy-calender-0.1.0-setup.exe` entsteht, die App läuft                                     | ✅                                               |
+| A-10 | «Google-Konto verbinden» ohne Zugangsdaten in `.env`                        | Verständliche Fehlermeldung, die App läuft weiter                                                | ✅                                               |
+| A-11 | Google-Konto verbinden                                                      | Browser öffnet die Anmeldung, danach erscheinen die Google-Kalender, die Demo-Daten verschwinden | ✅                                               |
+| A-12 | Termine eines Google-Kalenders anzeigen                                     | Termine stehen zur richtigen Zeit im Kalender, ganztägige oben                                   | ✅                                               |
+| A-13 | App neu starten mit verbundenem Google-Konto                                | Kalender und Termine sind ohne neue Anmeldung da                                                 | ✅                                               |
+| A-14 | Google-Konto entfernen                                                      | Kalender verschwinden, bleibt kein Konto, kommen die Demo-Daten zurück                           | ⬜                                               |
+| A-15 | Installer ausführen                                                         | App ist installiert, Verknüpfungen auf Desktop und im Startmenü, App startet                     | ✅                                               |
+| A-16 | Während der Anmeldung «Link kopieren» und «Abbrechen»                       | Link liegt in der Zwischenablage, nach dem Abbruch ist der Knopf wieder frei                     | ✅                                               |
+| A-17 | Termin erstellen über «Neuer Termin»                                        | Formular öffnet sich, nach dem Speichern steht der Termin im Kalender                            | ✅ (Beispieldaten)                               |
+| A-18 | Im Formular das Ende vor den Beginn setzen                                  | Meldung im Formular, nichts wird gespeichert                                                     | ✅                                               |
+| A-19 | Termin anklicken, «Bearbeiten», Titel ändern                                | Der Termin trägt den neuen Titel                                                                 | ✅ (Beispieldaten)                               |
+| A-20 | Termin anklicken, «Löschen»                                                 | Nach der Rückfrage ist der Termin weg                                                            | ⬜                                               |
+| A-21 | «Outlook verbinden»                                                         | Ohne Anmeldung erscheinen die Konten und Kalender aus Outlook (classic)                          | ✅                                               |
+| A-24 | Brückenskript lesend gegen das lokale Outlook                               | Konten, Kalender und Termine kommen richtig an                                                   | ✅                                               |
+| A-25 | Kalender «Aus der App entfernen» und unter «Entfernte Kalender» zurückholen | Kalender und seine Termine verschwinden bzw. kommen zurück, beim Anbieter ändert sich nichts     | ✅ (entfernen), ⬜ (zurückholen)                 |
+| A-26 | «Nur ganztägige Termine zeigen»                                             | Termine mit Uhrzeit dieses Kalenders verschwinden                                                | ✅                                               |
+| A-27 | Farbe eines Kalenders ändern                                                | Häkchen und Termine tragen die neue Farbe, auch nach einem Neustart                              | ⬜                                               |
+| A-28 | «Neuer Kalender» in einem Outlook-Konto                                     | Der Kalender erscheint in der App und in Outlook                                                 | ⬜                                               |
+| A-29 | «Assistent» ohne Ollama                                                     | Spalte zeigt eine Anleitung, Senden ist gesperrt                                                 | ✅                                               |
+| A-30 | Assistent: «morgen 14 Uhr Zahnarzt»                                         | Vorschlag mit richtigem Tag, Zeit und Kalender                                                   | ✅ Vorschlag geprüft, «Eintragen» nicht gedrückt |
+| A-31 | Assistent: unklare Nachricht («Kino mit Lea»)                               | Rückfrage statt Eintrag, die Antwort darauf ergibt den Vorschlag                                 | ✅                                               |
+| A-22 | Fenster schliessen mit «im Hintergrund weiterlaufen»                        | Die App bleibt im Infobereich, ein Klick auf das Symbol öffnet sie wieder                        | ⬜                                               |
+| A-23 | «Mit Windows starten» einschalten, neu anmelden                             | Die App startet ohne Fenster im Infobereich                                                      | ⬜                                               |
+
+### 2026-11-17 · Version 0.12.1
+
+- `npm test`: 114 von 114 Tests bestanden. `npm run typecheck` und `npm run lint` ohne Befund.
+- A-30 und A-31 an der installierten App mit Ollama und `qwen2.5:3b` geprüft (Sätze im Journal).
 
 ### 2026-11-17 · Version 0.12.0
 
