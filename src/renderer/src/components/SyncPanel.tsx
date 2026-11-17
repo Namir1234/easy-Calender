@@ -29,8 +29,13 @@ function SyncPanel({ accounts, calendars, onSynced, onError }: Props): React.JSX
   }
   const googleCalendars = ofProvider('google')
   const outlookCalendars = ofProvider('microsoft')
-  const nameOf = (id: string): string =>
-    calendars.find((calendar) => calendar.id === id)?.name ?? 'Unbekannter Kalender'
+  /** Name mit Konto, weil Kalender in mehreren Konten gleich heissen können. */
+  const nameOf = (id: string): string => {
+    const calendar = calendars.find((entry) => entry.id === id)
+    if (!calendar) return 'Unbekannter Kalender'
+    const account = accounts.find((entry) => entry.id === calendar.accountId)
+    return account ? `${calendar.name} (${account.email})` : calendar.name
+  }
 
   const applyStatus = useCallback(
     (next: SyncStatus) => {
@@ -144,7 +149,7 @@ function SyncPanel({ accounts, calendars, onSynced, onError }: Props): React.JSX
             <select value={googleId} onChange={(event) => setGoogleId(event.target.value)}>
               {googleCalendars.map((calendar) => (
                 <option key={calendar.id} value={calendar.id}>
-                  {calendar.name}
+                  {nameOf(calendar.id)}
                 </option>
               ))}
             </select>
@@ -154,7 +159,7 @@ function SyncPanel({ accounts, calendars, onSynced, onError }: Props): React.JSX
             <select value={outlookId} onChange={(event) => setOutlookId(event.target.value)}>
               {outlookCalendars.map((calendar) => (
                 <option key={calendar.id} value={calendar.id}>
-                  {calendar.name}
+                  {nameOf(calendar.id)}
                 </option>
               ))}
             </select>
