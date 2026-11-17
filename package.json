@@ -1,6 +1,6 @@
 {
   "name": "easy-calender",
-  "version": "0.10.2",
+  "version": "0.11.0",
   "description": "Desktop-App, die Google- und Outlook-Kalender bidirektional synchronisiert",
   "main": "./out/main/index.js",
   "author": "Namir",

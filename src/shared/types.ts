@@ -18,6 +18,18 @@ export interface Calendar {
   syncEnabled: boolean
   /** Ob der Kalender in der kombinierten Ansicht angezeigt wird */
   visible: boolean
+  /** Aus der App entfernt: erscheint weder in der Liste noch im Kalender */
+  hidden?: boolean
+  /** Von diesem Kalender werden nur ganztägige Termine gezeigt */
+  allDayOnly?: boolean
+}
+
+/** Einstellungen eines Kalenders, die nur auf diesem Gerät gelten. */
+export interface CalendarOptions {
+  hidden?: boolean
+  allDayOnly?: boolean
+  /** Eigene Farbe (`#rrggbb`). Ohne Angabe gilt die Farbe des Anbieters. */
+  color?: string
 }
 
 export type EventStatus = 'confirmed' | 'tentative' | 'cancelled'
@@ -88,6 +100,8 @@ export interface Settings {
   autostart: boolean
   /** Fenster schliessen beendet die App nicht, sie läuft im Infobereich weiter */
   closeToTray: boolean
+  /** Einstellungen pro Kalender, nach der ID des Kalenders in der App */
+  calendars: Record<string, CalendarOptions>
 }
 
 export interface DateRange {
@@ -127,6 +141,10 @@ export interface AppApi {
   removeAccount(accountId: string): Promise<void>
   listCalendars(): Promise<Calendar[]>
   setCalendarVisible(calendarId: string, visible: boolean): Promise<void>
+  /** Ersetzt die Einstellungen eines Kalenders (Farbe, entfernt, nur ganztägig). */
+  setCalendarOptions(calendarId: string, options: CalendarOptions): Promise<void>
+  /** Legt in einem Outlook-Konto einen neuen, leeren Kalender an. */
+  createCalendar(accountId: string, name: string): Promise<void>
   listEvents(range: DateRange): Promise<EventsResult>
   createEvent(calendarId: string, input: EventInput): Promise<CalendarEvent>
   updateEvent(calendarId: string, eventId: string, input: EventInput): Promise<CalendarEvent>

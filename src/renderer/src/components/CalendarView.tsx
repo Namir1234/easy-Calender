@@ -60,7 +60,7 @@ function CalendarView({
   // Der Main-Prozess fragt nur sichtbare Kalender ab. Ändert sich die
   // Auswahl oder die Kalenderliste, wird darum neu geladen.
   const visibleKey = calendars
-    .filter((calendar) => calendar.visible)
+    .filter((calendar) => calendar.visible && !calendar.hidden)
     .map((calendar) => calendar.id)
     .join(',')
 
@@ -90,7 +90,7 @@ function CalendarView({
     const byId = new Map(calendars.map((calendar) => [calendar.id, calendar]))
     return events.flatMap((event) => {
       const calendar = byId.get(event.calendarId)
-      if (!calendar || !calendar.visible) return []
+      if (!calendar || !calendar.visible || calendar.hidden) return []
       return [
         {
           id: event.id,
