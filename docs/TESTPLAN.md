@@ -8,27 +8,28 @@ Was getestet wird und mit welchem Ergebnis. Die Spalte «Status» wird nach jede
 
 Ausführen mit `npm test`.
 
-| Bereich        | Was wird geprüft                                                                                                                                 | Status |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | ------ |
-| Konfiguration  | Supabase-Zugangsdaten lesen, ungültige URLs und geheime Schlüssel ablehnen                                                                       | ✅     |
-| Zeiträume      | Datum umwandeln, ungültige oder zu lange Zeiträume vom Renderer ablehnen                                                                         | ✅     |
-| Demo-Provider  | Wochentage, Zwei-Wochen-Rhythmus, ganztägige Termine, eindeutige IDs                                                                             | ✅     |
-| Datenschicht   | Arbeitsspeicher-Variante: Demo-Daten anlegen, Sichtbarkeit merken, Fehlerfälle                                                                   | ✅     |
-| Datenschicht   | Supabase-Variante gegen eine echte Datenbank                                                                                                     | ⬜     |
-| Datenschicht   | Konto speichern mit Kalender-Abgleich, Konto entfernen, Demo-Konten entfernen                                                                    | ✅     |
-| Konfiguration  | Google-Zugangsdaten lesen und prüfen                                                                                                             | ✅     |
-| Anmeldung      | Rückweg vom Browser: richtiger und falscher `state`, Abbruch im Browser und in der App, Zeitüberschreitung                                       | ✅     |
-| Google-Mapper  | Termine mit Uhrzeit, ganztägig, Zeitzone, Serie, Status, unvollständige Termine                                                                  | ✅     |
-| Eingabeprüfung | Termine von der Oberfläche: Zeiten, Zeitzone, Längen, Wiederholung, Unsinn                                                                       | ✅     |
-| Sync-Engine    | Neu, geändert, gelöscht in beide Richtungen, Konflikt, Wiederherstellen, kein Ping-Pong, Sicherheitsstopp, Fehler bei einzelnen Terminen, Serien | ✅     |
-| Graph-Mapper   | Outlook-Termine lesen und schreiben, Uhrzeit in der Zeitzone des Termins                                                                         | ✅     |
-| Serien         | RRULE ↔ Graph-Format hin und zurück, Ablehnen nicht abbildbarer Regeln                                                                           | ✅     |
-| Mapper         | Google ↔ Graph: Titel, Ort, Beschreibung                                                                                                         | ⬜     |
-| Mapper         | Zeitzonen                                                                                                                                        | ⬜     |
-| Mapper         | Ganztägige Termine                                                                                                                               | ⬜     |
-| Mapper         | RRULE-Fälle (täglich, wöchentlich, monatlich, jährlich, mit Ende oder Anzahl)                                                                    | ⬜     |
-| Sync-Engine    | Hash und Loop-Schutz                                                                                                                             | ⬜     |
-| Sync-Engine    | Konfliktlösung mit gemockten Providern                                                                                                           | ⬜     |
+| Bereich         | Was wird geprüft                                                                                                                                 | Status |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | ------ |
+| Konfiguration   | Supabase-Zugangsdaten lesen, ungültige URLs und geheime Schlüssel ablehnen                                                                       | ✅     |
+| Zeiträume       | Datum umwandeln, ungültige oder zu lange Zeiträume vom Renderer ablehnen                                                                         | ✅     |
+| Demo-Provider   | Wochentage, Zwei-Wochen-Rhythmus, ganztägige Termine, eindeutige IDs                                                                             | ✅     |
+| Datenschicht    | Arbeitsspeicher-Variante: Demo-Daten anlegen, Sichtbarkeit merken, Fehlerfälle                                                                   | ✅     |
+| Datenschicht    | Supabase-Variante gegen eine echte Datenbank                                                                                                     | ⬜     |
+| Datenschicht    | Konto speichern mit Kalender-Abgleich, Konto entfernen, Demo-Konten entfernen                                                                    | ✅     |
+| Konfiguration   | Google-Zugangsdaten lesen und prüfen                                                                                                             | ✅     |
+| Anmeldung       | Rückweg vom Browser: richtiger und falscher `state`, Abbruch im Browser und in der App, Zeitüberschreitung                                       | ✅     |
+| Google-Mapper   | Termine mit Uhrzeit, ganztägig, Zeitzone, Serie, Status, unvollständige Termine                                                                  | ✅     |
+| Eingabeprüfung  | Termine von der Oberfläche: Zeiten, Zeitzone, Längen, Wiederholung, Unsinn                                                                       | ✅     |
+| Sync-Engine     | Neu, geändert, gelöscht in beide Richtungen, Konflikt, Wiederherstellen, kein Ping-Pong, Sicherheitsstopp, Fehler bei einzelnen Terminen, Serien | ✅     |
+| Graph-Mapper    | Outlook-Termine lesen und schreiben, Uhrzeit in der Zeitzone des Termins                                                                         | ✅     |
+| Serien          | RRULE ↔ Graph-Format hin und zurück, Ablehnen nicht abbildbarer Regeln                                                                           | ✅     |
+| Lokales Outlook | Mapper, Serien ↔ Outlook-Muster, Brücke zum PowerShell-Skript (mit Attrappe)                                                                     | ✅     |
+| Mapper          | Google ↔ Graph: Titel, Ort, Beschreibung                                                                                                         | ⬜     |
+| Mapper          | Zeitzonen                                                                                                                                        | ⬜     |
+| Mapper          | Ganztägige Termine                                                                                                                               | ⬜     |
+| Mapper          | RRULE-Fälle (täglich, wöchentlich, monatlich, jährlich, mit Ende oder Anzahl)                                                                    | ⬜     |
+| Sync-Engine     | Hash und Loop-Schutz                                                                                                                             | ⬜     |
+| Sync-Engine     | Konfliktlösung mit gemockten Providern                                                                                                           | ⬜     |
 
 ## Tests an der laufenden App
 
@@ -56,9 +57,16 @@ Diese Fälle werden an der gestarteten App geprüft, ohne echte Konten.
 | A-18 | Im Formular das Ende vor den Beginn setzen            | Meldung im Formular, nichts wird gespeichert                                                     | ✅                 |
 | A-19 | Termin anklicken, «Bearbeiten», Titel ändern          | Der Termin trägt den neuen Titel                                                                 | ✅ (Beispieldaten) |
 | A-20 | Termin anklicken, «Löschen»                           | Nach der Rückfrage ist der Termin weg                                                            | ⬜                 |
-| A-21 | Microsoft-Konto verbinden                             | Browser öffnet die Anmeldung, danach erscheinen die Outlook-Kalender                             | ⬜                 |
+| A-21 | «Outlook verbinden»                                   | Ohne Anmeldung erscheinen die Konten und Kalender aus Outlook (classic)                          | ⬜                 |
+| A-24 | Brückenskript lesend gegen das lokale Outlook         | Konten, Kalender und Termine kommen richtig an                                                   | ✅                 |
 | A-22 | Fenster schliessen mit «im Hintergrund weiterlaufen»  | Die App bleibt im Infobereich, ein Klick auf das Symbol öffnet sie wieder                        | ⬜                 |
 | A-23 | «Mit Windows starten» einschalten, neu anmelden       | Die App startet ohne Fenster im Infobereich                                                      | ⬜                 |
+
+### 2026-11-17 · Version 0.10.0
+
+- `npm test`: 87 von 87 Tests bestanden. `npm run typecheck` und `npm run lint` ohne Befund.
+- A-24 bestanden: zwei Konten, je drei Kalender, Termine mit Uhrzeit, ganztägige, Vorkommen und Serien, Umlaute und Notizen.
+- **Nicht geprüft:** A-21, Schreiben ins lokale Outlook, M-1 bis M-6.
 
 ### 2026-11-17 · Version 0.9.0 mit echtem Google-Konto
 

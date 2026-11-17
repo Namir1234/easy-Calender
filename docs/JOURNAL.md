@@ -6,12 +6,40 @@ Laufendes Protokoll des Projekts. Der neuste Eintrag steht oben.
 
 ## Aktueller Stand
 
-|                     |                                                                                                                                      |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| **Etappe**          | Alle sieben Etappen sind geschrieben (Version 0.9.0). Google ist mit dem echten Konto geprüft, Microsoft und der Abgleich noch nicht |
-| **Als Nächstes**    | App bei Microsoft registrieren, Outlook verbinden, dann den Abgleich mit zwei Testkalendern prüfen (Testplan M-1 bis M-6)            |
-| **Blockiert durch** | TBZ und BMZ sperren App-Registrierungen. Es braucht ein privates Microsoft-Konto für die Registrierung                               |
-| **Offen bei Namir** | Azure-Registrierung (siehe [SETUP.md](SETUP.md))                                                                                     |
+|                     |                                                                                                                                                                  |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Etappe**          | Alle sieben Etappen sind geschrieben (Version 0.10.0). Google ist mit dem echten Konto geprüft. Outlook läuft neu über das lokale Outlook und ist lesend geprüft |
+| **Als Nächstes**    | Namir klickt «Outlook verbinden», dann den Abgleich mit zwei Testkalendern prüfen (Testplan M-1 bis M-6)                                                         |
+| **Blockiert durch** | nichts                                                                                                                                                           |
+| **Offen bei Namir** | Outlook verbinden, je einen Kalender «Sync-Test» in Google und Outlook anlegen                                                                                   |
+
+---
+
+## 2026-11-17 · Outlook ohne Azure: über das lokale Outlook (Version 0.10.0)
+
+Namir wollte einen Weg ohne Azure, nachdem beide Schulen die App-Registrierung sperren.
+
+**Gemacht**
+
+- Die App spricht mit dem auf dem Rechner installierten Outlook (classic) statt mit Microsofts Servern. Ein kleines PowerShell-Skript (`resources/outlook.ps1`) liest und schreibt Termine über das Objektmodell von Outlook. Outlook gleicht sie selbst mit seinem Server ab.
+- Neuer Anbieter `OutlookLocalProvider` mit derselben Schnittstelle wie Google. Die Sync-Engine bleibt unverändert.
+- Der Knopf heisst jetzt «Outlook verbinden». Er übernimmt alle Konten, die in Outlook (classic) einen Kalender haben. Eine Anmeldung braucht es nicht.
+- Der Weg über Microsoft Graph bleibt im Code. Er wird nur verwendet, wenn `MAIN_VITE_MS_CLIENT_ID` gesetzt ist.
+
+**Geprüft**
+
+- 87 Unit-Tests bestanden, neu der Mapper, die Übersetzung der Serien und die Brücke.
+- Das Skript lesend gegen Namirs Outlook: zwei Konten mit je drei Kalendern, Termine mit Uhrzeit, ganztägige, einzelne Vorkommen und Serien, Umlaute und Notizen kommen richtig an. Eine Abfrage dauert etwa eine halbe Sekunde.
+
+**Nicht geprüft**
+
+- Schreiben ins lokale Outlook (erstellen, ändern, löschen) und der Abgleich. Das soll zuerst an einem Testkalender geschehen.
+- Der Knopf «Outlook verbinden» in der installierten App.
+
+**Aufgefallen**
+
+- In Outlook (classic) sind das BMZ-Konto und das Noser-Young-Konto eingerichtet, das TBZ-Konto nicht.
+- Entscheidung dazu: E-016.
 
 ---
 

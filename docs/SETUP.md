@@ -40,7 +40,11 @@ Die App fragt bei der Anmeldung diese Berechtigungen an: E-Mail-Adresse, Kalende
 
 Beim Typ «Desktop app» muss keine Redirect-URI eingetragen werden. Die App verwendet `http://127.0.0.1` mit einem zufälligen Port.
 
-## 3. Azure Portal (Microsoft)
+## 3. Outlook
+
+**Normalfall, ohne Registrierung:** Die App verwendet das auf dem Rechner installierte Outlook (classic). Voraussetzung ist nur, dass dein Konto dort eingerichtet ist. In der App genügt dann ein Klick auf «Outlook verbinden». Mit dem «neuen Outlook» geht das nicht.
+
+**Alternative über Azure:** Nur nötig, wenn du ohne lokales Outlook arbeiten willst. Schulen und Firmen sperren diesen Weg oft.
 
 1. Öffne das [Azure Portal](https://portal.azure.com/) und geh zu «App-Registrierungen».
 2. Erstelle eine neue Registrierung mit diesen Einstellungen:

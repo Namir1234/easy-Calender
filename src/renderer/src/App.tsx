@@ -226,11 +226,9 @@ function App(): React.JSX.Element {
               onClick={() => connect('microsoft')}
               disabled={connecting !== null}
             >
-              {connecting === 'microsoft'
-                ? 'Warte auf Anmeldung im Browser …'
-                : 'Microsoft-Konto verbinden'}
+              {connecting === 'microsoft' ? 'Outlook wird verbunden …' : 'Outlook verbinden'}
             </button>
-            {connecting && (
+            {connecting === 'google' && (
               <div className="login-help">
                 <p>
                   Die Anmeldung läuft in deinem Browser, in einem neuen Tab. Ist dort keine
