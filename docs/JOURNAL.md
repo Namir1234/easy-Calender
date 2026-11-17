@@ -10,8 +10,26 @@ Laufendes Protokoll des Projekts. Der neuste Eintrag steht oben.
 | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
 | **Etappe**          | Alle sieben Etappen sind geschrieben (Version 0.9.0). Google ist mit dem echten Konto geprüft, Microsoft und der Abgleich noch nicht |
 | **Als Nächstes**    | App bei Microsoft registrieren, Outlook verbinden, dann den Abgleich mit zwei Testkalendern prüfen (Testplan M-1 bis M-6)            |
-| **Blockiert durch** | Für Microsoft fehlt die Anwendungs-ID in `.env`                                                                                      |
+| **Blockiert durch** | TBZ und BMZ sperren App-Registrierungen. Es braucht ein privates Microsoft-Konto für die Registrierung                               |
 | **Offen bei Namir** | Azure-Registrierung (siehe [SETUP.md](SETUP.md))                                                                                     |
+
+---
+
+## 2026-11-17 · Azure-Registrierung: Schulkonten gesperrt
+
+**Versucht**
+
+- App-Registrierung mit dem TBZ-Konto und mit dem BMZ-Konto, im Azure-Portal und im Entra Admin Center.
+
+**Ergebnis**
+
+- Beide Schulen sperren den Bereich «App-Registrierungen»: «Sie haben keinen Zugriff», Fehlercode 401. Registriert wurde nichts.
+- Das Noser-Young-Konto wurde bewusst nicht versucht. Eine private App gehört nicht ins Verzeichnis des Arbeitgebers.
+
+**Als Nächstes**
+
+- Namir meldet sich mit einem privaten Microsoft-Konto an (outlook.com oder hotmail.com), dann wird die App dort registriert.
+- Offen bleibt, ob TBZ und BMZ die Zustimmung zu fremden Apps erlauben. Das zeigt sich erst beim Verbinden eines Schulkontos in der App.
 
 ---
 
