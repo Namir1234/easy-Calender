@@ -19,6 +19,10 @@ interface CalendarRow {
   visible: boolean
 }
 
+/**
+ * Die Spalten heissen aus der Zeit, als nur Google mit Outlook abgeglichen
+ * wurde, `google_…` und `ms_…`. Sie stehen heute für Seite A und Seite B.
+ */
 interface PairRow {
   id: string
   google_calendar_id: string
@@ -39,8 +43,8 @@ interface LinkRow {
 
 const toPair = (row: PairRow): SyncPair => ({
   id: row.id,
-  googleCalendarId: row.google_calendar_id,
-  msCalendarId: row.ms_calendar_id
+  calendarAId: row.google_calendar_id,
+  calendarBId: row.ms_calendar_id
 })
 
 const DEFAULT_COLOR = '#2563a8'
@@ -172,11 +176,11 @@ export class SupabaseStore implements Store {
     return (data as PairRow[]).map(toPair)
   }
 
-  async addSyncPair(googleCalendarId: string, msCalendarId: string): Promise<SyncPair> {
+  async addSyncPair(calendarAId: string, calendarBId: string): Promise<SyncPair> {
     const { data, error } = await this.client
       .from('sync_pairs')
       .upsert(
-        { google_calendar_id: googleCalendarId, ms_calendar_id: msCalendarId },
+        { google_calendar_id: calendarAId, ms_calendar_id: calendarBId },
         { onConflict: 'google_calendar_id,ms_calendar_id' }
       )
       .select('id, google_calendar_id, ms_calendar_id')

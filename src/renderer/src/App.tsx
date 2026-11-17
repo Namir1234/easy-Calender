@@ -13,6 +13,7 @@ import CalendarView from './components/CalendarView'
 import EventDetails, { type AnchorRect } from './components/EventDetails'
 import AssistantPanel from './components/AssistantPanel'
 import EventForm, { type FormTarget } from './components/EventForm'
+import ICloudForm from './components/ICloudForm'
 import StatusBadge from './components/StatusBadge'
 import SyncPanel from './components/SyncPanel'
 import { useColorScheme } from './useColorScheme'
@@ -23,7 +24,7 @@ function errorMessage(error: unknown): string {
   return text.replace(/^Error invoking remote method '[^']+': (Error: )?/, '')
 }
 
-type Provider = 'google' | 'microsoft'
+type Provider = 'google' | 'microsoft' | 'icloud'
 
 function App(): React.JSX.Element {
   const colorScheme = useColorScheme()
@@ -34,6 +35,7 @@ function App(): React.JSX.Element {
   const [loading, setLoading] = useState(true)
   const [connecting, setConnecting] = useState<Provider | null>(null)
   const [linkCopied, setLinkCopied] = useState(false)
+  const [icloudOpen, setICloudOpen] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [selected, setSelected] = useState<{ event: CalendarEvent; anchor: AnchorRect } | null>(
     null
@@ -94,8 +96,26 @@ function App(): React.JSX.Element {
     })
   }, [])
 
+  const connectICloud = useCallback(
+    async (appleId: string, password: string) => {
+      setConnecting('icloud')
+      setError(null)
+      try {
+        await window.api.connectICloud(appleId, password)
+        await loadAccounts()
+        setICloudOpen(false)
+      } catch (connectError) {
+        setError(errorMessage(connectError))
+        throw connectError
+      } finally {
+        setConnecting(null)
+      }
+    },
+    [loadAccounts]
+  )
+
   const connect = useCallback(
-    (provider: Provider) => {
+    (provider: 'google' | 'microsoft') => {
       setConnecting(provider)
       setLinkCopied(false)
       setError(null)
@@ -312,6 +332,22 @@ function App(): React.JSX.Element {
             >
               {connecting === 'microsoft' ? 'Outlook wird verbunden …' : 'Outlook verbinden'}
             </button>
+            {icloudOpen ? (
+              <ICloudForm
+                busy={connecting === 'icloud'}
+                onConnect={connectICloud}
+                onCancel={() => setICloudOpen(false)}
+              />
+            ) : (
+              <button
+                type="button"
+                className="button"
+                onClick={() => setICloudOpen(true)}
+                disabled={connecting !== null}
+              >
+                iCloud verbinden
+              </button>
+            )}
             {connecting === 'google' && (
               <div className="login-help">
                 <p>

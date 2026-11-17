@@ -1,4 +1,4 @@
-import type { Account, Calendar, SyncStatus } from '../../shared/types'
+import { PROVIDER_LABELS, type Account, type Calendar, type SyncStatus } from '../../shared/types'
 import type { DayRange } from '../dateRange'
 import type { Store } from '../db/store'
 import type { CalendarProvider } from '../providers/types'
@@ -112,18 +112,25 @@ export class SyncService {
         const accountById = new Map(accounts.map((account) => [account.id, account]))
 
         for (const pair of pairs) {
-          const google = calendarById.get(pair.googleCalendarId)
-          const outlook = calendarById.get(pair.msCalendarId)
-          const name = `${google?.name ?? '?'} ↔ ${outlook?.name ?? '?'}`
+          const calendarA = calendarById.get(pair.calendarAId)
+          const calendarB = calendarById.get(pair.calendarBId)
+          const name = `${calendarA?.name ?? '?'} ↔ ${calendarB?.name ?? '?'}`
           try {
-            const googleAccount = google && accountById.get(google.accountId)
-            const outlookAccount = outlook && accountById.get(outlook.accountId)
-            if (!google || !outlook || !googleAccount || !outlookAccount) {
+            const accountA = calendarA && accountById.get(calendarA.accountId)
+            const accountB = calendarB && accountById.get(calendarB.accountId)
+            if (!calendarA || !calendarB || !accountA || !accountB) {
               throw new Error('Ein Kalender dieses Paars fehlt')
             }
+            // In Meldungen heisst eine Seite nach ihrem Anbieter. Haben beide
+            // Seiten denselben, kommt der Name des Kalenders dazu.
+            const same = accountA.provider === accountB.provider
+            const label = (account: Account, calendar: Calendar): string =>
+              same
+                ? `${PROVIDER_LABELS[account.provider]} «${calendar.name}»`
+                : PROVIDER_LABELS[account.provider]
             const result = await syncPair(
-              side('Google', providerFor(googleAccount), google, range),
-              side('Outlook', providerFor(outlookAccount), outlook, range),
+              side(label(accountA, calendarA), providerFor(accountA), calendarA, range),
+              side(label(accountB, calendarB), providerFor(accountB), calendarB, range),
               {
                 list: () => store.listLinks(pair.id),
                 save: (link) => store.saveLink(pair.id, link),

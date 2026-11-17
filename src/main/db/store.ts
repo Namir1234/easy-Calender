@@ -39,10 +39,10 @@ export interface Store {
   removeDemoAccounts(): Promise<void>
 
   listSyncPairs(): Promise<SyncPair[]>
-  addSyncPair(googleCalendarId: string, msCalendarId: string): Promise<SyncPair>
+  addSyncPair(calendarAId: string, calendarBId: string): Promise<SyncPair>
   /** Entfernt ein Paar samt seinen Verknüpfungen. Die Termine selbst bleiben. */
   removeSyncPair(pairId: string): Promise<void>
-  /** Die Verknüpfungen eines Paars. Seite A ist Google, Seite B ist Outlook. */
+  /** Die Verknüpfungen eines Paars, Seite A und Seite B wie im Paar. */
   listLinks(pairId: string): Promise<EventLink[]>
   saveLink(pairId: string, link: EventLink): Promise<void>
   removeLink(linkId: string): Promise<void>

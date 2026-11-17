@@ -727,6 +727,23 @@ p {
   margin-top: 16px;
 }
 
+.icloud-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--ink-muted);
+}
+
+.icloud-form p {
+  margin: 0;
+}
+
+.icloud-form a {
+  color: inherit;
+  text-decoration: underline;
+}
+
 .login-help {
   margin-top: 10px;
   font-size: 13px;

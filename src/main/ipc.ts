@@ -7,7 +7,6 @@ import type {
   CalendarEvent,
   DbStatus,
   EventsResult,
-  ProviderId,
   Settings,
   SyncPair,
   SyncStatus
@@ -19,6 +18,7 @@ import type { StoreContext } from './db'
 import { parseEventInput } from './eventInput'
 import type { CalendarProvider } from './providers/types'
 import { parseCalendarOptions, parseSettings } from './settings'
+import { pairProblem } from './sync/pairs'
 import type { SyncService } from './sync/service'
 
 export interface AppContext extends StoreContext {
@@ -46,23 +46,15 @@ function requireId(value: unknown, what: string): string {
 export function registerIpc(ready: Promise<AppContext>, settings: SettingsAccess): void {
   /** Sucht zu einem Kalender der App den Anbieter und die ID beim Anbieter. */
   async function target(
-    calendarId: unknown,
-    expected?: ProviderId
-  ): Promise<{ calendar: Calendar; provider: CalendarProvider }> {
+    calendarId: unknown
+  ): Promise<{ calendar: Calendar; account: Account; provider: CalendarProvider }> {
     const id = requireId(calendarId, 'Kalender-ID')
     const { store, accounts } = await ready
     const calendar = (await store.listCalendars()).find((entry) => entry.id === id)
     const account =
       calendar && (await store.listAccounts()).find((entry) => entry.id === calendar.accountId)
     if (!calendar || !account) throw new Error('Kalender nicht gefunden')
-    if (expected && account.provider !== expected) {
-      throw new Error(
-        expected === 'google'
-          ? 'Hier wird ein Google-Kalender erwartet'
-          : 'Hier wird ein Outlook-Kalender erwartet'
-      )
-    }
-    return { calendar, provider: accounts.providerFor(account) }
+    return { calendar, account, provider: accounts.providerFor(account) }
   }
 
   /** Ergänzt einen Kalender um das, was auf diesem Gerät für ihn eingestellt ist. */
@@ -107,6 +99,27 @@ export function registerIpc(ready: Promise<AppContext>, settings: SettingsAccess
     const { accounts } = await ready
     return accounts.connectMicrosoft()
   })
+
+  ipcMain.handle(
+    'accounts:connectICloud',
+    async (_event, appleId: unknown, password: unknown): Promise<Account> => {
+      if (
+        typeof appleId !== 'string' ||
+        appleId.trim().length < 3 ||
+        appleId.length > 200 ||
+        !appleId.includes('@')
+      ) {
+        throw new Error('Gib die Apple-ID als E-Mail-Adresse ein')
+      }
+      // App-spezifische Passwörter sehen so aus: abcd-efgh-ijkl-mnop.
+      const secret = typeof password === 'string' ? password.replace(/\s/g, '') : ''
+      if (secret.length < 8 || secret.length > 100) {
+        throw new Error('Gib das app-spezifische Passwort ein (z. B. abcd-efgh-ijkl-mnop)')
+      }
+      const { accounts } = await ready
+      return accounts.connectICloud(appleId.trim(), secret)
+    }
+  )
 
   ipcMain.handle('accounts:reopenLogin', async (): Promise<void> => {
     await (await ready).accounts.reopenLogin()
@@ -247,11 +260,16 @@ export function registerIpc(ready: Promise<AppContext>, settings: SettingsAccess
 
   ipcMain.handle(
     'sync:addPair',
-    async (_event, googleCalendarId: unknown, msCalendarId: unknown): Promise<SyncPair> => {
-      const google = await target(googleCalendarId, 'google')
-      const outlook = await target(msCalendarId, 'microsoft')
+    async (_event, calendarAId: unknown, calendarBId: unknown): Promise<SyncPair> => {
+      const a = await target(calendarAId)
+      const b = await target(calendarBId)
+      if (a.account.provider === 'demo' || b.account.provider === 'demo') {
+        throw new Error('Beispielkalender lassen sich nicht abgleichen')
+      }
       const { store, sync } = await ready
-      const pair = await store.addSyncPair(google.calendar.id, outlook.calendar.id)
+      const problem = pairProblem(await store.listSyncPairs(), a.calendar.id, b.calendar.id)
+      if (problem) throw new Error(problem)
+      const pair = await store.addSyncPair(a.calendar.id, b.calendar.id)
       sync.runSoon()
       return pair
     }

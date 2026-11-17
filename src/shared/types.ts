@@ -1,6 +1,14 @@
 // Typen, die Main-Prozess, Preload und Renderer gemeinsam verwenden.
 
-export type ProviderId = 'google' | 'microsoft' | 'demo'
+export type ProviderId = 'google' | 'microsoft' | 'icloud' | 'demo'
+
+/** Wie die Anbieter in der Oberfläche und in Meldungen heissen. */
+export const PROVIDER_LABELS: Record<ProviderId, string> = {
+  google: 'Google',
+  microsoft: 'Outlook',
+  icloud: 'iCloud',
+  demo: 'Demo'
+}
 
 export interface Account {
   id: string
@@ -102,11 +110,14 @@ export interface AssistantStatus {
   problem?: string
 }
 
-/** Ein Google-Kalender und ein Outlook-Kalender, die abgeglichen werden. */
+/**
+ * Zwei Kalender, die abgeglichen werden, aus beliebigen Konten (Google,
+ * Outlook, iCloud). Bei einem Konflikt ohne Zeitangabe gewinnt Seite A.
+ */
 export interface SyncPair {
   id: string
-  googleCalendarId: string
-  msCalendarId: string
+  calendarAId: string
+  calendarBId: string
 }
 
 export interface SyncStatus {
@@ -156,6 +167,11 @@ export interface AppApi {
   connectGoogle(): Promise<Account>
   /** Wie `connectGoogle`, für ein Microsoft-Konto (Outlook). */
   connectMicrosoft(): Promise<Account>
+  /**
+   * Verbindet ein iCloud-Konto mit Apple-ID und app-spezifischem Passwort.
+   * Das Passwort wird geprüft und verschlüsselt auf diesem Gerät gespeichert.
+   */
+  connectICloud(appleId: string, password: string): Promise<Account>
   /** Öffnet die Seite der laufenden Anmeldung nochmals im Browser. */
   reopenLogin(): Promise<void>
   /** Kopiert die Adresse der laufenden Anmeldung in die Zwischenablage. */
@@ -173,7 +189,7 @@ export interface AppApi {
   updateEvent(calendarId: string, eventId: string, input: EventInput): Promise<CalendarEvent>
   deleteEvent(calendarId: string, eventId: string): Promise<void>
   listSyncPairs(): Promise<SyncPair[]>
-  addSyncPair(googleCalendarId: string, msCalendarId: string): Promise<SyncPair>
+  addSyncPair(calendarAId: string, calendarBId: string): Promise<SyncPair>
   removeSyncPair(pairId: string): Promise<void>
   /** Gleicht alle Kalenderpaare jetzt ab und wartet auf das Ergebnis. */
   syncNow(): Promise<SyncStatus>

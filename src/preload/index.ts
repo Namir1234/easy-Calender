@@ -8,6 +8,8 @@ const api: AppApi = {
   listAccounts: () => ipcRenderer.invoke('accounts:list'),
   connectGoogle: () => ipcRenderer.invoke('accounts:connectGoogle'),
   connectMicrosoft: () => ipcRenderer.invoke('accounts:connectMicrosoft'),
+  connectICloud: (appleId, password) =>
+    ipcRenderer.invoke('accounts:connectICloud', appleId, password),
   reopenLogin: () => ipcRenderer.invoke('accounts:reopenLogin'),
   copyLoginLink: () => ipcRenderer.invoke('accounts:copyLoginLink'),
   cancelLogin: () => ipcRenderer.invoke('accounts:cancelLogin'),
@@ -24,8 +26,8 @@ const api: AppApi = {
     ipcRenderer.invoke('events:update', calendarId, eventId, input),
   deleteEvent: (calendarId, eventId) => ipcRenderer.invoke('events:delete', calendarId, eventId),
   listSyncPairs: () => ipcRenderer.invoke('sync:listPairs'),
-  addSyncPair: (googleCalendarId, msCalendarId) =>
-    ipcRenderer.invoke('sync:addPair', googleCalendarId, msCalendarId),
+  addSyncPair: (calendarAId, calendarBId) =>
+    ipcRenderer.invoke('sync:addPair', calendarAId, calendarBId),
   removeSyncPair: (pairId) => ipcRenderer.invoke('sync:removePair', pairId),
   syncNow: () => ipcRenderer.invoke('sync:now'),
   getSyncStatus: () => ipcRenderer.invoke('sync:status'),

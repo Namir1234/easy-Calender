@@ -64,7 +64,21 @@ Die Redirect-URI muss genau `http://localhost` heissen, ohne Port. Die App häng
 > [!WARNING]
 > Bei TBZ- oder Noser-Konten kann die Organisation die Zustimmung für Dritt-Apps blockieren. Dann funktionieren nur private Microsoft-Konten, bis ein Admin die App freigibt.
 
-## 4. Assistent (Ollama)
+## 4. iCloud
+
+iCloud braucht keine Registrierung, aber ein app-spezifisches Passwort. Das normale Apple-Passwort nimmt iCloud von fremden Apps nicht an.
+
+1. Auf [account.apple.com](https://account.apple.com/account/manage) mit der Apple-ID anmelden.
+2. «Anmelden und Sicherheit» → «App-spezifische Passwörter» → neues Passwort erstellen, z. B. mit dem Namen «easy-Calender».
+3. Das Passwort hat die Form `abcd-efgh-ijkl-mnop`. In der App auf «iCloud verbinden» klicken, Apple-ID und dieses Passwort eintragen.
+
+Die App prüft das Passwort sofort bei iCloud und speichert es erst dann, verschlüsselt auf diesem Gerät. Widerrufen lässt es sich auf account.apple.com jederzeit. Danach das Konto in der App entfernen.
+
+Voraussetzung ist die Zwei-Faktor-Authentifizierung für die Apple-ID. Ohne sie bietet Apple keine app-spezifischen Passwörter an.
+
+Läuft die App mit Supabase, muss die Migration `supabase/migrations/20261117120000_icloud.sql` eingespielt sein (SQL Editor), sonst lehnt die Datenbank iCloud-Konten ab.
+
+## 5. Assistent (Ollama)
 
 Der Assistent braucht ein Sprachmodell auf deinem Rechner. Das ist gratis und nichts geht ins Internet.
 
@@ -79,7 +93,7 @@ Der Assistent braucht ein Sprachmodell auf deinem Rechner. Das ist gratis und ni
 
 Arbeitsspeicher: Das Modell braucht etwa 2 bis 3 GB. Wer mehr Speicher hat und genauere Antworten will, kann ein grösseres Modell laden (z. B. `qwen2.5:7b`, etwa 5 GB). Die App nimmt `qwen2.5:3b`, wenn es da ist, sonst das erste geladene Modell.
 
-## 5. Die Datei .env
+## 6. Die Datei .env
 
 Kopiere [`.env.example`](../.env.example) nach `.env` in den Projektordner und trage die Werte ein. Starte die App danach neu.
 

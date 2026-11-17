@@ -9,8 +9,10 @@ import type {
 } from './config'
 import { DEMO_SEED } from './db/demoData'
 import type { RemoteCalendar, Store } from './db/store'
+import { CalDavClient, type HttpFetch } from './providers/caldav'
 import { DemoProvider } from './providers/demo'
 import { GoogleProvider } from './providers/google'
+import { ICLOUD_CALDAV_URL, ICloudProvider } from './providers/icloud'
 import { MicrosoftProvider } from './providers/microsoft'
 import { OutlookLocalProvider, type OutlookBridge } from './providers/outlookLocal'
 import type { CalendarProvider } from './providers/types'
@@ -25,12 +27,17 @@ export interface AccountServiceOptions {
   outlook: OutlookBridge
   openBrowser(url: string): Promise<void>
   copyText(text: string): void
+  /** HTTP für CalDAV (iCloud). Für Tests austauschbar. */
+  http?: HttpFetch
 }
 
-type RealProvider = 'google' | 'microsoft'
+type RealProvider = 'google' | 'microsoft' | 'icloud'
+type BrowserProvider = 'google' | 'microsoft'
 
 /** Merkt sich, dass ein Microsoft-Konto über das lokale Outlook läuft, nicht über Graph. */
 const localKey = (email: string): string => `outlook-local:${email.toLowerCase()}`
+/** Unter diesem Schlüssel liegt das app-spezifische Passwort eines iCloud-Kontos. */
+const icloudKey = (email: string): string => `icloud:${email.toLowerCase()}`
 
 /**
  * Verbindet und entfernt Konten und liefert zu jedem Konto den passenden
@@ -40,6 +47,8 @@ export class AccountService {
   private readonly demo = new DemoProvider()
   private readonly googleProviders = new Map<string, GoogleProvider>()
   private readonly microsoftProviders = new Map<string, MicrosoftProvider>()
+  private readonly icloudProviders = new Map<string, ICloudProvider>()
+  private connectingICloud = false
   private readonly outlookLocal: OutlookLocalProvider
   private connectingOutlook = false
   /** Die laufende Anmeldung: ihre Adresse beim Anbieter und der Abbruch */
@@ -105,6 +114,38 @@ export class AccountService {
     }
   }
 
+  /**
+   * Verbindet ein iCloud-Konto. iCloud kennt für fremde Apps keine Anmeldung
+   * im Browser, sondern app-spezifische Passwörter (account.apple.com). Das
+   * Passwort wird zuerst an iCloud geprüft und erst dann gespeichert.
+   */
+  async connectICloud(appleId: string, password: string): Promise<Account> {
+    if (this.connectingICloud) throw new Error('iCloud wird bereits verbunden.')
+    this.connectingICloud = true
+    try {
+      const email = appleId.trim()
+      const provider = this.createICloudProvider(email, password)
+      const calendars = await provider.listCalendars()
+      if (calendars.length === 0) {
+        throw new Error('In diesem iCloud-Konto gibt es keinen Kalender für Termine.')
+      }
+      const { store, tokens } = this.options
+      tokens.setItem(icloudKey(email), password)
+      this.icloudProviders.set(email.toLowerCase(), provider)
+      const account = await store.saveAccount({ provider: 'icloud', email, calendars })
+      await store.removeDemoAccounts()
+      return account
+    } finally {
+      this.connectingICloud = false
+    }
+  }
+
+  private createICloudProvider(email: string, password: string): ICloudProvider {
+    return new ICloudProvider(
+      new CalDavClient(ICLOUD_CALDAV_URL, { username: email, password }, this.options.http)
+    )
+  }
+
   /** Legt in einem Konto des lokalen Outlook einen neuen, leeren Kalender an. */
   async createCalendar(accountId: string, name: string): Promise<void> {
     const { store, outlook } = this.options
@@ -126,7 +167,7 @@ export class AccountService {
   }
 
   private async connect(
-    provider: RealProvider,
+    provider: BrowserProvider,
     login: (open: (url: string) => Promise<void>, signal: AbortSignal) => Promise<string>
   ): Promise<Account> {
     if (this.login) {
@@ -188,6 +229,9 @@ export class AccountService {
       this.microsoftProviders.delete(account.email)
       forgetMicrosoftAccount(tokens, account.email)
       tokens.removeItem(localKey(account.email))
+    } else if (account.provider === 'icloud') {
+      this.icloudProviders.delete(account.email.toLowerCase())
+      tokens.removeItem(icloudKey(account.email))
     }
     await store.seedIfEmpty(DEMO_SEED)
   }
@@ -225,6 +269,8 @@ export class AccountService {
         return this.isLocalOutlook(account.email)
           ? this.outlookLocal
           : this.microsoftProvider(account.email)
+      case 'icloud':
+        return this.icloudProvider(account.email)
     }
   }
 
@@ -233,6 +279,7 @@ export class AccountService {
     email: string
   ): Promise<RemoteCalendar[]> {
     if (provider === 'google') return this.googleProvider(email).listCalendars()
+    if (provider === 'icloud') return this.icloudProvider(email).listCalendars()
     if (!this.isLocalOutlook(email)) return this.microsoftProvider(email).listCalendars()
     const stores = await this.options.outlook.listStores()
     const found = stores.find((entry) => entry.name.toLowerCase() === email.toLowerCase())
@@ -246,6 +293,19 @@ export class AccountService {
       const config = this.requireGoogleConfig()
       provider = new GoogleProvider(clientForAccount(config, this.options.tokens, email))
       this.googleProviders.set(email, provider)
+    }
+    return provider
+  }
+
+  private icloudProvider(email: string): ICloudProvider {
+    let provider = this.icloudProviders.get(email.toLowerCase())
+    if (!provider) {
+      const password = this.options.tokens.getItem(icloudKey(email))
+      if (!password) {
+        throw new Error('Das Passwort für iCloud fehlt. Entferne das Konto und verbinde es neu.')
+      }
+      provider = this.createICloudProvider(email, password)
+      this.icloudProviders.set(email.toLowerCase(), provider)
     }
     return provider
   }

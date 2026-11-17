@@ -8,13 +8,13 @@ Dieses Dokument beschreibt den geplanten Aufbau der App. Es wird mit jeder Etapp
 
 Die App ist eine Electron-Anwendung mit drei Teilen:
 
-| Teil             | Aufgabe                                                                      |
-| ---------------- | ---------------------------------------------------------------------------- |
-| **Main-Prozess** | Fenster, Tray, Datenschicht, Anmeldung bei Google und Microsoft, Sync-Engine |
-| **Preload**      | Schmale, sichere Brücke (`contextBridge`) zwischen Renderer und Main-Prozess |
-| **Renderer**     | React-Oberfläche mit FullCalendar, Dialogen und Einstellungen                |
+| Teil             | Aufgabe                                                                              |
+| ---------------- | ------------------------------------------------------------------------------------ |
+| **Main-Prozess** | Fenster, Tray, Datenschicht, Anmeldung bei Google, Microsoft und iCloud, Sync-Engine |
+| **Preload**      | Schmale, sichere Brücke (`contextBridge`) zwischen Renderer und Main-Prozess         |
+| **Renderer**     | React-Oberfläche mit FullCalendar, Dialogen und Einstellungen                        |
 
-Der Renderer spricht nie direkt mit Google oder Microsoft. Alle Zugriffe laufen über die IPC-API im Main-Prozess, dort liegen auch die Tokens.
+Der Renderer spricht nie direkt mit Google, Microsoft oder iCloud. Alle Zugriffe laufen über die IPC-API im Main-Prozess, dort liegen auch die Tokens.
 
 ```mermaid
 flowchart LR
@@ -29,11 +29,13 @@ flowchart LR
         DB["Datenschicht"]
         GP["Google-Provider"]
         MP["Microsoft-Provider"]
+        IP["iCloud-Provider"]
     end
 
     SB[("Supabase")]
     GAPI(["Google Calendar API v3"])
     GRAPH(["Microsoft Graph"])
+    CALDAV(["iCloud CalDAV"])
 
     UI <-->|contextBridge| IPC
     IPC --> ENG
@@ -42,8 +44,10 @@ flowchart LR
     DB <--> SB
     ENG <--> GP
     ENG <--> MP
+    ENG <--> IP
     GP <--> GAPI
     MP <--> GRAPH
+    IP <--> CALDAV
 ```
 
 ## Projektstruktur
@@ -120,17 +124,17 @@ erDiagram
     }
 ```
 
-| Tabelle       | Zweck                                                                                          |
-| ------------- | ---------------------------------------------------------------------------------------------- |
-| `accounts`    | Verbundene Konten mit Anbieter, E-Mail und Verweis auf das Token                               |
-| `calendars`   | Kalender eines Kontos mit Name, Farbe und ob der Sync aktiv ist                                |
-| `sync_pairs`  | Welche Kalender miteinander gekoppelt sind, z. B. Google «Privat» ↔ Outlook «Kalender»         |
-| `event_links` | Verknüpfung zwischen einem Google-Termin und seinem Outlook-Gegenstück, inklusive letztem Hash |
-| `sync_state`  | Googles `syncToken` bzw. Graphs `deltaLink` pro Kalender                                       |
+| Tabelle       | Zweck                                                                                       |
+| ------------- | ------------------------------------------------------------------------------------------- |
+| `accounts`    | Verbundene Konten mit Anbieter, E-Mail und Verweis auf das Token                            |
+| `calendars`   | Kalender eines Kontos mit Name, Farbe und ob der Sync aktiv ist                             |
+| `sync_pairs`  | Welche zwei Kalender gekoppelt sind, z. B. Google «Privat» ↔ iCloud «Zuhause» (Seite A ↔ B) |
+| `event_links` | Verknüpfung zwischen einem Termin auf Seite A und seinem Gegenstück auf Seite B, mit Hash   |
+| `sync_state`  | Googles `syncToken` bzw. Graphs `deltaLink` pro Kalender                                    |
 
 ## Sync-Algorithmus
 
-Der Abgleich läuft pro Kalenderpaar (ein Google-Kalender, ein Outlook-Kalender). Der Code steht in `src/main/sync/`.
+Der Abgleich läuft pro Kalenderpaar (zwei beliebige Kalender, E-020). Der Code steht in `src/main/sync/`.
 
 1. **Listen holen.** Von beiden Seiten kommen die Einzeltermine von 30 Tagen zurück bis 365 Tage voraus, dazu die Serien als Ganzes.
 2. **Verknüpfte Termine vergleichen.** Zu jedem Paar von Terminen gibt es eine Zeile in `event_links` mit einem Fingerabdruck pro Seite: So sah der Termin dort beim letzten Abgleich aus.
@@ -163,6 +167,7 @@ Schreibt die App einen Termin nach Outlook, sieht Outlook ihn danach vielleicht 
 - Eine Serie wird als ein Termin mit Regel abgeglichen. RRULE und das Graph-Format `patternedRecurrence` werden ineinander übersetzt: täglich, wöchentlich, monatlich, jährlich, mit Intervall, Wochentagen («zweiter Dienstag») und Ende (Datum oder Anzahl).
 - Ausnahmen einer Serie werden nicht abgeglichen (E-015).
 - Regeln, die Outlook nicht kennt, werden nicht übertragen und in der App gemeldet.
+- iCloud speichert Serien als RRULE in der `.ics`-Datei, dort ist keine Übersetzung nötig. Ein einzelnes Vorkommen, das in der App geändert wird, landet als Ausnahme (RECURRENCE-ID) in derselben Datei.
 - In der Anzeige sind Serien in einzelne Termine aufgelöst. Wird dort einer geändert oder gelöscht, betrifft das nur diesen einen.
 
 ## Sicherheit
@@ -173,3 +178,4 @@ Schreibt die App einen Termin nach Outlook, sieht Outlook ihn danach vielleicht 
 - Der Renderer hat über `contextBridge` nur Zugriff auf eine schmale, definierte API.
 - Google-Anmeldung über OAuth 2.0 «Desktop app» mit Loopback-Redirect und PKCE.
 - Microsoft-Anmeldung als öffentlicher Client mit PKCE und ohne Secret, Authority `common` für private Konten sowie Schul- und Firmenkonten.
+- iCloud mit app-spezifischem Passwort über HTTPS (Basic Auth). Das Passwort wird vor dem Speichern an iCloud geprüft und liegt danach nur verschlüsselt auf dem Gerät. Bei Weiterleitungen auf andere iCloud-Server schickt die App die Anmeldung selbst mit, nur über HTTPS-Adressen, die iCloud nennt.

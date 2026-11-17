@@ -22,6 +22,8 @@ Wichtige technische Entscheidungen mit Begründung. Neue Entscheidungen kommen u
 | [E-016](#e-016-outlook-über-das-lokal-installierte-outlook)           | 2026-11-17 | Outlook über das lokal installierte Outlook            | gilt   |
 | [E-017](#e-017-notizen-gehen-nur-mit-ascii-nach-outlook)              | 2026-11-17 | Notizen gehen nur mit ASCII nach Outlook               | gilt   |
 | [E-018](#e-018-assistent-mit-lokalem-modell-über-ollama)              | 2026-11-17 | Assistent mit lokalem Modell über Ollama               | gilt   |
+| [E-019](#e-019-icloud-über-caldav-mit-app-spezifischem-passwort)      | 2026-11-17 | iCloud über CalDAV mit app-spezifischem Passwort       | gilt   |
+| [E-020](#e-020-paare-aus-zwei-beliebigen-kalendern-ohne-ringe)        | 2026-11-17 | Paare aus zwei beliebigen Kalendern, ohne Ringe        | gilt   |
 
 ---
 
@@ -146,3 +148,25 @@ Wichtige technische Entscheidungen mit Begründung. Neue Entscheidungen kommen u
 **Preis:** Ollama muss installiert sein und läuft im Hintergrund. Das Modell braucht 2 bis 3 GB Arbeitsspeicher, eine Antwort kann ein paar Sekunden dauern. Ein kleines Modell versteht nicht jede Formulierung. Darum wird nie ohne Bestätigung eingetragen.
 
 **Nachtrag 0.12.1:** Der Test mit dem echten Modell zeigte, dass es Tage erfindet und Kalender falsch wählt. Seither entscheidet die App selbst, was sie prüfen kann: Kalender (über Namen und Konto), ob ein Wann genannt ist, ob Wochentag, Uhrzeit und Titel zur Nachricht passen. Das Modell liefert nur noch den Vorschlag, den die App prüft.
+
+## E-019: iCloud über CalDAV mit app-spezifischem Passwort
+
+**Entscheidung:** iCloud-Kalender werden über CalDAV (`caldav.icloud.com`) gelesen und geschrieben. Angemeldet wird mit der Apple-ID und einem app-spezifischen Passwort, das Namir auf account.apple.com erstellt. Das Passwort liegt wie die Tokens verschlüsselt im `safeStorage` (E-004). Den CalDAV-Teil (PROPFIND, REPORT, GET, PUT, DELETE) schreibt die App selbst, für das Format iCalendar nutzt sie `ical.js`.
+
+**Begründung:** Apple bietet für Kalender keine API mit Anmeldung im Browser an. CalDAV mit app-spezifischem Passwort ist der Weg, den auch Thunderbird und andere Kalender-Apps gehen. Der CalDAV-Teil ist klein, eine Bibliothek dafür hätte mehr mitgebracht als nötig (wie bei E-013). iCalendar dagegen ist heikel (Zeitzonen, Serien, Ausnahmen, Zeilenumbrüche), dort ist eine erprobte Bibliothek ohne weitere Abhängigkeiten sicherer.
+
+**Preis:** Das Passwort gilt für das ganze iCloud-Konto, nicht nur für Kalender. Es lässt sich auf account.apple.com jederzeit widerrufen. Ändert Namir sein Apple-Passwort, werden alle app-spezifischen Passwörter ungültig, dann muss das Konto in der App neu verbunden werden.
+
+**Einzelheiten:**
+
+- Beim Ändern liest die App die `.ics`-Datei, ändert nur die abgeglichenen Felder und schreibt sie mit `If-Match` zurück. Erinnerungen, Teilnehmer und Anhänge bleiben so stehen.
+- Ein einzelnes Vorkommen einer Serie wird in der Anzeige als Ausnahme (RECURRENCE-ID) geändert und per EXDATE gelöscht. Abgeglichen werden Ausnahmen weiterhin nicht (E-015).
+- Fehlt in einer Datei die Beschreibung einer Zeitzone (VTIMEZONE), rechnet die App mit `Intl`. Schreibt sie selbst eine Zone, baut sie die VTIMEZONE aus `Intl` (z. B. «letzter Sonntag im März»).
+
+## E-020: Paare aus zwei beliebigen Kalendern, ohne Ringe
+
+**Entscheidung:** Ein Kalenderpaar verbindet zwei beliebige Kalender, nicht mehr nur Google mit Outlook. Ein Kalender darf in mehreren Paaren stehen (Google ↔ Outlook und Google ↔ iCloud), Termine wandern dann über ihn weiter. Zwei Kalender, die schon über andere Paare verbunden sind, dürfen aber kein eigenes Paar bilden. In Supabase behalten die Spalten ihre Namen (`google_calendar_id` steht für Seite A, `ms_calendar_id` für Seite B), bestehende Paare laufen unverändert weiter.
+
+**Begründung:** Mit iCloud gibt es drei Anbieter, und jede Kombination soll möglich sein. Ein Ring (Google ↔ Outlook ↔ iCloud ↔ Google) brächte jeden Termin auf zwei Wegen ans selbe Ziel. Das gäbe doppelte Termine oder Löschungen, die sich gegenseitig überholen. Eine Kette leistet dasselbe ohne diese Gefahr. Die Spalten umzubenennen hätte eine ältere App-Version gegen die neue Datenbank gebrochen, ohne Nutzen.
+
+**Preis:** In einer Kette braucht ein Termin vom einen Ende zum anderen unter Umständen zwei Abgleiche, also bis zu fünf Minuten länger.

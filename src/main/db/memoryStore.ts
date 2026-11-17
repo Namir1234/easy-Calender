@@ -74,7 +74,7 @@ export class MemoryStore implements Store {
     // Wie in der Datenbank: Paare verschwinden mit ihren Kalendern.
     const calendarIds = new Set(this.calendars.map((calendar) => calendar.id))
     for (const pair of [...this.pairs]) {
-      if (!calendarIds.has(pair.googleCalendarId) || !calendarIds.has(pair.msCalendarId)) {
+      if (!calendarIds.has(pair.calendarAId) || !calendarIds.has(pair.calendarBId)) {
         await this.removeSyncPair(pair.id)
       }
     }
@@ -92,12 +92,12 @@ export class MemoryStore implements Store {
     return this.pairs.map((pair) => ({ ...pair }))
   }
 
-  async addSyncPair(googleCalendarId: string, msCalendarId: string): Promise<SyncPair> {
+  async addSyncPair(calendarAId: string, calendarBId: string): Promise<SyncPair> {
     const existing = this.pairs.find(
-      (pair) => pair.googleCalendarId === googleCalendarId && pair.msCalendarId === msCalendarId
+      (pair) => pair.calendarAId === calendarAId && pair.calendarBId === calendarBId
     )
     if (existing) return { ...existing }
-    const pair = { id: `mem-pair-${this.nextId++}`, googleCalendarId, msCalendarId }
+    const pair = { id: `mem-pair-${this.nextId++}`, calendarAId, calendarBId }
     this.pairs.push(pair)
     return { ...pair }
   }

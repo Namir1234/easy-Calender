@@ -1,5 +1,10 @@
 import { useState } from 'react'
-import type { Account, Calendar, CalendarOptions, ProviderId } from '../../../shared/types'
+import {
+  PROVIDER_LABELS,
+  type Account,
+  type Calendar,
+  type CalendarOptions
+} from '../../../shared/types'
 
 interface Props {
   accounts: Account[]
@@ -10,12 +15,6 @@ interface Props {
   /** Legt in einem Outlook-Konto einen neuen Kalender an. */
   onCreate(account: Account, name: string): Promise<void>
   onRemove(account: Account): void
-}
-
-const PROVIDER_LABELS: Record<ProviderId, string> = {
-  google: 'Google',
-  microsoft: 'Outlook',
-  demo: 'Demo'
 }
 
 /** Was für einen Kalender gerade eingestellt ist, als vollständiger Satz. */

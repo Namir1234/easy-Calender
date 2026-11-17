@@ -2,16 +2,16 @@
 
 # 📅 easy-Calender
 
-### Google Kalender ↔ Outlook – endlich synchron.
+### Google Kalender ↔ Outlook ↔ iCloud – endlich synchron.
 
-Eine Desktop-App für Windows, die Google- und Outlook-Kalender verbindet,<br>
+Eine Desktop-App für Windows, die Google-, Outlook- und iCloud-Kalender verbindet,<br>
 alle Termine **bidirektional** synchronisiert und sie in einer einzigen Ansicht zeigt.
 
 <br>
 
 ![Status](https://img.shields.io/badge/Status-l%C3%A4uft%20mit%20echten%20Konten-brightgreen?style=for-the-badge)
 ![Plattform](https://img.shields.io/badge/Plattform-Windows-0078D4?style=for-the-badge)
-![Version](https://img.shields.io/badge/Version-0.12.1-lightgrey?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-0.13.0-lightgrey?style=for-the-badge)
 
 ![Electron](https://img.shields.io/badge/Electron-2B2E3A?style=flat-square&logo=electron&logoColor=9FEAF9)
 ![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white)
@@ -38,7 +38,7 @@ alle Termine **bidirektional** synchronisiert und sie in einer einzigen Ansicht 
 ---
 
 > [!NOTE]
-> **Projektstatus:** Alle sieben Etappen sind gebaut (Version 0.12.1). Google und Outlook sind verbunden, der Abgleich hat die Tests an zwei echten Testkalendern bestanden.
+> **Projektstatus:** Alle sieben Etappen sind gebaut (Version 0.13.0). Google und Outlook sind verbunden, der Abgleich hat die Tests an zwei echten Testkalendern bestanden. Neu ist iCloud dazugekommen, noch nicht mit einem echten Konto geprüft.
 > Outlook läuft über das lokal installierte Outlook (classic). Den aktuellen Stand und die offenen Punkte findest du im [Arbeitsjournal](docs/JOURNAL.md).
 
 ## 💡 Worum geht es?
@@ -46,7 +46,7 @@ alle Termine **bidirektional** synchronisiert und sie in einer einzigen Ansicht 
 Wer einen privaten Google-Kalender und dazu Outlook-Kalender von Schule oder Firma hat, pflegt Termine oft doppelt.
 **easy-Calender** nimmt einem das ab:
 
-- Ein Termin, der in Google erstellt wird, erscheint in Outlook, und umgekehrt.
+- Ein Termin, der in Google erstellt wird, erscheint in Outlook und in iCloud, und umgekehrt.
 - Ändern und Löschen wird genauso gespiegelt.
 - Alle Kalender aller Konten sind in einer kombinierten Ansicht sichtbar.
 - Termine lassen sich direkt in der App erstellen.
@@ -55,18 +55,18 @@ Wer einen privaten Google-Kalender und dazu Outlook-Kalender von Schule oder Fir
 
 Das ist das Ziel der App. Was davon schon gebaut ist, zeigt die [Roadmap](#-roadmap).
 
-|     | Feature                    | Beschreibung                                                                               |
-| :-: | -------------------------- | ------------------------------------------------------------------------------------------ |
-| 🔄  | **Bidirektionaler Sync**   | Erstellen, Ändern und Löschen wird in beide Richtungen übertragen.                         |
-| 👥  | **Beliebig viele Konten**  | Privates Google-Konto, privates Outlook-Konto sowie Schul- und Firmenkonten von Microsoft. |
-| 🗓️  | **Kombinierte Ansicht**    | Monats-, Wochen- und Tagesansicht mit allen Kalendern zusammen.                            |
-| ✏️  | **Termine in der App**     | Erstellen, bearbeiten und löschen, direkt beim jeweiligen Anbieter.                        |
-| 🔗  | **Kalender-Paare**         | Du bestimmst, welche Kalender miteinander gekoppelt sind. Mehrere Paare sind möglich.      |
-| 🔁  | **Wiederkehrende Termine** | Serien inklusive verschobener oder abgesagter Einzeltermine.                               |
-| 🛡️  | **Loop-Schutz**            | Die App erkennt das Echo ihrer eigenen Änderungen, es gibt kein Ping-Pong.                 |
-| ⚖️  | **Konfliktlösung**         | Wurden beide Seiten geändert, gewinnt die neuere Änderung. Das steht danach im Sync-Log.   |
-| 🔐  | **Sichere Tokens**         | Verschlüsselt gespeichert über Electron `safeStorage` (Windows DPAPI).                     |
-| 📌  | **Läuft im Tray**          | Der Sync läuft weiter, auch wenn das Fenster minimiert ist.                                |
+|     | Feature                    | Beschreibung                                                                             |
+| :-: | -------------------------- | ---------------------------------------------------------------------------------------- |
+| 🔄  | **Bidirektionaler Sync**   | Erstellen, Ändern und Löschen wird in beide Richtungen übertragen.                       |
+| 👥  | **Beliebig viele Konten**  | Google, iCloud, privates Outlook-Konto sowie Schul- und Firmenkonten von Microsoft.      |
+| 🗓️  | **Kombinierte Ansicht**    | Monats-, Wochen- und Tagesansicht mit allen Kalendern zusammen.                          |
+| ✏️  | **Termine in der App**     | Erstellen, bearbeiten und löschen, direkt beim jeweiligen Anbieter.                      |
+| 🔗  | **Kalender-Paare**         | Du koppelst zwei beliebige Kalender, z. B. Google ↔ iCloud. Mehrere Paare sind möglich.  |
+| 🔁  | **Wiederkehrende Termine** | Serien inklusive verschobener oder abgesagter Einzeltermine.                             |
+| 🛡️  | **Loop-Schutz**            | Die App erkennt das Echo ihrer eigenen Änderungen, es gibt kein Ping-Pong.               |
+| ⚖️  | **Konfliktlösung**         | Wurden beide Seiten geändert, gewinnt die neuere Änderung. Das steht danach im Sync-Log. |
+| 🔐  | **Sichere Tokens**         | Verschlüsselt gespeichert über Electron `safeStorage` (Windows DPAPI).                   |
+| 📌  | **Läuft im Tray**          | Der Sync läuft weiter, auch wenn das Fenster minimiert ist.                              |
 
 <div align="center">
 <img src="docs/screenshots/monat-dunkel.png" alt="Monatsansicht im dunklen Modus" width="820">
@@ -177,7 +177,7 @@ src/
 supabase/migrations/         Datenbankschema mit Zugriffsregeln (RLS)
 ```
 
-Dazu gekommen: `accounts.ts` (Konten verbinden und entfernen), `auth/` (Anmeldung bei Google und Microsoft), `providers/` (Google, Microsoft, Demo), `sync/` (Engine, Fingerabdrücke, Zeitplan), `eventInput.ts` (Eingabeprüfung), `settings.ts`, `secureStorage.ts`.
+Dazu gekommen: `accounts.ts` (Konten verbinden und entfernen), `auth/` (Anmeldung bei Google und Microsoft), `providers/` (Google, Microsoft, iCloud über CalDAV, Demo), `sync/` (Engine, Fingerabdrücke, Zeitplan), `eventInput.ts` (Eingabeprüfung), `settings.ts`, `secureStorage.ts`.
 
 </details>
 
@@ -209,6 +209,7 @@ Die Details zu Datenmodell, Event-Modell und Sync-Algorithmus stehen in [docs/AR
 - [x] **Abnahme:** manuelle Sync-Tests M-1 bis M-5 mit zwei Testkalendern ([Testplan](docs/TESTPLAN.md))
 - [x] **Extra:** Einstellungen pro Kalender (Farbe, entfernen, nur ganztägig)
 - [x] **Extra:** Assistent zum Eintragen per Chat, mit lokalem Modell über Ollama
+- [x] **Extra:** iCloud-Kalender über CalDAV, Paare aus beliebigen zwei Kalendern _(mit nachgebautem Server geprüft, echtes Konto offen)_
 - [ ] **Extra:** Handy-Version als Web-App
 - [ ] **Extra:** Personen zu Terminen einladen
 
@@ -234,6 +235,7 @@ Für den echten Betrieb braucht es einmalig drei kostenlose Registrierungen:
 | **Supabase**             | Projekt, Schema einspielen, «Anonymous sign-ins» aktivieren                            |     1     | URL + Publishable Key |
 | **Google Cloud Console** | Projekt, Calendar API, OAuth-Client «Desktop app», dich als Testnutzer eintragen       |     2     | Client-ID + Secret    |
 | **Azure Portal**         | App-Registrierung als öffentlicher Client mit `Calendars.ReadWrite` + `offline_access` |     3     | Client-ID             |
+| **Apple-ID**             | App-spezifisches Passwort auf account.apple.com erstellen                              |  iCloud   | – (in der App)        |
 
 Die Schritt-für-Schritt-Anleitung steht in [docs/SETUP.md](docs/SETUP.md).
 

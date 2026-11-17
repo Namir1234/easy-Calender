@@ -8,10 +8,44 @@ Laufendes Protokoll des Projekts. Der neuste Eintrag steht oben.
 
 |                     |                                                                                                                                   |
 | ------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| **Etappe**          | Alle sieben Etappen sind gebaut und mit echten Konten geprüft. Version 0.12.1: Assistent mit echtem Modell geprüft und verbessert |
-| **Als Nächstes**    | Handy-Version als Web-App. Danach: Personen einladen                                                                              |
+| **Etappe**          | Alle sieben Etappen sind gebaut und mit echten Konten geprüft. Version 0.13.0: iCloud-Kalender und Paare aus beliebigen Kalendern |
+| **Als Nächstes**    | iCloud mit echtem Konto prüfen (A-32 bis A-34). Danach Handy-Version als Web-App, dann Personen einladen                          |
 | **Blockiert durch** | –                                                                                                                                 |
-| **Offen bei Namir** | Welche echten Kalender abgeglichen werden sollen. Wo die Stundenpläne liegen                                                      |
+| **Offen bei Namir** | App-spezifisches Passwort für iCloud erstellen. Welche echten Kalender abgeglichen werden sollen. Wo die Stundenpläne liegen      |
+
+---
+
+## 2026-11-17 · iCloud-Kalender (Version 0.13.0)
+
+Namirs Wunsch: Der Kalender soll sich auch mit dem iCloud-Kalender synchronisieren.
+
+**Gemacht**
+
+- Neuer Anbieter iCloud über CalDAV (E-019). Knopf «iCloud verbinden» in der Seitenleiste mit Feldern für Apple-ID und app-spezifisches Passwort, dazu der Hinweis, wo man das Passwort erstellt. Das Passwort wird zuerst an iCloud geprüft, dann verschlüsselt gespeichert.
+- iCloud-Kalender erscheinen mit ihrer Farbe in der Liste und im Kalender. Termine lassen sich wie bei Google erstellen, ändern und löschen. Erinnerungen und Teilnehmer in iCloud bleiben dabei stehen.
+- Serien werden für die Anzeige aufgelöst, mit Ausnahmen und gelöschten Vorkommen. Ein einzelnes Vorkommen lässt sich ändern oder löschen.
+- Kalenderpaare verbinden jetzt zwei beliebige Kalender (E-020). Die Auswahl heisst «Kalender» und «abgleichen mit» und zeigt alle Kalender aller echten Konten. Ringe aus Paaren lehnt die App ab.
+- Supabase: Migration `20261117120000_icloud.sql` lässt iCloud-Konten zu. Bestehende Paare laufen unverändert weiter.
+- Neue Abhängigkeit: `ical.js` 2.2.1 (keine weiteren Abhängigkeiten).
+
+**Geprüft**
+
+- 138 Unit-Tests bestanden. Neu: iCalendar lesen und schreiben (Zeitzonen, Serien, Ausnahmen, Zeitumstellung), ein nachgebauter iCloud-Server (Weiterleitung, falsches Passwort, keine Anmeldung an fremde Server, Termine, Vorkommen), ein Abgleich Google ↔ iCloud über zwei Läufe, die Prüfung der Paare.
+- Typprüfung ohne Befund, Lint ohne Fehler, Build läuft durch.
+
+**Nicht geprüft**
+
+- Mit einem echten iCloud-Konto. Dafür braucht es Namirs Apple-ID und ein app-spezifisches Passwort (A-32 bis A-34 im Testplan).
+- Die neue Oberfläche (Formular, Auswahl der Paare) habe ich nicht im laufenden Fenster angeschaut, nur Typen und Build geprüft.
+
+**Aufgefallen**
+
+- iCloud leitet von `caldav.icloud.com` auf einen eigenen Server pro Konto weiter (`pXX-caldav.icloud.com`). `fetch` würde dabei die Anmeldung weglassen, darum folgt die App Weiterleitungen selbst.
+- Bei einem Paar zwischen zwei Kalendern desselben Anbieters nennen die Meldungen zusätzlich den Kalendernamen, sonst stünde dort «nach Google übertragen» für beide Seiten.
+
+**Als Nächstes**
+
+- Namir erstellt ein app-spezifisches Passwort und verbindet iCloud. Dann A-32 bis A-34 an zwei Testkalendern.
 
 ---
 

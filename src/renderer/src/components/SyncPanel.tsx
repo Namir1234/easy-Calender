@@ -1,5 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import type { Account, Calendar, SyncPair, SyncStatus } from '../../../shared/types'
+import {
+  PROVIDER_LABELS,
+  type Account,
+  type Calendar,
+  type SyncPair,
+  type SyncStatus
+} from '../../../shared/types'
 
 interface Props {
   accounts: Account[]
@@ -12,30 +18,38 @@ interface Props {
 const POLL_MS = 20_000
 const TIME_FORMAT = new Intl.DateTimeFormat('de-CH', { hour: '2-digit', minute: '2-digit' })
 
-/** Kalenderpaare für den Abgleich Google ↔ Outlook und der Stand des Abgleichs. */
+/** Kalenderpaare für den Abgleich (Google, Outlook, iCloud) und der Stand des Abgleichs. */
 function SyncPanel({ accounts, calendars, onSynced, onError }: Props): React.JSX.Element {
   const [pairs, setPairs] = useState<SyncPair[]>([])
   const [status, setStatus] = useState<SyncStatus | null>(null)
-  const [googleId, setGoogleId] = useState('')
-  const [outlookId, setOutlookId] = useState('')
+  const [firstId, setFirstId] = useState('')
+  const [secondId, setSecondId] = useState('')
   const [busy, setBusy] = useState(false)
   const lastRun = useRef<string | null>(null)
 
-  const ofProvider = (provider: Account['provider']): Calendar[] => {
-    const ids = new Set(
-      accounts.filter((account) => account.provider === provider).map((account) => account.id)
-    )
-    return calendars.filter((calendar) => ids.has(calendar.accountId))
-  }
-  const googleCalendars = ofProvider('google')
-  const outlookCalendars = ofProvider('microsoft')
-  /** Name mit Konto, weil Kalender in mehreren Konten gleich heissen können. */
+  // Abgleichen lassen sich alle echten Kalender, die nicht aus der App entfernt sind.
+  const realAccounts = new Map(
+    accounts
+      .filter((account) => account.provider !== 'demo')
+      .map((account) => [account.id, account])
+  )
+  const choices = calendars.filter(
+    (calendar) => realAccounts.has(calendar.accountId) && !calendar.hidden
+  )
+  /** Name mit Anbieter und Konto, weil Kalender in mehreren Konten gleich heissen können. */
   const nameOf = (id: string): string => {
     const calendar = calendars.find((entry) => entry.id === id)
     if (!calendar) return 'Unbekannter Kalender'
     const account = accounts.find((entry) => entry.id === calendar.accountId)
-    return account ? `${calendar.name} (${account.email})` : calendar.name
+    return account
+      ? `${calendar.name} (${PROVIDER_LABELS[account.provider]}, ${account.email})`
+      : calendar.name
   }
+  const first = choices.some((calendar) => calendar.id === firstId) ? firstId : choices[0]?.id
+  const secondChoices = choices.filter((calendar) => calendar.id !== first)
+  const second = secondChoices.some((calendar) => calendar.id === secondId)
+    ? secondId
+    : secondChoices[0]?.id
 
   const applyStatus = useCallback(
     (next: SyncStatus) => {
@@ -89,17 +103,15 @@ function SyncPanel({ accounts, calendars, onSynced, onError }: Props): React.JSX
 
   const addPair = (): void =>
     run(async () => {
-      const google = googleId || googleCalendars[0]?.id
-      const outlook = outlookId || outlookCalendars[0]?.id
-      if (!google || !outlook) return
-      await window.api.addSyncPair(google, outlook)
+      if (!first || !second) return
+      await window.api.addSyncPair(first, second)
       setPairs(await window.api.listSyncPairs())
       applyStatus(await window.api.syncNow())
     })
 
   const removePair = (pair: SyncPair): void => {
     const sure = window.confirm(
-      `Abgleich «${nameOf(pair.googleCalendarId)} ↔ ${nameOf(pair.msCalendarId)}» beenden?\n\nDie Termine bleiben in beiden Kalendern stehen. Sie werden nur nicht mehr abgeglichen.`
+      `Abgleich «${nameOf(pair.calendarAId)} ↔ ${nameOf(pair.calendarBId)}» beenden?\n\nDie Termine bleiben in beiden Kalendern stehen. Sie werden nur nicht mehr abgeglichen.`
     )
     if (!sure) return
     run(async () => {
@@ -110,7 +122,7 @@ function SyncPanel({ accounts, calendars, onSynced, onError }: Props): React.JSX
 
   const syncNow = (): void => run(async () => applyStatus(await window.api.syncNow()))
 
-  const canPair = googleCalendars.length > 0 && outlookCalendars.length > 0
+  const canPair = choices.length > 1
 
   return (
     <section className="sync" aria-label="Synchronisation">
@@ -118,7 +130,8 @@ function SyncPanel({ accounts, calendars, onSynced, onError }: Props): React.JSX
 
       {!canPair && pairs.length === 0 && (
         <p className="section-hint">
-          Verbinde ein Google-Konto und Outlook. Danach lassen sich zwei Kalender abgleichen.
+          Verbinde zwei Konten (Google, Outlook oder iCloud). Danach lassen sich zwei Kalender
+          abgleichen.
         </p>
       )}
 
@@ -127,7 +140,7 @@ function SyncPanel({ accounts, calendars, onSynced, onError }: Props): React.JSX
           {pairs.map((pair) => (
             <li key={pair.id}>
               <span className="pair-name">
-                {nameOf(pair.googleCalendarId)} ↔ {nameOf(pair.msCalendarId)}
+                {nameOf(pair.calendarAId)} ↔ {nameOf(pair.calendarBId)}
               </span>
               <button
                 type="button"
@@ -145,9 +158,9 @@ function SyncPanel({ accounts, calendars, onSynced, onError }: Props): React.JSX
       {canPair && (
         <div className="pair-form">
           <label className="field">
-            <span>Google-Kalender</span>
-            <select value={googleId} onChange={(event) => setGoogleId(event.target.value)}>
-              {googleCalendars.map((calendar) => (
+            <span>Kalender</span>
+            <select value={first} onChange={(event) => setFirstId(event.target.value)}>
+              {choices.map((calendar) => (
                 <option key={calendar.id} value={calendar.id}>
                   {nameOf(calendar.id)}
                 </option>
@@ -155,9 +168,9 @@ function SyncPanel({ accounts, calendars, onSynced, onError }: Props): React.JSX
             </select>
           </label>
           <label className="field">
-            <span>Outlook-Kalender</span>
-            <select value={outlookId} onChange={(event) => setOutlookId(event.target.value)}>
-              {outlookCalendars.map((calendar) => (
+            <span>abgleichen mit</span>
+            <select value={second} onChange={(event) => setSecondId(event.target.value)}>
+              {secondChoices.map((calendar) => (
                 <option key={calendar.id} value={calendar.id}>
                   {nameOf(calendar.id)}
                 </option>

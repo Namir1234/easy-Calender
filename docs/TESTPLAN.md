@@ -8,31 +8,34 @@ Was getestet wird und mit welchem Ergebnis. Die Spalte «Status» wird nach jede
 
 Ausführen mit `npm test`.
 
-| Bereich         | Was wird geprüft                                                                                                                                 | Status |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | ------ |
-| Konfiguration   | Supabase-Zugangsdaten lesen, ungültige URLs und geheime Schlüssel ablehnen                                                                       | ✅     |
-| Zeiträume       | Datum umwandeln, ungültige oder zu lange Zeiträume vom Renderer ablehnen                                                                         | ✅     |
-| Demo-Provider   | Wochentage, Zwei-Wochen-Rhythmus, ganztägige Termine, eindeutige IDs                                                                             | ✅     |
-| Datenschicht    | Arbeitsspeicher-Variante: Demo-Daten anlegen, Sichtbarkeit merken, Fehlerfälle                                                                   | ✅     |
-| Datenschicht    | Supabase-Variante gegen eine echte Datenbank                                                                                                     | ⬜     |
-| Datenschicht    | Konto speichern mit Kalender-Abgleich, Konto entfernen, Demo-Konten entfernen                                                                    | ✅     |
-| Konfiguration   | Google-Zugangsdaten lesen und prüfen                                                                                                             | ✅     |
-| Anmeldung       | Rückweg vom Browser: richtiger und falscher `state`, Abbruch im Browser und in der App, Zeitüberschreitung                                       | ✅     |
-| Google-Mapper   | Termine mit Uhrzeit, ganztägig, Zeitzone, Serie, Status, unvollständige Termine                                                                  | ✅     |
-| Eingabeprüfung  | Termine von der Oberfläche: Zeiten, Zeitzone, Längen, Wiederholung, Unsinn                                                                       | ✅     |
-| Sync-Engine     | Neu, geändert, gelöscht in beide Richtungen, Konflikt, Wiederherstellen, kein Ping-Pong, Sicherheitsstopp, Fehler bei einzelnen Terminen, Serien | ✅     |
-| Graph-Mapper    | Outlook-Termine lesen und schreiben, Uhrzeit in der Zeitzone des Termins                                                                         | ✅     |
-| Serien          | RRULE ↔ Graph-Format hin und zurück, Ablehnen nicht abbildbarer Regeln                                                                           | ✅     |
-| Lokales Outlook | Mapper, Serien ↔ Outlook-Muster, Brücke zum PowerShell-Skript (mit Attrappe)                                                                     | ✅     |
-| Umschrift       | Notizen nach ASCII, Umlaute bleiben beim Abgleich auf der anderen Seite erhalten                                                                 | ✅     |
-| Einstellungen   | Vorgaben, gültige und ungültige Werte, Einstellungen pro Kalender                                                                                | ✅     |
-| Assistent       | Kalenderblatt, Antwort des Modells prüfen und umwandeln, Rückfragen, Wahl des Modells, Gespräch mit nachgebautem Ollama                          | ✅     |
-| Mapper          | Google ↔ Graph: Titel, Ort, Beschreibung                                                                                                         | ⬜     |
-| Mapper          | Zeitzonen                                                                                                                                        | ⬜     |
-| Mapper          | Ganztägige Termine                                                                                                                               | ⬜     |
-| Mapper          | RRULE-Fälle (täglich, wöchentlich, monatlich, jährlich, mit Ende oder Anzahl)                                                                    | ⬜     |
-| Sync-Engine     | Hash und Loop-Schutz                                                                                                                             | ⬜     |
-| Sync-Engine     | Konfliktlösung mit gemockten Providern                                                                                                           | ⬜     |
+| Bereich         | Was wird geprüft                                                                                                                                     | Status |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
+| Konfiguration   | Supabase-Zugangsdaten lesen, ungültige URLs und geheime Schlüssel ablehnen                                                                           | ✅     |
+| Zeiträume       | Datum umwandeln, ungültige oder zu lange Zeiträume vom Renderer ablehnen                                                                             | ✅     |
+| Demo-Provider   | Wochentage, Zwei-Wochen-Rhythmus, ganztägige Termine, eindeutige IDs                                                                                 | ✅     |
+| Datenschicht    | Arbeitsspeicher-Variante: Demo-Daten anlegen, Sichtbarkeit merken, Fehlerfälle                                                                       | ✅     |
+| Datenschicht    | Supabase-Variante gegen eine echte Datenbank                                                                                                         | ⬜     |
+| Datenschicht    | Konto speichern mit Kalender-Abgleich, Konto entfernen, Demo-Konten entfernen                                                                        | ✅     |
+| Konfiguration   | Google-Zugangsdaten lesen und prüfen                                                                                                                 | ✅     |
+| Anmeldung       | Rückweg vom Browser: richtiger und falscher `state`, Abbruch im Browser und in der App, Zeitüberschreitung                                           | ✅     |
+| Google-Mapper   | Termine mit Uhrzeit, ganztägig, Zeitzone, Serie, Status, unvollständige Termine                                                                      | ✅     |
+| Eingabeprüfung  | Termine von der Oberfläche: Zeiten, Zeitzone, Längen, Wiederholung, Unsinn                                                                           | ✅     |
+| Sync-Engine     | Neu, geändert, gelöscht in beide Richtungen, Konflikt, Wiederherstellen, kein Ping-Pong, Sicherheitsstopp, Fehler bei einzelnen Terminen, Serien     | ✅     |
+| Graph-Mapper    | Outlook-Termine lesen und schreiben, Uhrzeit in der Zeitzone des Termins                                                                             | ✅     |
+| Serien          | RRULE ↔ Graph-Format hin und zurück, Ablehnen nicht abbildbarer Regeln                                                                               | ✅     |
+| Lokales Outlook | Mapper, Serien ↔ Outlook-Muster, Brücke zum PowerShell-Skript (mit Attrappe)                                                                         | ✅     |
+| Umschrift       | Notizen nach ASCII, Umlaute bleiben beim Abgleich auf der anderen Seite erhalten                                                                     | ✅     |
+| Einstellungen   | Vorgaben, gültige und ungültige Werte, Einstellungen pro Kalender                                                                                    | ✅     |
+| Assistent       | Kalenderblatt, Antwort des Modells prüfen und umwandeln, Rückfragen, Wahl des Modells, Gespräch mit nachgebautem Ollama                              | ✅     |
+| iCalendar       | Lesen und Schreiben: Zeitzonen (mit und ohne VTIMEZONE), ganztägig, Serien, Ausnahmen, EXDATE, Zeitumstellung, unbekannte Felder bleiben stehen      | ✅     |
+| iCloud          | CalDAV mit nachgebautem Server: Kalender finden über Weiterleitung, falsches Passwort, fremde Server, Termine und Vorkommen erstellen/ändern/löschen | ✅     |
+| Sync mit iCloud | Abgleich Google-Attrappe ↔ iCloud in beide Richtungen, zweiter Lauf ändert nichts. Paare: doppelt, Ring, mit sich selbst werden abgelehnt            | ✅     |
+| Mapper          | Google ↔ Graph: Titel, Ort, Beschreibung                                                                                                             | ⬜     |
+| Mapper          | Zeitzonen                                                                                                                                            | ⬜     |
+| Mapper          | Ganztägige Termine                                                                                                                                   | ⬜     |
+| Mapper          | RRULE-Fälle (täglich, wöchentlich, monatlich, jährlich, mit Ende oder Anzahl)                                                                        | ⬜     |
+| Sync-Engine     | Hash und Loop-Schutz                                                                                                                                 | ⬜     |
+| Sync-Engine     | Konfliktlösung mit gemockten Providern                                                                                                               | ⬜     |
 
 ## Tests an der laufenden App
 
@@ -69,8 +72,17 @@ Diese Fälle werden an der gestarteten App geprüft, ohne echte Konten.
 | A-29 | «Assistent» ohne Ollama                                                     | Spalte zeigt eine Anleitung, Senden ist gesperrt                                                 | ✅                                               |
 | A-30 | Assistent: «morgen 14 Uhr Zahnarzt»                                         | Vorschlag mit richtigem Tag, Zeit und Kalender                                                   | ✅ Vorschlag geprüft, «Eintragen» nicht gedrückt |
 | A-31 | Assistent: unklare Nachricht («Kino mit Lea»)                               | Rückfrage statt Eintrag, die Antwort darauf ergibt den Vorschlag                                 | ✅                                               |
+| A-32 | «iCloud verbinden» mit echter Apple-ID und app-spezifischem Passwort        | Die iCloud-Kalender erscheinen mit Farbe, ihre Termine stehen im Kalender                        | ⬜                                               |
+| A-33 | Paar Google ↔ iCloud mit zwei Testkalendern, M-1 bis M-5 durchspielen       | Wie bei Google ↔ Outlook: neu, ändern, löschen in beide Richtungen, keine Doppelten              | ⬜                                               |
+| A-34 | Drittes Paar, das einen Ring schliessen würde                               | Meldung «schon über einen anderen Kalender abgeglichen», kein Paar entsteht                      | ⬜                                               |
 | A-22 | Fenster schliessen mit «im Hintergrund weiterlaufen»                        | Die App bleibt im Infobereich, ein Klick auf das Symbol öffnet sie wieder                        | ⬜                                               |
 | A-23 | «Mit Windows starten» einschalten, neu anmelden                             | Die App startet ohne Fenster im Infobereich                                                      | ⬜                                               |
+
+### 2026-11-17 · Version 0.13.0
+
+- `npm test`: 138 von 138 Tests bestanden (neu: iCalendar, CalDAV/iCloud mit nachgebautem Server, Abgleich mit iCloud, Prüfung der Paare). `npm run typecheck` ohne Befund, `npm run lint` ohne Fehler.
+- `electron-vite build` läuft durch, `ical.js` wird im Main-Prozess richtig geladen.
+- A-32 bis A-34 sind offen: Sie brauchen Namirs Apple-ID und ein app-spezifisches Passwort.
 
 ### 2026-11-17 · Version 0.12.1
 
