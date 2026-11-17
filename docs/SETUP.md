@@ -12,6 +12,8 @@ Ohne Einrichtung startet die App mit Demo-Daten. Für den echten Betrieb musst d
 - [x] Supabase: URL und Publishable Key in `.env`
 - [x] Google Cloud: Projekt erstellt, Calendar API aktiviert
 - [x] Google Cloud: OAuth-Client «Desktop app» angelegt, eigenes Konto als Testnutzer eingetragen
+- [ ] Google Cloud: OAuth-Client «Webanwendung» für die Handy-Version
+- [ ] GitHub: Pages mit Quelle «GitHub Actions» eingeschaltet
 - [ ] Azure: App registriert, Berechtigungen gesetzt, Anwendungs-ID in `.env`
 
 ## 1. Supabase
@@ -79,7 +81,36 @@ Der Assistent braucht ein Sprachmodell auf deinem Rechner. Das ist gratis und ni
 
 Arbeitsspeicher: Das Modell braucht etwa 2 bis 3 GB. Wer mehr Speicher hat und genauere Antworten will, kann ein grösseres Modell laden (z. B. `qwen2.5:7b`, etwa 5 GB). Die App nimmt `qwen2.5:3b`, wenn es da ist, sonst das erste geladene Modell.
 
-## 5. Die Datei .env
+## 5. Handy-Version (Web-App)
+
+Die Handy-Version läuft unter **https://namir1234.github.io/easy-Calender/**. Damit die Anmeldung dort geht, braucht es zwei Einstellungen, die nur du machen kannst.
+
+**GitHub Pages einschalten (einmalig)**
+
+1. Öffne auf GitHub das Repository → **Settings → Pages**.
+2. Wähle bei **Source** die Option **«GitHub Actions»**.
+3. Unter **Actions** den Ablauf «Handy-Version» starten (**Run workflow**) oder etwas auf main pushen.
+
+**Google-Client für das Web (einmalig)**
+
+1. Öffne die [Google Cloud Console](https://console.cloud.google.com/) im selben Projekt wie für die Desktop-App.
+2. Unter «APIs und Dienste → Anmeldedaten» einen neuen **OAuth-Client** vom Typ **«Webanwendung»** anlegen.
+3. Bei **Autorisierte JavaScript-Quellen** eintragen:
+   - `https://namir1234.github.io`
+   - `http://localhost:5174` (zum Ausprobieren am PC)
+4. Weiterleitungs-URIs braucht es keine.
+5. Die **Client-ID** (endet auf `.apps.googleusercontent.com`) in `web/src/config.ts` bei `COMMITTED_CLIENT_ID` eintragen. Sie ist nicht geheim. Ein Client-Secret braucht die Web-App nicht.
+
+**Auf das Handy legen**
+
+- **iPhone:** Die Adresse in Safari öffnen → Teilen → «Zum Home-Bildschirm».
+- **Android:** In Chrome öffnen → Menü → «Zum Startbildschirm hinzufügen».
+
+Die Anmeldung gilt eine Stunde. Danach zeigt die App «Wieder anmelden». Ein Tipp darauf genügt meist.
+
+**Lokal ausprobieren:** `npm run web:dev` startet sie unter http://localhost:5174. Mit `?demo` in der Adresse läuft sie mit Beispieldaten.
+
+## 6. Die Datei .env
 
 Kopiere [`.env.example`](../.env.example) nach `.env` in den Projektordner und trage die Werte ein. Starte die App danach neu.
 

@@ -12,3 +12,5 @@ out
 
 # Lokale Claude-Arbeitsordner
 .claude/worktrees
+
+out-web

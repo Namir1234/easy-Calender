@@ -6,12 +6,47 @@ Laufendes Protokoll des Projekts. Der neuste Eintrag steht oben.
 
 ## Aktueller Stand
 
-|                     |                                                                                                                                   |
-| ------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| **Etappe**          | Alle sieben Etappen sind gebaut und mit echten Konten geprüft. Version 0.12.1: Assistent mit echtem Modell geprüft und verbessert |
-| **Als Nächstes**    | Handy-Version als Web-App. Danach: Personen einladen                                                                              |
-| **Blockiert durch** | –                                                                                                                                 |
-| **Offen bei Namir** | Welche echten Kalender abgeglichen werden sollen. Wo die Stundenpläne liegen                                                      |
+|                     |                                                                                                                          |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| **Etappe**          | Alle sieben Etappen sind gebaut. Version 0.13.0 bringt die Handy-Version als Web-App                                     |
+| **Als Nächstes**    | Handy-Version mit dem echten Google-Konto prüfen. Danach: Personen einladen                                              |
+| **Blockiert durch** | Google-Client «Webanwendung» und GitHub Pages sind noch nicht eingerichtet. Das macht Namir (docs/SETUP.md, Abschnitt 5) |
+| **Offen bei Namir** | Google-Client «Webanwendung» anlegen, GitHub Pages einschalten, Client-ID mitteilen. Wo die Stundenpläne liegen          |
+
+---
+
+## 2026-11-17 · Handy-Version als Web-App (Version 0.13.0)
+
+Namir wollte eine Handy-Version und hat die Web-App gewählt. Er fragte, ob man für eine iPhone-App einen Mac braucht: für eine echte App ja (Xcode), für die Web-App nicht (E-019).
+
+**Gemacht**
+
+- Neuer Ordner `web/`: eine eigene kleine App mit Vite und React. Sie läuft ganz im Browser und spricht direkt mit Google. Ein eigener Server ist nicht nötig.
+- Anmeldung mit Google Identity Services (Token-Modell). Das Token gilt eine Stunde. Danach genügt ein Tipp auf «Wieder anmelden», Google schlägt das Konto vor.
+- Ansichten Liste (Woche), Tag und Monat. Oben Blättern und «Heute», unten rechts ein runder «+»-Knopf.
+- Ein Tipp auf einen Termin öffnet ein Blatt von unten mit Bearbeiten und Löschen. Kalender, die man nur lesen darf, zeigen das an.
+- Das Formular ist dasselbe wie am PC, auf dem Handy über den ganzen Bildschirm.
+- Kalender ein- und ausblenden und die Farbe ändern. Das gilt nur auf dem Handy.
+- Umwandlung der Termine aus der Desktop-App übernommen (`googleMapper`).
+- Lässt sich auf den Home-Bildschirm legen: Manifest, Symbol, Service Worker.
+- Mit `?demo` in der Adresse läuft sie mit Beispieldaten, ohne Google.
+- GitHub Actions baut sie bei jedem Push auf main und stellt sie auf GitHub Pages: https://namir1234.github.io/easy-Calender/
+
+**Geprüft**
+
+- 124 Unit-Tests bestanden (neu: Anmeldung speichern, Einstellungen, Kalender umwandeln, Termine seitenweise laden, abgelaufene Anmeldung, Anlegen und Ändern).
+- Im Browser in Handygrösse (375 × 812), hell und dunkel, mit Beispieldaten: Liste, Tag, Monat, Details, Ändern, Neu, Kalender ausblenden.
+- Fertiger Build: Content-Security-Policy aktiv, Service Worker registriert, Manifest lesbar.
+
+**Nicht geprüft**
+
+- Die Anmeldung mit dem echten Google-Konto. Dafür fehlt noch der Google-Client «Webanwendung».
+- Auf einem echten iPhone.
+
+**Grenzen**
+
+- Outlook-Termine kommen nur über Google aufs Handy, also nur, wenn der Abgleich am PC läuft.
+- Den Assistenten gibt es auf dem Handy nicht. Ollama läuft auf dem PC.
 
 ---
 
