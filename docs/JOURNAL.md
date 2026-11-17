@@ -11,7 +11,7 @@ Laufendes Protokoll des Projekts. Der neuste Eintrag steht oben.
 | **Etappe**          | Alle sieben Etappen sind gebaut und mit echten Konten geprüft (Version 0.10.2). Der Abgleich Google ↔ Outlook hat die Tests M-1 bis M-5 an zwei Testkalendern bestanden |
 | **Als Nächstes**    | Namir entscheidet, welche echten Kalender er abgleichen will. Offene Punkte: A-14, A-20, A-22, A-23, M-6                                                                |
 | **Blockiert durch** | nichts                                                                                                                                                                  |
-| **Offen bei Namir** | Doppelten Google-Kalender «Sync-Test» löschen. Entscheiden, ob das Noser-Konto in der App bleiben soll                                                                  |
+| **Offen bei Namir** | Entscheiden, ob das Noser-Konto in der App bleiben soll                                                                                                                 |
 
 ---
 
@@ -40,6 +40,10 @@ Laufendes Protokoll des Projekts. Der neuste Eintrag steht oben.
 **Aufgefallen**
 
 - Der Versuch mit dem Texteditor hat Outlook zum Absturz gebracht. Es startet beim nächsten Zugriff wieder. Dieser Weg wird nicht verwendet.
+
+**Nachtrag**
+
+- Den doppelten, leeren Google-Kalender «Sync-Test» auf Namirs Auftrag gelöscht. Vorher an der Kalender-ID geprüft, dass es der unverbundene ist. Der verbundene Testkalender und das Paar bestehen weiter.
 
 **Nicht geprüft**
 
