@@ -12,6 +12,7 @@ import type { RemoteCalendar, Store } from './db/store'
 import { DemoProvider } from './providers/demo'
 import { GoogleProvider } from './providers/google'
 import { MicrosoftProvider } from './providers/microsoft'
+import { OutlookLocalProvider, type OutlookBridge } from './providers/outlookLocal'
 import type { CalendarProvider } from './providers/types'
 import type { SecureStorage } from './secureStorage'
 
@@ -20,11 +21,16 @@ export interface AccountServiceOptions {
   tokens: SecureStorage
   google: GoogleConfigResult
   microsoft: MicrosoftConfigResult
+  /** Zugriff auf das lokal installierte Outlook (classic) */
+  outlook: OutlookBridge
   openBrowser(url: string): Promise<void>
   copyText(text: string): void
 }
 
 type RealProvider = 'google' | 'microsoft'
+
+/** Merkt sich, dass ein Microsoft-Konto über das lokale Outlook läuft, nicht über Graph. */
+const localKey = (email: string): string => `outlook-local:${email.toLowerCase()}`
 
 /**
  * Verbindet und entfernt Konten und liefert zu jedem Konto den passenden
@@ -34,10 +40,14 @@ export class AccountService {
   private readonly demo = new DemoProvider()
   private readonly googleProviders = new Map<string, GoogleProvider>()
   private readonly microsoftProviders = new Map<string, MicrosoftProvider>()
+  private readonly outlookLocal: OutlookLocalProvider
+  private connectingOutlook = false
   /** Die laufende Anmeldung: ihre Adresse beim Anbieter und der Abbruch */
   private login: { url: string | null; abort: AbortController } | null = null
 
-  constructor(private readonly options: AccountServiceOptions) {}
+  constructor(private readonly options: AccountServiceOptions) {
+    this.outlookLocal = new OutlookLocalProvider(options.outlook)
+  }
 
   /** Meldet ein Google-Konto an und speichert es mit seinen Kalendern. */
   connectGoogle(): Promise<Account> {
@@ -47,12 +57,56 @@ export class AccountService {
     )
   }
 
-  /** Meldet ein Microsoft-Konto an und speichert es mit seinen Kalendern. */
-  connectMicrosoft(): Promise<Account> {
+  /**
+   * Verbindet Outlook. Ohne App-Registrierung bei Microsoft geht das über
+   * das lokal installierte Outlook, mit Registrierung über die Anmeldung
+   * im Browser.
+   */
+  async connectMicrosoft(): Promise<Account> {
+    if (this.options.microsoft.kind === 'missing') {
+      const [first] = await this.connectLocalOutlook()
+      return first
+    }
     const config = this.requireMicrosoftConfig()
     return this.connect('microsoft', (open, signal) =>
       loginWithMicrosoft(config, this.options.tokens, open, signal)
     )
+  }
+
+  /**
+   * Übernimmt alle Konten des lokal installierten Outlook (classic), die
+   * einen Kalender haben. Eine Anmeldung braucht es nicht: Outlook ist
+   * schon angemeldet und gleicht Änderungen selbst mit seinem Server ab.
+   */
+  async connectLocalOutlook(): Promise<Account[]> {
+    if (this.connectingOutlook) throw new Error('Outlook wird bereits verbunden.')
+    this.connectingOutlook = true
+    try {
+      const { store, tokens, outlook } = this.options
+      const stores = await outlook.listStores()
+      if (stores.length === 0) {
+        throw new Error('In Outlook (classic) ist kein Konto mit Kalender eingerichtet.')
+      }
+      const accounts: Account[] = []
+      for (const entry of stores) {
+        tokens.setItem(localKey(entry.name), '1')
+        accounts.push(
+          await store.saveAccount({
+            provider: 'microsoft',
+            email: entry.name,
+            calendars: entry.calendars
+          })
+        )
+      }
+      await store.removeDemoAccounts()
+      return accounts
+    } finally {
+      this.connectingOutlook = false
+    }
+  }
+
+  private isLocalOutlook(email: string): boolean {
+    return this.options.tokens.getItem(localKey(email)) !== null
   }
 
   private async connect(
@@ -117,6 +171,7 @@ export class AccountService {
     } else if (account.provider === 'microsoft') {
       this.microsoftProviders.delete(account.email)
       forgetMicrosoftAccount(tokens, account.email)
+      tokens.removeItem(localKey(account.email))
     }
     await store.seedIfEmpty(DEMO_SEED)
   }
@@ -151,14 +206,22 @@ export class AccountService {
       case 'google':
         return this.googleProvider(account.email)
       case 'microsoft':
-        return this.microsoftProvider(account.email)
+        return this.isLocalOutlook(account.email)
+          ? this.outlookLocal
+          : this.microsoftProvider(account.email)
     }
   }
 
-  private listRemoteCalendars(provider: RealProvider, email: string): Promise<RemoteCalendar[]> {
-    return provider === 'google'
-      ? this.googleProvider(email).listCalendars()
-      : this.microsoftProvider(email).listCalendars()
+  private async listRemoteCalendars(
+    provider: RealProvider,
+    email: string
+  ): Promise<RemoteCalendar[]> {
+    if (provider === 'google') return this.googleProvider(email).listCalendars()
+    if (!this.isLocalOutlook(email)) return this.microsoftProvider(email).listCalendars()
+    const stores = await this.options.outlook.listStores()
+    const found = stores.find((entry) => entry.name.toLowerCase() === email.toLowerCase())
+    if (!found) throw new Error('Dieses Konto ist in Outlook (classic) nicht mehr eingerichtet')
+    return found.calendars
   }
 
   private googleProvider(email: string): GoogleProvider {

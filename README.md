@@ -11,7 +11,7 @@ alle Termine **bidirektional** synchronisiert und sie in einer einzigen Ansicht 
 
 ![Status](https://img.shields.io/badge/Status-Code%20fertig%2C%20Pr%C3%BCfung%20offen-orange?style=for-the-badge)
 ![Plattform](https://img.shields.io/badge/Plattform-Windows-0078D4?style=for-the-badge)
-![Version](https://img.shields.io/badge/Version-0.9.0-lightgrey?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-0.10.0-lightgrey?style=for-the-badge)
 
 ![Electron](https://img.shields.io/badge/Electron-2B2E3A?style=flat-square&logo=electron&logoColor=9FEAF9)
 ![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white)
@@ -38,8 +38,8 @@ alle Termine **bidirektional** synchronisiert und sie in einer einzigen Ansicht 
 ---
 
 > [!NOTE]
-> **Projektstatus:** Alle sieben Etappen sind geschrieben (Version 0.9.0). Google ist mit einem echten Konto geprüft.
-> Microsoft und der Abgleich sind erst durch Unit-Tests abgedeckt. Den aktuellen Stand findest du im [Arbeitsjournal](docs/JOURNAL.md).
+> **Projektstatus:** Alle sieben Etappen sind geschrieben (Version 0.10.0). Google ist mit einem echten Konto geprüft. Outlook läuft über das lokal installierte Outlook (classic), ohne Registrierung bei Microsoft.
+> Der Abgleich zwischen echten Kalendern ist noch nicht geprüft. Den aktuellen Stand findest du im [Arbeitsjournal](docs/JOURNAL.md).
 
 ## 💡 Worum geht es?
 
@@ -191,7 +191,7 @@ Die Details zu Datenmodell, Event-Modell und Sync-Algorithmus stehen in [docs/AR
 | Kalender-UI    | FullCalendar 7 (`@fullcalendar/react`)                                                         |
 | Datenbank      | Supabase (Postgres) über `@supabase/supabase-js`, Zugriff nur aus dem Main-Prozess             |
 | Google         | `@googleapis/calendar` (Calendar API v3), OAuth 2.0 «Desktop app» mit Loopback-Redirect + PKCE |
-| Microsoft      | Microsoft Graph direkt über `fetch`, Anmeldung mit PKCE (Authority `common`)                   |
+| Outlook        | Lokal installiertes Outlook (classic) über PowerShell. Alternativ Microsoft Graph über `fetch` |
 | Token-Speicher | Electron `safeStorage` (Windows DPAPI)                                                         |
 | Tests          | Vitest                                                                                         |
 | Installer      | electron-builder                                                                               |
@@ -201,7 +201,7 @@ Die Details zu Datenmodell, Event-Modell und Sync-Algorithmus stehen in [docs/AR
 - [x] **Etappe 0:** Plan, README und Dokumentation
 - [x] **Etappe 1:** Grundgerüst (Projekt, Supabase-Datenschicht, IPC, FullCalendar-UI mit Demo-Daten)
 - [x] **Etappe 2:** Google-Login, Kalender lesen und anzeigen _(mit echtem Konto geprüft)_
-- [x] **Etappe 3:** Microsoft-Login, Kalender lesen und anzeigen _(Code fertig, Prüfung offen)_
+- [x] **Etappe 3:** Microsoft-Login, Kalender lesen und anzeigen _(über das lokale Outlook, lesend geprüft)_
 - [x] **Etappe 4:** Termine in der App erstellen, bearbeiten und löschen _(mit Beispieldaten geprüft)_
 - [x] **Etappe 5:** Sync-Engine (Loop-Schutz, Konflikte, Löschungen) _(Unit-Tests, Prüfung mit echten Kalendern offen)_
 - [x] **Etappe 6:** Wiederkehrende Termine als Serie _(ohne Ausnahmen, Prüfung offen)_

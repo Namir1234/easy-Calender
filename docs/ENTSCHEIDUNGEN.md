@@ -19,6 +19,7 @@ Wichtige technische Entscheidungen mit Begründung. Neue Entscheidungen kommen u
 | [E-013](#e-013-microsoft-ohne-zusatzbibliotheken)                     | 2026-11-16 | Microsoft ohne Zusatzbibliotheken                      | gilt   |
 | [E-014](#e-014-abgleich-über-listen-und-fingerabdrücke)               | 2026-11-16 | Abgleich über Listen und Fingerabdrücke                | gilt   |
 | [E-015](#e-015-serien-als-ganzes-ohne-ausnahmen)                      | 2026-11-16 | Serien als Ganzes, ohne Ausnahmen                      | gilt   |
+| [E-016](#e-016-outlook-über-das-lokal-installierte-outlook)           | 2026-11-17 | Outlook über das lokal installierte Outlook            | gilt   |
 
 ---
 
@@ -117,3 +118,11 @@ Wichtige technische Entscheidungen mit Begründung. Neue Entscheidungen kommen u
 **Entscheidung:** Eine Serie wird als ein Termin mit Regel abgeglichen. Einzelne geänderte oder abgesagte Termine einer Serie (Ausnahmen) werden nicht übertragen. Regeln, die Outlook nicht abbilden kann, werden nicht übertragen und im Bereich «Synchronisation» gemeldet.
 
 **Begründung:** Ausnahmen sind bei Google und Microsoft sehr unterschiedlich gebaut. Ein falscher Abgleich wäre schlimmer als ein fehlender. Die Serie selbst deckt den häufigsten Fall ab.
+
+## E-016: Outlook über das lokal installierte Outlook
+
+**Entscheidung:** Outlook-Kalender werden über das auf dem Rechner installierte Outlook (classic) gelesen und geschrieben, nicht über Microsoft Graph. Ein PowerShell-Skript steuert Outlook über dessen Objektmodell (COM). Der Graph-Weg aus E-013 bleibt im Code und wird nur mit gesetzter Anwendungs-ID verwendet.
+
+**Begründung:** Graph verlangt eine App-Registrierung bei Microsoft. TBZ und BMZ sperren diese für Lernende, und auch die Zustimmung zu fremden Apps kann gesperrt sein. Das lokale Outlook ist schon angemeldet und braucht weder Registrierung noch Freigabe.
+
+**Preis:** Es geht nur unter Windows mit Outlook (classic) und eingerichtetem Konto, nicht mit dem «neuen Outlook». Der Abgleich läuft nur, wenn der Rechner an ist. Outlook wird dafür im Hintergrund gestartet. Kalender haben keine eigene Farbe aus Outlook.

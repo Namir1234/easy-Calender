@@ -2,11 +2,13 @@ import { app, clipboard, Menu, nativeImage, shell, Tray, BrowserWindow } from 'e
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import outlookScript from '../../resources/outlook.ps1?asset'
 import type { Settings } from '../shared/types'
 import { AccountService } from './accounts'
 import { readGoogleConfig, readMicrosoftConfig } from './config'
 import { initStore } from './db'
 import { registerIpc, type AppContext } from './ipc'
+import { OutlookBridge, powershellRunner } from './providers/outlookLocal'
 import { createEncryptedStorage } from './secureStorage'
 import { loadSettings, saveSettings } from './settings'
 import { SyncService } from './sync/service'
@@ -136,6 +138,7 @@ if (!app.requestSingleInstanceLock()) {
         tokens: createEncryptedStorage(join(userData, 'tokens.bin')),
         google: readGoogleConfig(import.meta.env),
         microsoft: readMicrosoftConfig(import.meta.env),
+        outlook: new OutlookBridge(powershellRunner(outlookScript)),
         openBrowser: (url) => shell.openExternal(url),
         copyText: (text) => clipboard.writeText(text)
       })

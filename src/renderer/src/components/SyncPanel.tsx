@@ -113,7 +113,7 @@ function SyncPanel({ accounts, calendars, onSynced, onError }: Props): React.JSX
 
       {!canPair && pairs.length === 0 && (
         <p className="section-hint">
-          Verbinde ein Google- und ein Microsoft-Konto. Danach lassen sich zwei Kalender abgleichen.
+          Verbinde ein Google-Konto und Outlook. Danach lassen sich zwei Kalender abgleichen.
         </p>
       )}
 
