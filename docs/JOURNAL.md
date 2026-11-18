@@ -6,12 +6,12 @@ Laufendes Protokoll des Projekts. Der neuste Eintrag steht oben.
 
 ## Aktueller Stand
 
-|                     |                                                                                                                          |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| **Etappe**          | Alle sieben Etappen sind gebaut. Version 0.13.0 bringt die Handy-Version als Web-App                                     |
-| **Als Nächstes**    | Handy-Version mit dem echten Google-Konto prüfen. Danach: Personen einladen                                              |
-| **Blockiert durch** | Google-Client «Webanwendung» und GitHub Pages sind noch nicht eingerichtet. Das macht Namir (docs/SETUP.md, Abschnitt 5) |
-| **Offen bei Namir** | Google-Client «Webanwendung» anlegen, GitHub Pages einschalten, Client-ID mitteilen. Wo die Stundenpläne liegen          |
+|                     |                                                                                      |
+| ------------------- | ------------------------------------------------------------------------------------ |
+| **Etappe**          | Alle sieben Etappen sind gebaut. Version 0.13.0 bringt die Handy-Version als Web-App |
+| **Als Nächstes**    | Handy-Version mit dem echten Google-Konto prüfen. Danach: Personen einladen          |
+| **Blockiert durch** | –                                                                                    |
+| **Offen bei Namir** | Handy-Version auf dem iPhone ausprobieren. Wo die Stundenpläne liegen                |
 
 ---
 
@@ -38,9 +38,11 @@ Namir wollte eine Handy-Version und hat die Web-App gewählt. Er fragte, ob man 
 - Im Browser in Handygrösse (375 × 812), hell und dunkel, mit Beispieldaten: Liste, Tag, Monat, Details, Ändern, Neu, Kalender ausblenden.
 - Fertiger Build: Content-Security-Policy aktiv, Service Worker registriert, Manifest lesbar.
 
+**Nachtrag 2026-11-18:** Auf Namirs Wunsch im Browser der App eingerichtet: GitHub Pages mit Quelle «GitHub Actions» eingeschaltet, OAuth-Client «easy-Calender Handy» (Webanwendung) mit den Quellen `https://namir1234.github.io` und `http://localhost:5174` angelegt. Die Client-ID steht in `web/src/config.ts`. Der erste Versuch beim Anlegen ergab bei Google einen Fehler, angelegt wurde nichts. Der zweite klappte.
+
 **Nicht geprüft**
 
-- Die Anmeldung mit dem echten Google-Konto. Dafür fehlt noch der Google-Client «Webanwendung».
+- Die Anmeldung mit dem echten Google-Konto.
 - Auf einem echten iPhone.
 
 **Grenzen**

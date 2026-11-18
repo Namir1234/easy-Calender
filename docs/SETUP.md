@@ -12,8 +12,8 @@ Ohne Einrichtung startet die App mit Demo-Daten. Für den echten Betrieb musst d
 - [x] Supabase: URL und Publishable Key in `.env`
 - [x] Google Cloud: Projekt erstellt, Calendar API aktiviert
 - [x] Google Cloud: OAuth-Client «Desktop app» angelegt, eigenes Konto als Testnutzer eingetragen
-- [ ] Google Cloud: OAuth-Client «Webanwendung» für die Handy-Version
-- [ ] GitHub: Pages mit Quelle «GitHub Actions» eingeschaltet
+- [x] Google Cloud: OAuth-Client «Webanwendung» für die Handy-Version
+- [x] GitHub: Pages mit Quelle «GitHub Actions» eingeschaltet
 - [ ] Azure: App registriert, Berechtigungen gesetzt, Anwendungs-ID in `.env`
 
 ## 1. Supabase
