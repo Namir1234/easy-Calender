@@ -94,6 +94,12 @@ function Apply($item, $event) {
     $separator = [System.Globalization.CultureInfo]::CurrentCulture.TextInfo.ListSeparator
     $item.Categories = (@($event.categories) -join "$separator ")
   }
+  # Bei einer ganzen Serie (RecurrenceState 1) lassen sich Beginn, Ende und «ganztägig»
+  # nicht direkt setzen. Die Serie wird darum aufgelöst und unten neu gesetzt.
+  # Ausnahmen der Serie gehen dabei verloren, sie werden ohnehin nicht abgeglichen (E-015).
+  if ($item.RecurrenceState -eq 1 -and $event.recurrence -ne 'keep') {
+    $item.ClearRecurrencePattern()
+  }
   if ($event.allDay) {
     $item.AllDayEvent = $true
     $item.Start = [datetime]::ParseExact($event.startDate, 'yyyy-MM-dd', $null)

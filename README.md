@@ -11,7 +11,7 @@ alle Termine **bidirektional** synchronisiert und sie in einer einzigen Ansicht 
 
 ![Status](https://img.shields.io/badge/Status-l%C3%A4uft%20mit%20echten%20Konten-brightgreen?style=for-the-badge)
 ![Plattform](https://img.shields.io/badge/Plattform-Windows-0078D4?style=for-the-badge)
-![Version](https://img.shields.io/badge/Version-0.13.0-lightgrey?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-0.13.1-lightgrey?style=for-the-badge)
 
 ![Electron](https://img.shields.io/badge/Electron-2B2E3A?style=flat-square&logo=electron&logoColor=9FEAF9)
 ![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white)
@@ -38,7 +38,7 @@ alle Termine **bidirektional** synchronisiert und sie in einer einzigen Ansicht 
 ---
 
 > [!NOTE]
-> **Projektstatus:** Alle sieben Etappen sind gebaut (Version 0.13.0, mit den Kalenderfunktionen von Outlook). Google und Outlook sind verbunden, der Abgleich hat die Tests an zwei echten Testkalendern bestanden.
+> **Projektstatus:** Alle sieben Etappen sind gebaut (Version 0.13.1, mit den Kalenderfunktionen von Outlook). Google und Outlook sind verbunden, der Abgleich hat die Tests an zwei echten Testkalendern bestanden.
 > Outlook läuft über das lokal installierte Outlook (classic). Den aktuellen Stand und die offenen Punkte findest du im [Arbeitsjournal](docs/JOURNAL.md).
 
 ## 💡 Worum geht es?

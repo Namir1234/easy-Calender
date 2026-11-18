@@ -6,12 +6,41 @@ Laufendes Protokoll des Projekts. Der neuste Eintrag steht oben.
 
 ## Aktueller Stand
 
-|                     |                                                                                                                        |
-| ------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| **Etappe**          | Alle sieben Etappen sind gebaut und mit echten Konten geprüft. Version 0.13.0: Kalenderfunktionen von Outlook          |
-| **Als Nächstes**    | Zusatzfelder und Serien an Testkalendern prüfen (A-38, A-40). Dann Handy-Version als Web-App, danach Personen einladen |
-| **Blockiert durch** | –                                                                                                                      |
-| **Offen bei Namir** | Welche echten Kalender abgeglichen werden sollen. Wo die Stundenpläne liegen                                           |
+|                     |                                                                                                                                         |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| **Etappe**          | Alle sieben Etappen sind gebaut und mit echten Konten geprüft. Version 0.13.1: Kalenderfunktionen von Outlook, an Testkalendern geprüft |
+| **Als Nächstes**    | Testtermine «Claude-Test» in Outlook Sync-Test löschen, sobald Outlook verbunden ist. Neue Version installieren. Dann Handy-Version     |
+| **Blockiert durch** | Outlook ist vom Exchange-Server getrennt: Löschen geht dort nicht                                                                       |
+| **Offen bei Namir** | Welche echten Kalender abgeglichen werden sollen. Wo die Stundenpläne liegen                                                            |
+
+---
+
+## 2026-11-18 · Outlook-Funktionen an Testkalendern geprüft (Version 0.13.1)
+
+Auf Namirs Auftrag habe ich das Schreiben an den beiden Sync-Test-Kalendern geprüft.
+
+**Vorgehen**
+
+- Die installierte App lief weiter (Beenden war nicht erlaubt). Damit nicht zwei Abgleiche gleichzeitig laufen, habe ich keine zweite App gestartet, sondern ein Testskript mit dem neuen Code direkt gegen die Anbieter laufen lassen. Es liegt im ignorierten Ordner `out/live-test`.
+- Die Google-Anmeldung wurde nur gelesen, aus einer Kopie in einem Testordner, die danach gelöscht wurde. Supabase blieb unberührt.
+- Alle Testtermine heissen «Claude-Test …».
+
+**Ergebnis**
+
+- Google: alles bestanden. «Abwesend», privat, 30 Minuten Erinnerung und Kategorie kommen an und lassen sich ändern. Ein Ändern ohne Zusatzfelder (wie beim Abgleich) lässt sie stehen. Eine Serie mit 3 Terminen: Jedes Vorkommen kennt seine Serie, die ganze Serie lässt sich laden, umbenennen und löschen.
+- Outlook: Zusatzfelder bestanden. **Fehler gefunden:** Die ganze Serie ändern scheiterte mit «The object does not support this method». Outlook erlaubt bei einer Serie nicht, Beginn und Ende direkt zu setzen. Das betraf auch den Abgleich, wenn er eine Serie in Outlook ändern wollte. Behoben: Das Brückenskript löst die Serie vor dem Ändern auf und setzt das Muster neu (Nachtrag zu E-015). Danach geprüft: alle 3 Termine umbenannt und verlängert.
+- Erinnerung: Die Windows-Mitteilung für einen echten Google-Termin erschien zur richtigen Zeit.
+
+**Aufgefallen**
+
+- Outlook ist vom Exchange-Server getrennt (Verbindungsmodus «Cached Disconnected», nicht «Offline arbeiten»). Anlegen und Ändern gehen im lokalen Zwischenspeicher, Löschen und Verschieben verweigert Outlook dann für jeden Termin, auch für einen frisch angelegten.
+- Darum liegen im Outlook-Kalender «Sync-Test» noch drei Testtermine: «Claude-Test Zusatzfelder geändert», «Claude-Test Serie umbenannt» (3 Termine ab 19.11.) und «Claude-Test Löschprobe». Die installierte App hat sie nach Google «Sync-Test» gespiegelt. Die Google-Kopien habe ich bewusst nicht gelöscht, sonst würde der Abgleich die geänderte Serie wiederherstellen.
+
+**Offen**
+
+- Sobald Outlook wieder verbunden ist: die drei Testtermine in Outlook löschen. Der Abgleich entfernt dann die Kopien in Google.
+- «Serie löschen» in Outlook ist wegen der Trennung nicht geprüft.
+- Die installierte App hat noch den alten Stand. Die neue Version kommt mit dem nächsten Installer.
 
 ---
 

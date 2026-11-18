@@ -80,11 +80,18 @@ Diese Fälle werden an der gestarteten App geprüft, ohne echte Konten.
 | A-35 | Termin mit der Maus auf einen anderen Tag ziehen                            | Der Termin wird gespeichert, Zusatzfelder bleiben                                                | ✅ Demo                                          |
 | A-36 | Neuer Termin: wöchentlich, Wochentage, Anzeigen als, Erinnerung, Kategorie  | Felder erscheinen, der Termin hat alle Angaben                                                   | ✅ Demo                                          |
 | A-37 | Termin in einen anderen Kalender verschieben                                | Er steht im neuen Kalender und ist im alten weg                                                  | ✅ Demo                                          |
-| A-38 | «Serie bearbeiten» und «Serie löschen» bei Google und Outlook               | Die ganze Serie ändert sich bzw. verschwindet                                                    | ⬜ braucht Testkalender                          |
-| A-39 | Erinnerung an einen Google-Termin                                           | Windows-Mitteilung zur eingestellten Zeit, Klick öffnet den Termin                               | ⬜                                               |
-| A-40 | Zusatzfelder in Google und Outlook schreiben                                | Anzeigen als, privat, Erinnerung und Kategorien stehen beim Anbieter                             | ⬜ braucht Testkalender                          |
+| A-38 | «Serie bearbeiten» und «Serie löschen» bei Google und Outlook               | Die ganze Serie ändert sich bzw. verschwindet                                                    | ✅ Google; Outlook umbenennen ✅, löschen offen|
+| A-39 | Erinnerung an einen Google-Termin                                           | Windows-Mitteilung zur eingestellten Zeit, Klick öffnet den Termin                               | ✅                                               |
+| A-40 | Zusatzfelder in Google und Outlook schreiben                                | Anzeigen als, privat, Erinnerung und Kategorien stehen beim Anbieter                             | ✅ Google und Outlook                            |
 | A-22 | Fenster schliessen mit «im Hintergrund weiterlaufen»                        | Die App bleibt im Infobereich, ein Klick auf das Symbol öffnet sie wieder                        | ⬜                                               |
 | A-23 | «Mit Windows starten» einschalten, neu anmelden                             | Die App startet ohne Fenster im Infobereich                                                      | ⬜                                               |
+
+### 2026-11-18 · Version 0.13.1
+
+- Testskript (nicht Teil der App) mit dem neuen Code gegen die Sync-Test-Kalender: Google 17 von 17 Prüfungen (Zusatzfelder schreiben, ändern, beim Ändern ohne Zusatzfelder erhalten; Serie mit 3 Vorkommen, Serie laden, ganz umbenennen, ganz löschen).
+- Outlook: Zusatzfelder 11 von 11. Die ganze Serie umbenennen schlug fehl (Fehler im Brückenskript, behoben, danach geprüft). Löschen war nicht möglich, weil Outlook vom Exchange-Server getrennt war.
+- A-39: Windows-Mitteilung für einen echten Google-Termin erschien zur richtigen Zeit.
+- `npm test`: 145 von 145 bestanden.
 
 ### 2026-11-17 · Version 0.13.0
 

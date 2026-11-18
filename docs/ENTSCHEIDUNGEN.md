@@ -121,6 +121,8 @@ Wichtige technische Entscheidungen mit Begründung. Neue Entscheidungen kommen u
 
 **Begründung:** Ausnahmen sind bei Google und Microsoft sehr unterschiedlich gebaut. Ein falscher Abgleich wäre schlimmer als ein fehlender. Die Serie selbst deckt den häufigsten Fall ab.
 
+**Nachtrag 0.13.1:** Outlook erlaubt bei einer ganzen Serie nicht, Beginn, Ende oder «ganztägig» direkt zu ändern («The object does not support this method»). Das Brückenskript löst die Serie darum vor dem Ändern auf und setzt das Muster danach neu. Allfällige Ausnahmen der Serie gehen dabei verloren, was zu dieser Entscheidung passt.
+
 ## E-016: Outlook über das lokal installierte Outlook
 
 **Entscheidung:** Outlook-Kalender werden über das auf dem Rechner installierte Outlook (classic) gelesen und geschrieben, nicht über Microsoft Graph. Ein PowerShell-Skript steuert Outlook über dessen Objektmodell (COM). Der Graph-Weg aus E-013 bleibt im Code und wird nur mit gesetzter Anwendungs-ID verwendet.
