@@ -815,6 +815,16 @@ p {
   min-height: 0;
 }
 
+/* Hintergrund-Kalender (Stundenplan): kräftiger als FullCalendars blasse
+   Vorgabe, damit die Lektion lesbar bleibt, aber klar hinter den Terminen. */
+.calendar-view .is-background-calendar {
+  background-color: color-mix(in oklab, var(--fc-event-color) 28%, transparent) !important;
+}
+
+.calendar-view .is-background-calendar * {
+  opacity: 0.85 !important;
+}
+
 /* Termin-Details: Popover neben dem Termin */
 
 .event-details {

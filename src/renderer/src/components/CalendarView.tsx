@@ -24,6 +24,9 @@ interface Props {
   onError(message: string): void
 }
 
+/** Länge eines Zeitfelds in der Wochenansicht (Vorgabe von FullCalendar: 30 Minuten) */
+const SLOT_MS = 30 * 60 * 1000
+
 const PLUGINS = [dayGridPlugin, timeGridPlugin, interactionPlugin, themePlugin]
 
 const TOOLBAR = {
@@ -96,6 +99,13 @@ function CalendarView({
     }
   }, [range, visibleKey, reloadKey, onError])
 
+  // Hintergrund-Kalender (etwa der Stundenplan) liegen in Wochen- und
+  // Tagesansicht als Fläche hinter allem. So bekommen andere Termine die
+  // volle Breite, statt sich die Spalte mit der Schule zu teilen. In der
+  // Monatsansicht zeigt FullCalendar Hintergrund-Termine nur ganztägig,
+  // darum bleiben sie dort normale Termine.
+  const isTimeGrid = viewType.startsWith('timeGrid')
+
   const calendarEvents = useMemo<EventInput[]>(() => {
     const byId = new Map(calendars.map((calendar) => [calendar.id, calendar]))
     return events.flatMap((event) => {
@@ -109,11 +119,14 @@ function CalendarView({
           end: event.end,
           allDay: event.allDay,
           color: calendar.color,
+          ...(calendar.background && isTimeGrid && !event.allDay
+            ? { display: 'background', className: 'is-background-calendar' }
+            : {}),
           extendedProps: { source: event }
         }
       ]
     })
-  }, [events, calendars])
+  }, [events, calendars, isTimeGrid])
 
   const handleEventClick = useCallback(
     (info: EventClickInfo) => {
@@ -124,8 +137,36 @@ function CalendarView({
   )
 
   const handleSelect = useCallback(
-    (info: DateSelectInfo) => onCreate(info.start, info.end, info.allDay),
-    [onCreate]
+    (info: DateSelectInfo) => {
+      // Hintergrund-Termine liegen unter der Ebene der übrigen Termine und
+      // bekommen darum selbst keinen Klick. Ein einfacher Klick (kein
+      // Ziehen über mehrere Felder) auf einen davon zeigt seine Details.
+      const isClick = info.end.getTime() - info.start.getTime() <= SLOT_MS
+      if (info.jsEvent && isClick && !info.allDay) {
+        const clicked = info.start.getTime()
+        const source = calendarEvents.find(
+          (event) =>
+            event.display === 'background' &&
+            Date.parse(String(event.start)) <= clicked &&
+            clicked < Date.parse(String(event.end))
+        )?.extendedProps?.source as CalendarEvent | undefined
+        if (source) {
+          // Das Popover erscheint auf Höhe des Klicks neben der Tagesspalte.
+          const { clientX, clientY } = info.jsEvent
+          const block = document
+            .elementsFromPoint(clientX, clientY)
+            .find((el) => el.classList.contains('is-background-calendar'))
+          const { left, right } = block?.getBoundingClientRect() ?? {
+            left: clientX,
+            right: clientX
+          }
+          onSelect(source, { top: clientY, bottom: clientY, left, right })
+          return
+        }
+      }
+      onCreate(info.start, info.end, info.allDay)
+    },
+    [calendarEvents, onCreate, onSelect]
   )
 
   return (

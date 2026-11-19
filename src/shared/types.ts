@@ -22,12 +22,15 @@ export interface Calendar {
   hidden?: boolean
   /** Von diesem Kalender werden nur ganztägige Termine gezeigt */
   allDayOnly?: boolean
+  /** Termine liegen in Wochen- und Tagesansicht hinter allen anderen (z. B. Stundenplan) */
+  background?: boolean
 }
 
 /** Einstellungen eines Kalenders, die nur auf diesem Gerät gelten. */
 export interface CalendarOptions {
   hidden?: boolean
   allDayOnly?: boolean
+  background?: boolean
   /** Eigene Farbe (`#rrggbb`). Ohne Angabe gilt die Farbe des Anbieters. */
   color?: string
 }

@@ -145,7 +145,8 @@ function App(): React.JSX.Element {
               ...entry,
               color: options.color ?? entry.color,
               hidden: Boolean(options.hidden),
-              allDayOnly: Boolean(options.allDayOnly)
+              allDayOnly: Boolean(options.allDayOnly),
+              background: Boolean(options.background)
             }
           : entry
       )
@@ -153,7 +154,7 @@ function App(): React.JSX.Element {
     window.api
       .setCalendarOptions(calendar.id, options)
       .then(() => {
-        // Die Farbe ändert die Termine nicht, alles andere schon.
+        // Farbe und Hintergrund ändern die Termine nicht, alles andere schon.
         if (
           Boolean(options.hidden) !== Boolean(calendar.hidden) ||
           Boolean(options.allDayOnly) !== Boolean(calendar.allDayOnly)

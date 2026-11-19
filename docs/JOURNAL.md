@@ -6,12 +6,40 @@ Laufendes Protokoll des Projekts. Der neuste Eintrag steht oben.
 
 ## Aktueller Stand
 
-|                     |                                                                                     |
-| ------------------- | ----------------------------------------------------------------------------------- |
-| **Etappe**          | Alle sieben Etappen sind gebaut. Version 0.14.0: im Monat durch die Monate blättern |
-| **Als Nächstes**    | Handy-Version mit dem echten Google-Konto prüfen. Danach: Personen einladen         |
-| **Blockiert durch** | –                                                                                   |
-| **Offen bei Namir** | Handy-Version auf dem iPhone ausprobieren. Am 22.2. prüfen, ob der BMS-Plan im zweiten Semester gleich bleibt |
+|                     |                                                                                                                                                                    |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Etappe**          | Alle sieben Etappen sind gebaut. Version 0.15.0: Stundenplan im Hintergrund                                                                                        |
+| **Als Nächstes**    | Handy-Version mit dem echten Google-Konto prüfen. Danach: Personen einladen                                                                                        |
+| **Blockiert durch** | –                                                                                                                                                                  |
+| **Offen bei Namir** | Bei TBZ und BMS «Im Hintergrund zeigen» einschalten. Handy-Version auf dem iPhone ausprobieren. Am 22.2. prüfen, ob der BMS-Plan im zweiten Semester gleich bleibt |
+
+---
+
+## 2026-11-19 · Stundenplan im Hintergrund (Version 0.15.0)
+
+Namirs Wunsch: TBZ und BMS sollen immer im Hintergrund liegen. Andere Termine wie ein Arzttermin sollen sie überdecken, statt sich die Tagesspalte mit der Schule zu teilen.
+
+**Gemacht**
+
+- Neue Einstellung pro Kalender im Menü «···»: «Im Hintergrund zeigen». Sie wird wie die anderen Einstellungen nur auf diesem Gerät gespeichert.
+- In Woche und Tag zeichnet FullCalendar solche Termine als getönte Fläche über die ganze Spaltenbreite (`display: 'background'`). Alle anderen Termine liegen in voller Breite darüber.
+- In der Monatsansicht bleiben sie normale Termine, weil FullCalendar Hintergrund-Termine dort nur ganztägig zeigt. Ganztägige Termine solcher Kalender bleiben ebenfalls normal.
+- Ein Klick auf eine Lektion öffnet weiterhin die Details. Wer über die Lektion zieht, legt wie überall einen neuen Termin an.
+
+**Aufgefallen**
+
+- FullCalendar 7 legt die Ebene der normalen Termine über die Hintergrund-Termine. Ein Klick kommt darum bei der Lektion nicht an, sondern markiert ein freies Feld. Die App erkennt einen einfachen Klick (höchstens ein Feld von 30 Minuten) in einer Lektion und zeigt dann deren Details statt des Formulars für einen neuen Termin.
+- `eventDidMount` wird für Hintergrund-Termine nicht aufgerufen. Die Lektion wird darum über die Uhrzeit des Klicks gefunden, nicht über das HTML-Element.
+
+**Geprüft**
+
+- Mit einer Testseite im Browser (FullCalendar, Forma-Theme, CSS der App): Arzttermin liegt in voller Breite über dem TBZ-Block. Klick auf die Lektion ergibt die Details, Klick auf den Arzttermin ebenfalls, Klick auf ein freies Feld und Ziehen über die Lektion ergeben einen neuen Termin.
+- `npm test`: 133 von 133 Tests bestanden. `npm run typecheck` ohne Befund.
+- **Nicht geprüft:** an der echten Desktop-App mit den Kalendern TBZ und BMS.
+
+**Als Nächstes**
+
+- Namir schaltet bei TBZ und BMS «Im Hintergrund zeigen» ein. Die Handy-Version hat die Einstellung noch nicht.
 
 ---
 
