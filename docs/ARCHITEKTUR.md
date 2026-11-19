@@ -171,7 +171,7 @@ Schreibt die App einen Termin nach Outlook, sieht Outlook ihn danach vielleicht 
 
 - **Anmeldung:** Google Identity Services, Token-Modell (`web/src/google/auth.ts`). Das Zugriffs-Token liegt eine Stunde lang im `localStorage` des Browsers.
 - **Daten:** `GoogleCalendarApi` (`web/src/google/api.ts`) spricht per `fetch` mit der Calendar API und verwendet dieselbe Umwandlung wie die Desktop-App (`src/main/providers/googleMapper.ts`).
-- **Oberfläche:** `MobileCalendar` (FullCalendar mit Liste, Tag, Monat), Blätter von unten für Details und Kalender. Das Formular `EventForm` kommt aus der Desktop-App. Es ruft `window.api.createEvent` und `updateEvent` auf, die Web-App stellt diese zwei Aufrufe bereit.
+- **Oberfläche:** `MobileCalendar` (FullCalendar mit Liste, Tag, Monat; im Monat blättert `useMonthScroll` aus `src/renderer/src/monthScroll.ts` per Wischen, wie am PC per Mausrad), Blätter von unten für Details und Kalender. Das Formular `EventForm` kommt aus der Desktop-App. Es ruft `window.api.createEvent` und `updateEvent` auf, die Web-App stellt diese zwei Aufrufe bereit.
 - **Einstellungen:** Sichtbarkeit und Farbe pro Kalender im `localStorage`, nur auf diesem Gerät.
 - **Offline-Start:** Ein Service Worker hält die App-Dateien bereit. Termine werden nicht zwischengespeichert.
 - **Veröffentlichung:** `.github/workflows/web.yml` testet, baut nach `out-web/` und stellt auf GitHub Pages.

@@ -70,12 +70,20 @@ Diese Fälle werden an der gestarteten App geprüft, ohne echte Konten.
 | A-29 | «Assistent» ohne Ollama                                                     | Spalte zeigt eine Anleitung, Senden ist gesperrt                                                  | ✅                                               |
 | A-30 | Assistent: «morgen 14 Uhr Zahnarzt»                                         | Vorschlag mit richtigem Tag, Zeit und Kalender                                                    | ✅ Vorschlag geprüft, «Eintragen» nicht gedrückt |
 | A-31 | Assistent: unklare Nachricht («Kino mit Lea»)                               | Rückfrage statt Eintrag, die Antwort darauf ergibt den Vorschlag                                  | ✅                                               |
+| A-32 | Monatsansicht: Mausrad und Touchpad nach unten und oben                     | Je Raste bzw. Wisch ein Monat weiter oder zurück, in Woche und Tag scrollt das Rad die Stunden    | ⬜                                               |
 | H-1  | Handy-Version mit `?demo` in Handygrösse                                    | Liste, Tag und Monat, Details als Blatt, Ändern und Neu im Vollbild-Formular, Kalender ausblenden | ✅                                               |
 | H-2  | Fertiger Build                                                              | Content-Security-Policy aktiv, Service Worker registriert, Manifest lesbar                        | ✅                                               |
 | H-3  | Anmeldung mit echtem Google-Konto auf dem Handy                             | Kalender und Termine wie am PC, neuer Termin erscheint in Google                                  | ⬜                                               |
 | H-4  | Auf den Home-Bildschirm legen (iPhone)                                      | Startet als App ohne Browserleiste, mit Symbol                                                    | ⬜                                               |
+| H-5  | Handy, Monat: nach oben, unten, links und rechts wischen                    | Oben und links: nächster Monat, unten und rechts: voriger. Antippen öffnet weiter den Termin      | ✅ (Browser)                                     |
 | A-22 | Fenster schliessen mit «im Hintergrund weiterlaufen»                        | Die App bleibt im Infobereich, ein Klick auf das Symbol öffnet sie wieder                         | ⬜                                               |
 | A-23 | «Mit Windows starten» einschalten, neu anmelden                             | Die App startet ohne Fenster im Infobereich                                                       | ⬜                                               |
+
+### 2026-11-19 · Version 0.14.0
+
+- `npm test`: 133 von 133 Tests bestanden. `npm run typecheck` und ESLint ohne Befund.
+- H-5 im Browser geprüft (375 × 812, Mausrad echt, Touchpad und Wischen simuliert).
+- **Nicht geprüft:** A-32 an der Desktop-App, H-5 auf einem echten Handy.
 
 ### 2026-11-17 · Version 0.13.0
 

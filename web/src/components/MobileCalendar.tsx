@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react'
+import { useCallback, useMemo, useRef } from 'react'
 import FullCalendar, { useCalendarController } from '@fullcalendar/react'
 import type { DateSelectInfo, DatesSetInfo, EventClickInfo, EventInput } from '@fullcalendar/react'
 import interactionPlugin from '@fullcalendar/react/interaction'
@@ -13,6 +13,7 @@ import type { CalendarEvent } from '../../../src/shared/types'
 import type { ColorScheme } from '../../../src/renderer/src/useColorScheme'
 import type { WebCalendar } from '../google/api'
 import type { ViewName } from '../store'
+import { useMonthScroll } from '../../../src/renderer/src/monthScroll'
 
 /** Sichtbarer Zeitraum als lokale Tage, `end` exklusiv. */
 export interface DayRange {
@@ -48,7 +49,8 @@ const toLocalDate = (date: Date): string =>
 
 /**
  * Der Kalender fürs Handy: oben Titel und Blättern, darunter die Ansicht.
- * Wischen und Antippen statt Ziehen mit der Maus.
+ * Wischen und Antippen statt Ziehen mit der Maus. Im Monat blättert ein
+ * Wisch nach oben oder unten (oder zur Seite) einen Monat weiter.
  */
 function MobileCalendar({
   calendars,
@@ -64,6 +66,12 @@ function MobileCalendar({
   onCalendars
 }: Props): React.JSX.Element {
   const controller = useCalendarController()
+  const viewRef = useRef<HTMLDivElement>(null)
+
+  // In der Monatsansicht wischt (oder scrollt) man durch die Monate.
+  useMonthScroll(viewRef, view === 'dayGridMonth', (step) =>
+    step > 0 ? controller.next() : controller.prev()
+  )
 
   const handleDatesSet = useCallback(
     (info: DatesSetInfo) => onRange({ start: toLocalDate(info.start), end: toLocalDate(info.end) }),
@@ -168,7 +176,7 @@ function MobileCalendar({
         </div>
       </header>
 
-      <div className="mobile-view">
+      <div className="mobile-view" ref={viewRef}>
         <FullCalendar
           controller={controller}
           plugins={PLUGINS}

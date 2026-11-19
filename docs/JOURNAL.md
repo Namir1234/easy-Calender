@@ -6,11 +6,11 @@ Laufendes Protokoll des Projekts. Der neuste Eintrag steht oben.
 
 ## Aktueller Stand
 
-|                     |                                                                                      |
-| ------------------- | ------------------------------------------------------------------------------------ |
-| **Etappe**          | Alle sieben Etappen sind gebaut. Version 0.13.0 bringt die Handy-Version als Web-App |
-| **Als Nächstes**    | Handy-Version mit dem echten Google-Konto prüfen. Danach: Personen einladen          |
-| **Blockiert durch** | –                                                                                    |
+|                     |                                                                                     |
+| ------------------- | ----------------------------------------------------------------------------------- |
+| **Etappe**          | Alle sieben Etappen sind gebaut. Version 0.14.0: im Monat durch die Monate blättern |
+| **Als Nächstes**    | Handy-Version mit dem echten Google-Konto prüfen. Danach: Personen einladen         |
+| **Blockiert durch** | –                                                                                   |
 | **Offen bei Namir** | Handy-Version auf dem iPhone ausprobieren. Am 22.2. prüfen, ob der BMS-Plan im zweiten Semester gleich bleibt |
 
 ---
@@ -110,6 +110,33 @@ Namir hat die Stundenpläne als Screenshots aus schulNetz geschickt: Montag BMS,
 
 - Die Ferien der Schulen und der Beginn der Sommerferien (12.7.2027) sind geschätzt, nicht aus dem Ferienplan der Schulen.
 - Code wurde nicht geändert. Ein automatischer Import aus schulNetz (iCal-Abo) wäre eine eigene Etappe.
+
+---
+
+## 2026-11-19 · Durch die Monate scrollen (Version 0.14.0)
+
+Namir wollte durch die Monate scrollen können.
+
+**Gemacht**
+
+- In der Monatsansicht blättert das Mausrad einen Monat weiter (nach unten) oder zurück (nach oben). Am PC und in der Handy-Version.
+- Touchpad: Ein Wisch mit zwei Fingern blättert genau einen Monat, auch wenn er noch nachläuft. Danach braucht es eine kurze Pause. Am Mausrad zählt jede Raste.
+- Handy: Wischen nach oben oder links zeigt den nächsten Monat, nach unten oder rechts den vorigen. Antippen und langes Drücken (neuer Termin) bleiben wie bisher.
+- In Woche, Tag und Liste scrollt das Rad wie bisher durch die Stunden und Tage.
+- Kann etwas im Monat selbst scrollen (zum Beispiel die Liste «+3 weitere»), scrollt dort der Inhalt und es wird nicht geblättert.
+- Ctrl + Mausrad zoomt weiterhin.
+- Die Logik steht in `src/renderer/src/monthScroll.ts` und wird von beiden Apps benutzt (E-020).
+
+**Geprüft**
+
+- 133 Unit-Tests bestanden (neu: Mausrad-Rasten, nachlaufendes Touchpad, Pause, kleines Zucken, Zeilen und Seiten, Wischen in alle Richtungen, Antippen).
+- `npm run typecheck` und ESLint ohne Befund.
+- Handy-Version mit `?demo` im Browser (375 × 812): Mausrad, simuliertes Touchpad und simuliertes Wischen blättern im Monat. In Tag und Liste bleibt das Datum stehen.
+
+**Nicht geprüft**
+
+- Die Desktop-App selbst (Electron) und ein echtes Touchpad. Sie benutzt denselben Code wie die Handy-Version.
+- Wischen auf einem echten iPhone.
 
 ---
 
