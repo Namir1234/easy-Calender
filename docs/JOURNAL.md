@@ -11,7 +11,35 @@ Laufendes Protokoll des Projekts. Der neuste Eintrag steht oben.
 | **Etappe**          | Alle sieben Etappen sind gebaut. Version 0.13.0 bringt die Handy-Version als Web-App |
 | **Als Nächstes**    | Handy-Version mit dem echten Google-Konto prüfen. Danach: Personen einladen          |
 | **Blockiert durch** | –                                                                                    |
-| **Offen bei Namir** | Handy-Version auf dem iPhone ausprobieren. Ferien im Stundenplan mit dem Ferienplan vergleichen |
+| **Offen bei Namir** | Handy-Version auf dem iPhone ausprobieren. Zugriff auf den BMS-Stundenplan geben |
+
+---
+
+## 2026-11-19 · TBZ-Stundenplan bis Ende Schuljahr aus dem Intranet
+
+Namir hat den TBZ-Stundenplan im Intranet (intranet.tam.ch) im eingebauten Browser geöffnet. Ich habe den Plan vom 16.11.2026 bis 1.8.2027 dort ausgelesen.
+
+**Gefunden**
+
+- Die TBZ ist jeden Dienstag, immer 08:10–11:40 und 12:35–16:05. Die Module wechseln jedes Quartal:
+  - bis 26.1.: Modul 231 (AU-060, FRN) und Modul 319 (AU-U61, NUY)
+  - 16.2.–20.4.: Modul 117 und Modul 293 (beide AU-058, FRN)
+  - 11.5.–13.7.: Modul 164 (AU-502, FRN) und Modul 122 (AU-511, BUM)
+- Unterricht fällt aus: Weihnachtsferien 21.12.–3.1., Sportferien 1.2.–14.2., Ostern 26.–29.3., 19.4., Frühlingsferien 26.4.–9.5., Pfingsten 15.–17.5. und ab 19.7. die Sommerferien. Auf einen Dienstag fallen davon nur 22.12., 29.12., 2.2., 9.2., 27.4. und 4.5.
+- Am 19.11. fällt wegen der Kantonalen Lehrerkonferenz der Unterricht aus. Das ist ein Donnerstag, an dem Namir keine TBZ hat.
+
+**Gemacht**
+
+- Die Serien für Modul 231 und 319 stimmten schon genau mit dem Intranet überein und bleiben so.
+- Vier neue Serien im Kalender «Claude»: Modul 117 und 293 (16.2.–20.4.), Modul 164 und 122 (11.5.–13.7.). Gleiche Form wie die bestehenden, ohne Erinnerungen.
+
+**Geprüft**
+
+- Vom 1.2. bis 19.7. stehen 40 TBZ-Termine im Kalender, genau die 20 Dienstage aus dem Intranet mit je zwei Blöcken.
+
+**Als Nächstes**
+
+- Dasselbe für die BMS, sobald Namir den Zugriff gibt. Die BMS-Ferien sind bis jetzt nur geschätzt.
 
 ---
 
