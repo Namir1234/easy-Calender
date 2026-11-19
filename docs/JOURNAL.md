@@ -35,10 +35,13 @@ Namirs Wunsch: TBZ und BMS sollen immer im Hintergrund liegen. Andere Termine wi
 
 **Geprüft**
 
-- Namirs erster Test lief noch mit der installierten 0.14.0, darum sah alles aus wie vorher. Die neue Version konnte ich nicht installieren, weil das Beenden der laufenden App nicht erlaubt war.
+- Namirs erster Test lief noch mit der installierten 0.14.0, darum sah alles aus wie vorher.
+- Beim zweiten Test war eine andere «0.15.0» installiert: der Build aus dem Branch `arrow-key-day-navigation` (12:38). Drei Branches tragen gerade die Nummer 0.15.0. Im Menü fehlte darum «Im Hintergrund zeigen», und die Mathe-Prüfung am Montag teilte sich die Spalte noch mit Chemie. Danach diesen Build installiert und beim Kalender «Claude» die Einstellung gesetzt.
+- An der installierten App (Woche vom 16.11.): Mathe-Prüfung 08:00 liegt in voller Breite über BMS · Chemie, die Probeprüfung 15:20 über BMS · Französisch, die Lektionen haben alle die ganze Spaltenbreite.
 - Mit einer Testseite im Browser (die echte `CalendarView` mit nachgebauten Lektionen, dunkler Modus): Arzttermin liegt in voller Breite über dem TBZ-Block. Klick auf die Lektion ergibt die Details, Klick auf den Arzttermin ebenfalls, Klick auf ein freies Feld und Ziehen über die Lektion ergeben einen neuen Termin.
 - `npm test`: 133 von 133 Tests bestanden. `npm run typecheck` ohne Befund.
-- **Nicht geprüft:** an der echten Desktop-App mit den Kalendern TBZ und BMS.
+- **Nicht geprüft:** Klick auf eine Lektion in der installierten App.
+- **Achtung:** Die installierte App enthält jetzt die Pfeiltasten-Navigation nicht mehr, bis die Branches in `main` zusammengeführt sind. Beim Mergen die Versionsnummern bereinigen.
 
 **Als Nächstes**
 
