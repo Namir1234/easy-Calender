@@ -11,7 +11,7 @@ alle Termine **bidirektional** synchronisiert und sie in einer einzigen Ansicht 
 
 ![Status](https://img.shields.io/badge/Status-l%C3%A4uft%20mit%20echten%20Konten-brightgreen?style=for-the-badge)
 ![Plattform](https://img.shields.io/badge/Plattform-Windows-0078D4?style=for-the-badge)
-![Version](https://img.shields.io/badge/Version-0.14.0-lightgrey?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-0.15.0-lightgrey?style=for-the-badge)
 
 ![Electron](https://img.shields.io/badge/Electron-2B2E3A?style=flat-square&logo=electron&logoColor=9FEAF9)
 ![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white)
@@ -38,7 +38,7 @@ alle Termine **bidirektional** synchronisiert und sie in einer einzigen Ansicht 
 ---
 
 > [!NOTE]
-> **Projektstatus:** Alle sieben Etappen sind gebaut (Version 0.14.0). Google und Outlook sind verbunden, der Abgleich hat die Tests an zwei echten Testkalendern bestanden.
+> **Projektstatus:** Alle sieben Etappen sind gebaut (Version 0.15.0). Google und Outlook sind verbunden, der Abgleich hat die Tests an zwei echten Testkalendern bestanden.
 > Outlook läuft über das lokal installierte Outlook (classic). Den aktuellen Stand und die offenen Punkte findest du im [Arbeitsjournal](docs/JOURNAL.md).
 
 ## 💡 Worum geht es?
@@ -55,20 +55,20 @@ Wer einen privaten Google-Kalender und dazu Outlook-Kalender von Schule oder Fir
 
 Das ist das Ziel der App. Was davon schon gebaut ist, zeigt die [Roadmap](#-roadmap).
 
-|     | Feature                    | Beschreibung                                                                                                  |
-| :-: | -------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| 🔄  | **Bidirektionaler Sync**   | Erstellen, Ändern und Löschen wird in beide Richtungen übertragen.                                            |
-| 👥  | **Beliebig viele Konten**  | Privates Google-Konto, privates Outlook-Konto sowie Schul- und Firmenkonten von Microsoft.                    |
-| 🗓️  | **Kombinierte Ansicht**    | Monats-, Wochen- und Tagesansicht mit allen Kalendern zusammen. Im Monat blättern Mausrad und Wischen weiter. |
-| ✏️  | **Termine in der App**     | Erstellen, bearbeiten und löschen, direkt beim jeweiligen Anbieter.                                           |
-| 🔗  | **Kalender-Paare**         | Du bestimmst, welche Kalender miteinander gekoppelt sind. Mehrere Paare sind möglich.                         |
-| 🔁  | **Wiederkehrende Termine** | Serien inklusive verschobener oder abgesagter Einzeltermine.                                                  |
-| 🛡️  | **Loop-Schutz**            | Die App erkennt das Echo ihrer eigenen Änderungen, es gibt kein Ping-Pong.                                    |
-| ⚖️  | **Konfliktlösung**         | Wurden beide Seiten geändert, gewinnt die neuere Änderung. Das steht danach im Sync-Log.                      |
-| 🔐  | **Sichere Tokens**         | Verschlüsselt gespeichert über Electron `safeStorage` (Windows DPAPI).                                        |
-| 📌  | **Läuft im Tray**          | Der Sync läuft weiter, auch wenn das Fenster minimiert ist.                                                   |
-| 📱  | **Handy-Version**          | Web-App für iPhone und Android, auf den Home-Bildschirm legbar: https://namir1234.github.io/easy-Calender/    |
-| 💬  | **Assistent**              | Termine per Chat eintragen, mit einem lokalen Sprachmodell (Ollama).                                          |
+|     | Feature                    | Beschreibung                                                                                                                                        |
+| :-: | -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 🔄  | **Bidirektionaler Sync**   | Erstellen, Ändern und Löschen wird in beide Richtungen übertragen.                                                                                  |
+| 👥  | **Beliebig viele Konten**  | Privates Google-Konto, privates Outlook-Konto sowie Schul- und Firmenkonten von Microsoft.                                                          |
+| 🗓️  | **Kombinierte Ansicht**    | Monats-, Wochen- und Tagesansicht mit allen Kalendern zusammen. Im Monat blättern Mausrad und Wischen weiter, die Pfeiltasten gehen von Tag zu Tag. |
+| ✏️  | **Termine in der App**     | Erstellen, bearbeiten und löschen, direkt beim jeweiligen Anbieter.                                                                                 |
+| 🔗  | **Kalender-Paare**         | Du bestimmst, welche Kalender miteinander gekoppelt sind. Mehrere Paare sind möglich.                                                               |
+| 🔁  | **Wiederkehrende Termine** | Serien inklusive verschobener oder abgesagter Einzeltermine.                                                                                        |
+| 🛡️  | **Loop-Schutz**            | Die App erkennt das Echo ihrer eigenen Änderungen, es gibt kein Ping-Pong.                                                                          |
+| ⚖️  | **Konfliktlösung**         | Wurden beide Seiten geändert, gewinnt die neuere Änderung. Das steht danach im Sync-Log.                                                            |
+| 🔐  | **Sichere Tokens**         | Verschlüsselt gespeichert über Electron `safeStorage` (Windows DPAPI).                                                                              |
+| 📌  | **Läuft im Tray**          | Der Sync läuft weiter, auch wenn das Fenster minimiert ist.                                                                                         |
+| 📱  | **Handy-Version**          | Web-App für iPhone und Android, auf den Home-Bildschirm legbar: https://namir1234.github.io/easy-Calender/                                          |
+| 💬  | **Assistent**              | Termine per Chat eintragen, mit einem lokalen Sprachmodell (Ollama).                                                                                |
 
 <div align="center">
 <img src="docs/screenshots/monat-dunkel.png" alt="Monatsansicht im dunklen Modus" width="820">
@@ -213,6 +213,7 @@ Die Details zu Datenmodell, Event-Modell und Sync-Algorithmus stehen in [docs/AR
 - [x] **Extra:** Assistent zum Eintragen per Chat, mit lokalem Modell über Ollama
 - [x] **Extra:** Handy-Version als Web-App _(Anmeldung mit echtem Konto offen)_
 - [x] **Extra:** Mit Mausrad, Touchpad und Wischen durch die Monate blättern
+- [x] **Extra:** Mit den Pfeiltasten durch die Tage
 - [ ] **Extra:** Personen zu Terminen einladen
 
 ## 🔑 Einrichtung

@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import FullCalendar, { useCalendarController } from '@fullcalendar/react'
 import type { DateSelectInfo, DatesSetInfo, EventClickInfo, EventInput } from '@fullcalendar/react'
 import interactionPlugin from '@fullcalendar/react/interaction'
@@ -14,6 +14,7 @@ import type { ColorScheme } from '../../../src/renderer/src/useColorScheme'
 import type { WebCalendar } from '../google/api'
 import type { ViewName } from '../store'
 import { useMonthScroll } from '../../../src/renderer/src/monthScroll'
+import { toDayKey, useDayKeys } from '../../../src/renderer/src/dayKeys'
 
 /** Sichtbarer Zeitraum als lokale Tage, `end` exklusiv. */
 export interface DayRange {
@@ -43,10 +44,6 @@ const VIEWS: Array<[ViewName, string]> = [
   ['dayGridMonth', 'Monat']
 ]
 
-const pad = (value: number): string => String(value).padStart(2, '0')
-const toLocalDate = (date: Date): string =>
-  `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
-
 /**
  * Der Kalender fürs Handy: oben Titel und Blättern, darunter die Ansicht.
  * Wischen und Antippen statt Ziehen mit der Maus. Im Monat blättert ein
@@ -73,8 +70,23 @@ function MobileCalendar({
     step > 0 ? controller.next() : controller.prev()
   )
 
+  // Mit einer Tastatur (Tablet, Desktop-Browser) gehen auch die Pfeiltasten.
+  const [current, setCurrent] = useState<DayRange | null>(null)
+  const { dayClass, headerClass } = useDayKeys({
+    viewType: view,
+    range: current,
+    gotoDate: (day) => controller.gotoDate(day)
+  })
+
   const handleDatesSet = useCallback(
-    (info: DatesSetInfo) => onRange({ start: toLocalDate(info.start), end: toLocalDate(info.end) }),
+    (info: DatesSetInfo) => {
+      const start = toDayKey(info.view.currentStart)
+      const end = toDayKey(info.view.currentEnd)
+      setCurrent((before) =>
+        before && before.start === start && before.end === end ? before : { start, end }
+      )
+      onRange({ start: toDayKey(info.start), end: toDayKey(info.end) })
+    },
     [onRange]
   )
 
@@ -197,6 +209,10 @@ function MobileCalendar({
           selectable
           selectLongPressDelay={400}
           select={create}
+          dayCellClass={dayClass}
+          dayHeaderClass={headerClass}
+          dayLaneClass={dayClass}
+          listDayClass={dayClass}
           noEventsText="Keine Termine in dieser Woche"
           // Schmale Tagesspalte: «Mi.» und «18. Nov.», damit der Titel Platz hat.
           listDayFormat={{ weekday: 'short' }}

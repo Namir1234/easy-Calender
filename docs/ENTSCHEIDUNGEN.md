@@ -168,3 +168,11 @@ Wichtige technische Entscheidungen mit Begründung. Neue Entscheidungen kommen u
 **Begründung:** FullCalendar zeigt einen Monat als Raster, das die ganze Höhe füllt. Eine endlose Liste von Monaten gäbe es nur mit der Jahresansicht (`multiMonth`), die nach zwölf Monaten aufhört und andere Zellen hat. Blättern passt zu den Knöpfen «‹ ›», lädt Termine weiter pro Monat und funktioniert in beiden Apps mit demselben Code (`monthScroll.ts`).
 
 **Preis:** Ein Touchpad-Wisch blättert genau einen Monat, auch ein schneller. Wer weit springen will, wischt mehrmals oder nimmt das Mausrad. Die Werte (60 px pro Schritt, 250 ms Ruhe) sind geschätzt und am echten Touchpad noch nicht geprüft.
+
+## E-021: Pfeiltasten markieren einen Tag
+
+**Entscheidung:** ← und → wählen den vorigen oder nächsten Tag und markieren ihn. Der Kalender blättert erst, wenn der Tag aus der Woche oder dem Monat fällt. Die Tasten hängen am ganzen Fenster, nicht an einem fokussierten Kalenderfeld.
+
+**Begründung:** Würden die Pfeile in der Woche eine ganze Woche blättern, käme man nie zu einem bestimmten Tag. Mit der Markierung sieht man, wo man ist, und kann mit «Tag» genau dort hineinschauen. Am Fenster hängen sie, weil FullCalendar keine fokussierbaren Tageszellen hat und man sonst zuerst in den Kalender klicken müsste.
+
+**Preis:** Die Pfeile gehören dem Kalender, solange kein Eingabefeld, Formular oder Popover offen ist. Wer im Fenster etwas mit den Pfeilen scrollen will, kann das nur noch mit ↑ und ↓ (ausser im Monat). In der Handy-Liste springen ← und → eine Woche statt einen Tag.
