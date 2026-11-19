@@ -813,6 +813,14 @@ p {
 .calendar-view {
   flex: 1;
   min-height: 0;
+  /* Für die Zeilenhöhe im Monatsband (100cqh = Höhe der Ansicht) */
+  container-type: size;
+}
+
+/* Monat als Band von Wochen (monthStrip.ts): Sechs Wochen füllen die Höhe
+   unter Werkzeugleiste und Wochentagen, wie bei einem gewohnten Monat. */
+.calendar-view .month-strip-row {
+  min-height: calc((100cqh - 100px) / 6);
 }
 
 /* Termin-Details: Popover neben dem Termin */

@@ -13,7 +13,12 @@ import type { CalendarEvent } from '../../../src/shared/types'
 import type { ColorScheme } from '../../../src/renderer/src/useColorScheme'
 import type { WebCalendar } from '../google/api'
 import type { ViewName } from '../store'
-import { useMonthScroll } from '../../../src/renderer/src/monthScroll'
+import {
+  MONTH_STRIP,
+  STRIP_VIEWS,
+  monthShading,
+  useMonthStrip
+} from '../../../src/renderer/src/monthStrip'
 
 /** Sichtbarer Zeitraum als lokale Tage, `end` exklusiv. */
 export interface DayRange {
@@ -49,8 +54,8 @@ const toLocalDate = (date: Date): string =>
 
 /**
  * Der Kalender fürs Handy: oben Titel und Blättern, darunter die Ansicht.
- * Wischen und Antippen statt Ziehen mit der Maus. Im Monat blättert ein
- * Wisch nach oben oder unten (oder zur Seite) einen Monat weiter.
+ * Wischen und Antippen statt Ziehen mit der Maus. Der Monat ist ein langes
+ * Band von Wochen, durch das man stufenlos wischt.
  */
 function MobileCalendar({
   calendars,
@@ -68,14 +73,16 @@ function MobileCalendar({
   const controller = useCalendarController()
   const viewRef = useRef<HTMLDivElement>(null)
 
-  // In der Monatsansicht wischt (oder scrollt) man durch die Monate.
-  useMonthScroll(viewRef, view === 'dayGridMonth', (step) =>
-    step > 0 ? controller.next() : controller.prev()
-  )
+  const isMonth = view === 'dayGridMonth'
+  const strip = useMonthStrip(viewRef, isMonth, controller)
+  const { rendered } = strip
 
   const handleDatesSet = useCallback(
-    (info: DatesSetInfo) => onRange({ start: toLocalDate(info.start), end: toLocalDate(info.end) }),
-    [onRange]
+    (info: DatesSetInfo) => {
+      onRange({ start: toLocalDate(info.start), end: toLocalDate(info.end) })
+      rendered(info.view.type)
+    },
+    [onRange, rendered]
   )
 
   const calendarEvents = useMemo<EventInput[]>(() => {
@@ -109,7 +116,8 @@ function MobileCalendar({
   )
 
   const changeView = (next: ViewName): void => {
-    controller.changeView(next)
+    if (isMonth) strip.leave()
+    controller.changeView(next === 'dayGridMonth' ? MONTH_STRIP : next)
     onView(next)
   }
 
@@ -120,7 +128,7 @@ function MobileCalendar({
           <button
             type="button"
             className="icon-button"
-            onClick={() => controller.prev()}
+            onClick={() => (isMonth ? strip.step(-1) : controller.prev())}
             aria-label="Zurück"
           >
             <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -128,12 +136,12 @@ function MobileCalendar({
             </svg>
           </button>
           <h1 className="topbar-title" aria-live="polite">
-            {controller.view?.title ?? ''}
+            {isMonth ? strip.title : (controller.view?.title ?? '')}
           </h1>
           <button
             type="button"
             className="icon-button"
-            onClick={() => controller.next()}
+            onClick={() => (isMonth ? strip.step(1) : controller.next())}
             aria-label="Weiter"
           >
             <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -142,7 +150,11 @@ function MobileCalendar({
           </button>
         </div>
         <div className="topbar-row">
-          <button type="button" className="chip" onClick={() => controller.today()}>
+          <button
+            type="button"
+            className="chip"
+            onClick={() => (isMonth ? strip.today() : controller.today())}
+          >
             Heute
           </button>
           <div className="segmented" role="group" aria-label="Ansicht">
@@ -177,12 +189,14 @@ function MobileCalendar({
       </header>
 
       <div className="mobile-view" ref={viewRef}>
+        <style>{monthShading('.mobile-view', strip.month)}</style>
         <FullCalendar
           controller={controller}
           plugins={PLUGINS}
           locale={deLocale}
           colorScheme={colorScheme}
-          initialView={view}
+          initialView={view === 'dayGridMonth' ? MONTH_STRIP : view}
+          views={STRIP_VIEWS}
           headerToolbar={false}
           height="100%"
           borderless

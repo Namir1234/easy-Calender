@@ -190,6 +190,13 @@ body {
   flex: 1;
   min-height: 0;
   padding-bottom: var(--safe-bottom);
+  /* Für die Zeilenhöhe im Monatsband (100cqh = Höhe der Ansicht) */
+  container-type: size;
+}
+
+/* Monat als Band von Wochen: sechs Wochen füllen die Höhe unter den Wochentagen */
+.mobile-view .month-strip-row {
+  min-height: calc((100cqh - 34px - var(--safe-bottom)) / 6);
 }
 
 /* Neuer Termin: runder Knopf unten rechts, über der Home-Leiste */

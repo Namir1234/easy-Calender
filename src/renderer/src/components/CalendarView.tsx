@@ -11,7 +11,7 @@ import '@fullcalendar/react/themes/forma/theme.css'
 import type { Calendar, CalendarEvent, DateRange } from '../../../shared/types'
 import type { ColorScheme } from '../useColorScheme'
 import type { AnchorRect } from './EventDetails'
-import { useMonthScroll } from '../monthScroll'
+import { MONTH_STRIP, STRIP_VIEWS, monthShading, useMonthStrip } from '../monthStrip'
 
 interface Props {
   calendars: Calendar[]
@@ -29,7 +29,7 @@ const PLUGINS = [dayGridPlugin, timeGridPlugin, interactionPlugin, themePlugin]
 const TOOLBAR = {
   start: 'prev,next today',
   center: 'title',
-  end: 'dayGridMonth,timeGridWeek,timeGridDay'
+  end: `${MONTH_STRIP},timeGridWeek,timeGridDay`
 }
 
 /** Lokales Datum als `YYYY-MM-DD`, ohne Umweg über UTC. */
@@ -53,19 +53,45 @@ function CalendarView({
   const controller = useCalendarController()
   const viewRef = useRef<HTMLDivElement>(null)
 
-  // In der Monatsansicht blättern Mausrad und Touchpad durch die Monate.
-  useMonthScroll(viewRef, viewType === 'dayGridMonth', (step) =>
-    step > 0 ? controller.next() : controller.prev()
+  // Im Monat scrollt man stufenlos durch die Wochen (monthStrip.ts).
+  const isMonth = viewType === MONTH_STRIP
+  const strip = useMonthStrip(viewRef, isMonth, controller)
+  const { rendered, step, today, leave, title: stripTitle } = strip
+
+  // «‹ › Heute» scrollen im Monat weich zum Monatsanfang, sonst wie gewohnt.
+  const buttons = useMemo(
+    () => ({
+      [MONTH_STRIP]: { text: 'Monat' },
+      // Woche und Tag zeigen danach den Monat im Blick, nicht ein internes Datum.
+      timeGridWeek: { click: () => leave() },
+      timeGridDay: { click: () => leave() },
+      // `preventDefault` hält FullCalendar davon ab, zusätzlich selbst zu blättern.
+      ...(isMonth && {
+        prev: { click: (ev: MouseEvent) => (ev.preventDefault(), step(-1)), hint: 'Voriger Monat' },
+        next: { click: (ev: MouseEvent) => (ev.preventDefault(), step(1)), hint: 'Nächster Monat' },
+        today: { click: (ev: MouseEvent) => (ev.preventDefault(), today()) }
+      })
+    }),
+    [isMonth, step, today, leave]
+  )
+  // Der Titel zeigt im Monat den Monat im Blick, nicht den ganzen Zeitraum des Rasters.
+  const titleFormat = useMemo(
+    () => (isMonth && stripTitle ? () => stripTitle : undefined),
+    [isMonth, stripTitle]
   )
 
-  const handleDatesSet = useCallback((info: DatesSetInfo) => {
-    setViewType(info.view.type)
-    const start = toLocalDate(info.start)
-    const end = toLocalDate(info.end)
-    setRange((current) =>
-      current && current.start === start && current.end === end ? current : { start, end }
-    )
-  }, [])
+  const handleDatesSet = useCallback(
+    (info: DatesSetInfo) => {
+      setViewType(info.view.type)
+      rendered(info.view.type)
+      const start = toLocalDate(info.start)
+      const end = toLocalDate(info.end)
+      setRange((current) =>
+        current && current.start === start && current.end === end ? current : { start, end }
+      )
+    },
+    [rendered]
+  )
 
   // Der Main-Prozess fragt nur sichtbare Kalender ab. Ändert sich die
   // Auswahl oder die Kalenderliste, wird darum neu geladen.
@@ -130,8 +156,12 @@ function CalendarView({
 
   return (
     <div className="calendar-view" ref={viewRef}>
+      <style>{monthShading('.calendar-view', strip.month)}</style>
       <FullCalendar
         controller={controller}
+        views={STRIP_VIEWS}
+        buttons={buttons}
+        titleFormat={titleFormat}
         plugins={PLUGINS}
         locale={deLocale}
         colorScheme={colorScheme}

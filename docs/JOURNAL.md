@@ -6,12 +6,44 @@ Laufendes Protokoll des Projekts. Der neuste Eintrag steht oben.
 
 ## Aktueller Stand
 
-|                     |                                                                                     |
-| ------------------- | ----------------------------------------------------------------------------------- |
-| **Etappe**          | Alle sieben Etappen sind gebaut. Version 0.14.0: im Monat durch die Monate blättern |
-| **Als Nächstes**    | Handy-Version mit dem echten Google-Konto prüfen. Danach: Personen einladen         |
-| **Blockiert durch** | –                                                                                   |
-| **Offen bei Namir** | Handy-Version auf dem iPhone ausprobieren. Wo die Stundenpläne liegen               |
+|                     |                                                                                            |
+| ------------------- | ------------------------------------------------------------------------------------------ |
+| **Etappe**          | Alle sieben Etappen sind gebaut. Version 0.15.0: Monat stufenlos durch die Wochen scrollen |
+| **Als Nächstes**    | Handy-Version mit dem echten Google-Konto prüfen. Danach: Personen einladen                |
+| **Blockiert durch** | –                                                                                          |
+| **Offen bei Namir** | Handy-Version auf dem iPhone ausprobieren. Wo die Stundenpläne liegen                      |
+
+---
+
+## 2026-11-19 · Monat stufenlos scrollen (Version 0.15.0)
+
+Nach dem ersten Wurf (0.14.0, Monat für Monat) wollte Namir «clean ohne Stoppen» scrollen, auch halbe Monate, ohne Einrasten.
+
+**Gemacht**
+
+- Der Monat ist jetzt ein langes Band von Wochen, das man mit Mausrad, Touchpad oder Finger stufenlos scrollt. Am PC und in der Handy-Version (E-021).
+- Eine Woche ist ein Sechstel der Höhe hoch, man sieht also wie gewohnt etwa einen Monat.
+- Der Titel zeigt den Monat, der gerade im Blick ist. Die Tage der anderen Monate sind leicht abgetönt, so sieht man, wo ein Monat aufhört.
+- «‹ ›» und «Heute» scrollen weich zum Anfang des Monats. Mehrmals schnell «›» zählt richtig weiter.
+- Das Band umfasst 50 Wochen und wird unbemerkt neu gelegt, wenn man ans Ende kommt. Man kann also beliebig weit scrollen.
+- Wechselt man vom Monat zu Woche, Tag oder Liste, zeigen diese den Monat im Blick (heute, wenn er darin liegt).
+- Das Blättern aus 0.14.0 (`monthScroll.ts`) ist entfernt. Neu: `src/renderer/src/monthStrip.ts`.
+
+**Aufgefallen**
+
+- FullCalendar benutzt beim Wechsel der Ansicht dasselbe Scroll-Element weiter. Ohne Korrektur öffnete der Monat darum auf der Höhe von 07:00 aus der Wochenansicht.
+- Eigene Klicks auf «‹ ›» ersetzen die eingebauten nur mit `preventDefault()`, sonst blättert FullCalendar zusätzlich um vier Wochen.
+- Die Zeilenhöhe muss stimmen, sobald FullCalendar das Raster einsetzt. Darum hängt sie an einer Klasse der Ansicht (`dayRowClass`), nicht an einem Attribut, das React erst später setzt.
+
+**Geprüft**
+
+- 134 Unit-Tests bestanden (neu: Montag, Zeitraum des Bands, Monat im Blick, Abtönung).
+- Handy-Version und Desktop-Ansicht im Browser, Einzelheiten im [Testplan](TESTPLAN.md).
+
+**Nicht geprüft**
+
+- An der installierten Desktop-App mit echtem Mausrad und Touchpad. Den Zugriff auf den Bildschirm hat Namir abgelehnt.
+- Auf einem echten Handy.
 
 ---
 

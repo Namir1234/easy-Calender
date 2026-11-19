@@ -163,8 +163,23 @@ Wichtige technische Entscheidungen mit Begründung. Neue Entscheidungen kommen u
 
 ## E-020: Im Monat blättern statt endlos scrollen
 
+> **Überholt durch E-021** (Version 0.15.0). Namir wollte stufenlos scrollen, ohne Einrasten.
+
 **Entscheidung:** In der Monatsansicht blättern Mausrad, Touchpad und Wischen ganze Monate weiter. Die Monate laufen nicht als eine lange Liste untereinander.
 
 **Begründung:** FullCalendar zeigt einen Monat als Raster, das die ganze Höhe füllt. Eine endlose Liste von Monaten gäbe es nur mit der Jahresansicht (`multiMonth`), die nach zwölf Monaten aufhört und andere Zellen hat. Blättern passt zu den Knöpfen «‹ ›», lädt Termine weiter pro Monat und funktioniert in beiden Apps mit demselben Code (`monthScroll.ts`).
 
 **Preis:** Ein Touchpad-Wisch blättert genau einen Monat, auch ein schneller. Wer weit springen will, wischt mehrmals oder nimmt das Mausrad. Die Werte (60 px pro Schritt, 250 ms Ruhe) sind geschätzt und am echten Touchpad noch nicht geprüft.
+
+## E-021: Monat als Band von Wochen, stufenlos scrollbar
+
+**Entscheidung:** Die Monatsansicht ist ein langes Band von Wochen (eigene FullCalendar-Ansicht `monthStrip`, Typ `dayGrid` mit `visibleRange`). Man scrollt es mit Mausrad, Touchpad oder Finger stufenlos, auch bis zur Mitte eines Monats. Das Band umfasst 50 Wochen (20 vor, 30 nach dem gewählten Datum). Kommt man näher als 8 Wochen an ein Ende, wird es in der nächsten Scrollpause neu um die sichtbare Woche gelegt, näher als 2 Wochen sofort. Die sichtbare Woche bleibt dabei an derselben Stelle. Der Titel zeigt den Monat im Blick (die Woche auf 35 % der Höhe, gezählt nach ihrem Donnerstag), die anderen Monate sind leicht abgetönt. «‹ ›» und «Heute» scrollen weich zum Monatsanfang.
+
+**Begründung:** Namir wollte «clean ohne Stoppen» scrollen, nicht Monat für Monat (E-020). FullCalendar hat keine endlose Ansicht. Ein Raster über viele Wochen mit eigenem Scrollbereich ist das Nächste, und Termine, Auswahl und Farben funktionieren wie im normalen Monat. Ein eigenes Raster ohne FullCalendar wäre viel mehr Arbeit (mehrtägige Termine, Auswahl, Popover).
+
+**Preis:**
+
+- Es werden die Termine von 50 Wochen auf einmal geladen statt von 6. Bei Outlook über das Brückenskript kann das länger dauern.
+- Wird das Band neu gelegt, während man sehr schnell weiterscrollt, kann ein einzelner Scroll-Schritt verloren gehen (im Test 3 Schritte auf 10'500 px bei Dauer-Vollgas).
+- Die Zeilenhöhe hängt an CSS-Container-Einheiten (`100cqh`). Das können Chrome/Electron und Safari ab iOS 16.
+- Die Logik misst das Raster über `role="row"` und `data-date`, weil die Klassen von FullCalendar verschlüsselt sind. Ein Update von FullCalendar kann das brechen; die Tests der reinen Funktionen fangen das nicht.
