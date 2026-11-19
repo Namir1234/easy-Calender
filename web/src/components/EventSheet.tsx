@@ -43,11 +43,16 @@ function EventSheet({ event, calendar, onEdit, onDelete, onClose }: Props): Reac
   const [day, time] = describeWhen(event)
   return (
     <Sheet label={event.title} onClose={onClose}>
-      <h2 className="sheet-title">{event.title}</h2>
-      <p className="event-when">
-        <span>{day}</span>
-        <span>{time}</span>
-      </p>
+      <header
+        className="sheet-label"
+        style={calendar ? ({ '--cal': calendar.color } as React.CSSProperties) : undefined}
+      >
+        <h2 className="sheet-title">{event.title}</h2>
+        <p className="event-when">
+          <span>{day}</span>
+          <span>{time}</span>
+        </p>
+      </header>
       <dl className="sheet-facts">
         {calendar && (
           <>

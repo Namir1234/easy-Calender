@@ -113,13 +113,16 @@ function EventDetails({
       className="event-details"
       role="dialog"
       aria-label={event.title}
+      style={calendar ? ({ '--cal': calendar.color } as React.CSSProperties) : undefined}
     >
-      <h2>{event.title}</h2>
-      <p className="event-when">
-        {formatWhen(event).map((line) => (
-          <span key={line}>{line}</span>
-        ))}
-      </p>
+      <header className="event-details-head">
+        <h2>{event.title}</h2>
+        <p className="event-when">
+          {formatWhen(event).map((line) => (
+            <span key={line}>{line}</span>
+          ))}
+        </p>
+      </header>
 
       <dl>
         {calendar && (

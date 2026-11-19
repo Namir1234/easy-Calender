@@ -1,0 +1,141 @@
+/*
+ * Hallmark-Tokens, Theme «Dose» (App-Massstab). Jede Farbe und jede Schrift
+ * der Oberfläche läuft über eine dieser Variablen, einmal hell, einmal dunkel.
+ * Die Schriften liegen als Pakete in der App (@fontsource), nichts wird
+ * aus dem Netz geladen.
+ */
+
+:root {
+  color-scheme: light;
+
+  /* Abstände */
+  --space-3xs: 2px;
+  --space-2xs: 4px;
+  --space-xs: 8px;
+  --space-sm: 12px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 40px;
+  --space-2xl: 64px;
+
+  /* Schriftgrade, App-Skala 1.125 */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.266rem;
+  --text-2xl: 1.424rem;
+  --text-display: 1.602rem;
+
+  /* Bewegung: nur Zustand, nie Dekoration */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-micro: 120ms;
+  --dur-short: 220ms;
+
+  --z-raised: 10;
+  --z-sticky: 200;
+
+  /* Masse der Bedienelemente */
+  --control: 40px;
+  --control-sm: 32px;
+  --tap: 44px;
+  --sidebar: 272px;
+  --assistant: 340px;
+
+  /* Papier, Tinte, Linien */
+  --color-paper: oklch(97.6% 0.011 88);
+  --color-paper-2: oklch(96.2% 0.02 150);
+  --color-paper-3: oklch(93% 0.036 160);
+  --color-surface: oklch(99.3% 0.006 88);
+  --color-ink: oklch(21% 0.025 170);
+  --color-ink-2: oklch(31% 0.02 170);
+  --color-muted: oklch(49% 0.024 165);
+  --color-rule: oklch(86.5% 0.022 140);
+  --color-hover: oklch(21% 0.025 170 / 0.06);
+  --color-scrim: oklch(21% 0.025 170 / 0.32);
+
+  /* Das eine Grün: Aktion, Auswahl, «heute», «jetzt», Fokus */
+  --color-accent: oklch(50% 0.13 160);
+  --color-accent-deep: oklch(42% 0.11 162);
+  --color-accent-soft: oklch(88% 0.08 160);
+  --color-accent-wash: oklch(50% 0.13 160 / 0.14);
+  --color-accent-ink: oklch(99% 0.006 160);
+  --color-focus: oklch(45% 0.14 160);
+
+  /* Zustände. Demo-Daten sind grau, nicht gelb: Dose kennt kein Warnamber. */
+  --color-ok: oklch(46% 0.12 160);
+  --color-notice: oklch(46% 0.02 165);
+  --color-error: oklch(48% 0.17 30);
+  --color-error-bg: oklch(95.5% 0.025 40);
+
+  /* Kunststoff: Licht oben, Schatten unten */
+  --glint: oklch(100% 0 0);
+  --p-thu: oklch(86.5% 0.075 160);
+
+  /* Papierfaser, als Bild unter der Papierfarbe */
+  --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='f'><feTurbulence type='fractalNoise' baseFrequency='.85 .32' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .16  0 0 0 0 .22  0 0 0 0 .18  0 0 0 .07 0'/></filter><rect width='100%' height='100%' filter='url(%23f)'/></svg>");
+
+  /* Schriften */
+  --font-display: 'Schibsted Grotesk Variable', 'Schibsted Grotesk', ui-sans-serif, sans-serif;
+  --font-body: 'Instrument Sans Variable', 'Instrument Sans', ui-sans-serif, sans-serif;
+  --font-outlier: 'DM Mono', ui-monospace, monospace;
+  --tracking-display: -0.025em;
+  --display-weight: 700;
+
+  /* Formen */
+  --radius-card: 14px;
+  --radius-input: 10px;
+  --radius-sheet: 22px;
+  --radius-pill: 999px;
+  --radius-swatch: 4px;
+  --rule-hair: 1px;
+  --shadow-lift:
+    0 1px 1px oklch(30% 0.03 165 / 0.1), 8px 18px 28px -14px oklch(36% 0.06 165 / 0.32),
+    18px 40px 60px -30px oklch(40% 0.08 165 / 0.3);
+  --shadow-fab: 0 3px 0 var(--color-accent-deep), 0 14px 24px -10px oklch(36% 0.08 165 / 0.45);
+  --rim: inset 0 1px 0 var(--glint), 0 0 0 1px var(--color-rule), 0 3px 0 var(--color-rule);
+  --rim-down: inset 0 1px 0 var(--glint), 0 0 0 1px var(--color-rule), 0 0 0 var(--color-rule);
+  --rim-accent:
+    inset 0 1px 0 oklch(100% 0 0 / 0.28), 0 0 0 1px var(--color-accent-deep),
+    0 3px 0 var(--color-accent-deep);
+  --rim-accent-down:
+    inset 0 1px 0 oklch(100% 0 0 / 0.28), 0 0 0 1px var(--color-accent-deep),
+    0 0 0 var(--color-accent-deep);
+}
+
+/* Nacht: Dose «night», der Kunststoff mit 40 % Licht, Mint mit dunkler Tinte */
+:root[data-color-scheme='dark'] {
+  color-scheme: dark;
+
+  --color-paper: oklch(15% 0.01 170);
+  --color-paper-2: oklch(18.5% 0.012 168);
+  --color-paper-3: oklch(26% 0.03 165);
+  --color-surface: oklch(21.5% 0.014 168);
+  --color-ink: oklch(95% 0.01 160);
+  --color-ink-2: oklch(86% 0.014 160);
+  --color-muted: oklch(73% 0.02 165);
+  --color-rule: oklch(32% 0.02 165);
+  --color-hover: oklch(95% 0.01 160 / 0.07);
+  --color-scrim: oklch(5% 0.01 170 / 0.6);
+
+  --color-accent: oklch(78% 0.13 160);
+  --color-accent-deep: oklch(64% 0.12 162);
+  --color-accent-soft: oklch(40% 0.07 160);
+  --color-accent-wash: oklch(78% 0.13 160 / 0.16);
+  --color-accent-ink: oklch(17% 0.03 165);
+  --color-focus: oklch(82% 0.13 160);
+
+  --color-ok: oklch(80% 0.12 160);
+  --color-notice: oklch(74% 0.02 165);
+  --color-error: oklch(76% 0.12 30);
+  --color-error-bg: oklch(25% 0.05 30);
+
+  --glint: oklch(100% 0 0 / 0.08);
+  --p-thu: oklch(40% 0.06 160);
+
+  --grain: none;
+
+  /* Im Dunkeln trägt ein Schatten nicht. Die Kante übernimmt. */
+  --shadow-lift: 0 0 0 1px var(--color-rule), 0 18px 40px -20px oklch(0% 0 0 / 0.6);
+  --shadow-fab: 0 3px 0 var(--color-accent-deep), 0 14px 24px -10px oklch(0% 0 0 / 0.6);
+}

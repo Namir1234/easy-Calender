@@ -2,75 +2,86 @@
 
 Die Gestaltungsregeln der Oberfläche. Wer etwas an der UI ändert, hält sich daran oder passt dieses Dokument an.
 
-Die Regeln folgen dem Katalog von [Impeccable](https://impeccable.style/slop), der typische Merkmale von KI-generierten Oberflächen («AI-Slop») und Qualitätsprobleme auflistet. Die Impeccable-Skills liegen unter `.claude/skills/impeccable` (ohne Hooks). Geprüft wird mit `npx impeccable detect`.
+Seit Version 0.15.0 folgt die Oberfläche [Hallmark](https://github.com/Nutlope/hallmark), Theme **Dose**: warmes Papier mit feiner Faser, getönter Kunststoff, grün-schwarze Tinte und ein einziges Grün. Hallmark prüft mit `sloplint` gegen eine Liste typischer Merkmale von KI-generierten Oberflächen. Der Stempel oben in [`main.css`](../src/renderer/src/assets/main.css) und [`web.css`](../web/src/web.css) hält fest, welches Theme und welche Entscheidungen gelten.
 
 ## Grundsatz
 
-**Die Oberfläche ist neutral. Farbe gehört den Kalendern.**
+**Die Oberfläche ist Papier. Farbe gehört den Kalendern.**
 
-In einer Kalender-App ist Farbe Information: Sie sagt, zu welchem Kalender ein Termin gehört. Darum ist alles andere grau, und nur ein einziges Rot markiert «heute» und «jetzt».
+In einer Kalender-App ist Farbe Information: Sie sagt, zu welchem Kalender ein Termin gehört. Darum ist alles andere Papier und Tinte, und ein einziges Grün markiert Aktion, Auswahl, «heute» und «jetzt».
 
 ## Farben
 
-Alle Farben sind als CSS-Variablen in [`main.css`](../src/renderer/src/assets/main.css) definiert, je einmal für hell und dunkel. FullCalendar bekommt dieselben Werte.
+Alle Farben sind als CSS-Variablen in [`tokens.css`](../src/renderer/src/assets/tokens.css) definiert, je einmal für hell und dunkel («night»). Ausserhalb dieser Datei steht keine Farbe als Wert. FullCalendar bekommt dieselben Werte über seine `--fc-forma-*`-Variablen.
 
-| Variable      | Hell      | Dunkel    | Verwendung                                |
-| ------------- | --------- | --------- | ----------------------------------------- |
-| `--paper`     | `#ffffff` | `#17181b` | Kalenderfläche, Popover                   |
-| `--panel`     | `#f3f4f5` | `#101113` | Seitenleiste                              |
-| `--ink`       | `#16181d` | `#ecedef` | Text                                      |
-| `--ink-muted` | `#535966` | `#a4a9b3` | Nebentext                                 |
-| `--ink-faint` | `#6f7582` | `#838995` | zurückgenommener Text, z. B. Nachbarmonat |
-| `--line`      | `#e2e4e8` | `#2c2e33` | Trennlinien                               |
-| `--accent`    | `#c8321e` | `#ff7a66` | nur «heute», «jetzt» und Fokusrahmen      |
-| `--ok`        | `#1f7a4d` | `#5fcf9a` | Status: verbunden                         |
-| `--notice`    | `#8a5a00` | `#e0b252` | Status: Demo-Daten                        |
-| `--error`     | `#a1260d` | `#ff8f7d` | Fehler                                    |
+| Variable              | Verwendung                                          |
+| --------------------- | --------------------------------------------------- |
+| `--color-paper`       | Kalenderfläche, warmes Papier mit Faser (`--grain`) |
+| `--color-paper-2`     | Seitenleiste, Assistent, Kopfzeile auf dem Handy    |
+| `--color-surface`     | Knöpfe, Felder, Etikett, Blätter                    |
+| `--color-ink`         | Text                                                |
+| `--color-muted`       | Nebentext, Rand der Felder                          |
+| `--color-rule`        | Trennlinien, Rand der Knöpfe                        |
+| `--color-accent`      | das eine Grün: Hauptknopf, «heute», «jetzt»         |
+| `--color-accent-soft` | Mint: was gewählt ist (Ansicht auf dem Handy)       |
+| `--color-focus`       | Fokusrahmen                                         |
+| `--color-ok`          | Status: verbunden                                   |
+| `--color-notice`      | Status: Demo-Daten (grau, kein Warn-Gelb)           |
+| `--color-error`       | Fehler                                              |
 
 Regeln:
 
-- Die Oberfläche selbst nutzt kein Violett, keine Verläufe, kein Leuchten und keinen Glas-Effekt. Kalender dürfen jede Farbe haben.
-- Text erreicht mindestens einen Kontrast von 4.5:1 zum Hintergrund.
+- Kein Violett-Blau-Verlauf, kein Leuchten, kein Glas. Kalender dürfen jede Farbe haben.
+- Text erreicht mindestens 4.5:1 zum Hintergrund, Ränder von Feldern 3:1.
 - Kalenderfarben müssen mit weisser Schrift lesbar sein (mindestens 4.5:1).
 
 ## Schrift
 
-- **Segoe UI Variable**, die Systemschrift von Windows 11. Die App ist ein Windows-Programm und soll sich so anfühlen. Es wird keine Schrift nachgeladen.
-- Überschriften nutzen den Schnitt «Display», Fliesstext den Schnitt «Text».
+Die Schriften liegen als Pakete in der App (`@fontsource`), es wird nichts aus dem Netz geladen.
 
-| Rolle                      | Grösse | Gewicht |
-| -------------------------- | ------ | ------- |
-| App-Name, Titel im Popover | 18 px  | 650     |
-| Fliesstext, Bedienelemente | 14 px  | 400     |
-| Konto-Überschrift, Status  | 13 px  | 600     |
-| Nebentext (Minimum)        | 12 px  | 400     |
+| Rolle                                 | Schrift           | Gewicht  |
+| ------------------------------------- | ----------------- | -------- |
+| App-Name, Titel, Monat, Überschriften | Schibsted Grotesk | 700      |
+| Fliesstext, Bedienelemente, Labels    | Instrument Sans   | 400, 500 |
+| Uhrzeiten (Wochenraster, Etikett)     | DM Mono           | 400, 500 |
 
 Regeln:
 
+- DM Mono nur für Uhrzeiten und Daten, nie für Labels oder Überschriften.
 - Nichts ist kleiner als 12 px.
-- Keine Grossbuchstaben-Labels, keine gesperrte Schrift.
-- Überschriften-Ebenen werden nicht übersprungen (`h1` App-Name, `h2` Konten).
+- Keine Grossbuchstaben-Labels, keine gesperrte Schrift, keine Vorzeile über einer Überschrift.
 
 ## Formen und Flächen
 
-- Eckenradius: 4 px für Bedienelemente, 8 px für das Popover. Sonst keine Rundungen.
-- Keine Karte in einer Karte. Seitenleiste und Kalender trennt eine einzige Linie, der Kalender füllt seine Fläche randlos.
-- Eine Fläche bekommt entweder eine Kante oder einen Schatten, nie beides. Hell: Schatten. Dunkel: Kante, weil ein Schatten dort nicht trägt.
+- Eckenradius: 10 px für Bedienelemente, 14 px für Flächen (Etikett, Formular), 22 px oben an Blättern auf dem Handy.
+- **Knöpfe sind gegossener Kunststoff:** Lichtkante oben, ein 3 px Rand unten, beim Drücken sinken sie ein. Der Hauptknopf ist grün, die anderen sind klar.
+- **Ein Termin ist ein Etikett:** Der Kopf ist in der Farbe seines Kalenders getönt, die Zeit steht in DM Mono, eine gestrichelte Abrisskante trennt die Aktionen ab.
+- **Der Status ist ein Stempel:** doppelt umrandet, leicht schräg, in der Farbe des Zustands.
+- Keine Karte in einer Karte. Seitenleiste und Kalender trennt eine einzige Linie.
+- Hell trägt ein Schatten, dunkel eine Kante.
 - Kein Emoji und kein Icon als Dekoration.
 
 ## Abstände
 
-Zusammengehöriges steht eng, Getrenntes weit: 4 px innerhalb einer Kontogruppe, 24 px zwischen den Gruppen, 20 px Innenabstand der Seitenleiste.
+Alle Abstände laufen über die Skala `--space-3xs` (2 px) bis `--space-2xl` (64 px). Zusammengehöriges steht eng, Getrenntes weit: 2 px zwischen Kalendern einer Gruppe, 24 px zwischen den Gruppen, 24 px Innenabstand der Seitenleiste.
 
 ## Bewegung
 
-- Nur kurze Übergänge (120 ms, `ease-out`) bei Hover und beim Öffnen des Popovers.
-- Kein Federn, kein Pulsieren, keine Daueranimation. Der Status-Punkt steht still.
+- Nur kurze Übergänge (`--dur-micro` 120 ms, `--dur-short` 220 ms) bei Hover, beim Drücken und beim Öffnen des Etiketts.
+- Nur `transform`, `opacity`, Farben und Schatten werden animiert, nie Breite oder Höhe.
 - `prefers-reduced-motion` schaltet alle Übergänge ab.
-- Inhalte sind ohne Animation sichtbar. Fällt eine Animation aus, fehlt nichts.
+- Inhalte sind ohne Animation sichtbar.
 
 ## Bedienung
 
-- Termin-Details erscheinen als Popover neben dem Termin, nicht als Modal. Ein Klick daneben oder Escape schliesst es.
-- Jeder Text steht nur einmal. Ein Label wird nicht in der Zeile darunter wiederholt.
-- Hell und dunkel folgen der Windows-Einstellung.
+- Termin-Details erscheinen als Etikett neben dem Termin, nicht als Modal. Ein Klick daneben oder Escape schliesst es.
+- Jeder Text steht nur einmal.
+- Hell und dunkel folgen der Einstellung des Systems.
+
+## Prüfen
+
+```bash
+node <hallmark>/scripts/sloplint.mjs src/renderer/src/assets src/renderer/src/components web/src --genre modern-minimal --scope app
+```
+
+Stand 0.15.0: 0 FAIL, 0 WARN, 2 beantwortete Hinweise (F4, im Stempel begründet).

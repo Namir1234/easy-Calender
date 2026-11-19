@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import FullCalendar, { useCalendarController } from '@fullcalendar/react'
-import type { DateSelectInfo, DatesSetInfo, EventClickInfo, EventInput } from '@fullcalendar/react'
+import type {
+  DateSelectInfo,
+  DatesSetInfo,
+  EventClickInfo,
+  EventInput,
+  EventTextInfo
+} from '@fullcalendar/react'
 import interactionPlugin from '@fullcalendar/react/interaction'
 import dayGridPlugin from '@fullcalendar/react/daygrid'
 import timeGridPlugin from '@fullcalendar/react/timegrid'
@@ -25,6 +31,9 @@ interface Props {
 }
 
 const PLUGINS = [dayGridPlugin, timeGridPlugin, interactionPlugin, themePlugin]
+/** Uhrzeiten in der Etikett-Schrift, «Ganztägig» nicht. */ const timeClass = (
+  info: EventTextInfo
+): string | undefined => (info.event.allDay ? undefined : 'cal-time')
 
 const TOOLBAR = {
   start: 'prev,next today',
@@ -145,6 +154,9 @@ function CalendarView({
         dayMaxEvents
         eventDisplay="block"
         events={calendarEvents}
+        toolbarTitleClass="cal-title"
+        slotHeaderInnerClass="cal-time"
+        eventTimeClass={timeClass}
         datesSet={handleDatesSet}
         eventClick={handleEventClick}
         selectable

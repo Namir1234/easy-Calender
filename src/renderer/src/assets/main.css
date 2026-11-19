@@ -1,105 +1,16 @@
+/* Hallmark · shape: app screen · genre: modern-minimal · theme: Dose (deal 1/3 picked 3, seed desktop-phone-calendar-app-bfcd·7f80f305·2026-11-19·r0) · redesign: full
+ * nav: kept, the sidebar shell (accounts, calendars, sync, settings) · signature: the event as a pharmacy label, tinted in its calendar colour, the time in DM Mono · states: loading, empty, error, full · dose: white and night
+ * axes: light/grotesk-sans/chromatic-green · posture: committed · contrast: pass · v2.0.0 */
+/* Hallmark · pre-emit critique: P4 H4 E4 S4 R4 V4 · weakest: P, a calendar shell is familiar by design; the argument is that colour belongs to the calendars, so the one green only marks action, today and now */
+/* Hallmark · answered F4 · .button is the clear plastic secondary of Dose, .button-strong the one green primary */
+
+@import url('./tokens.css');
+
 /*
  * Gestaltungsregeln: siehe docs/DESIGN.md.
- * Die Oberfläche selbst ist neutral. Farbe gehört den Kalendern (sie ist
- * Information), und ein einziges Rot markiert «heute» und «jetzt».
+ * Die Oberfläche ist warmes Papier, Farbe gehört den Kalendern, und ein
+ * einziges Grün markiert Aktion, Auswahl, «heute» und «jetzt».
  */
-
-:root {
-  /* Flächen */
-  --paper: #ffffff;
-  --panel: #f3f4f5;
-  --hover: #0000000f;
-
-  /* Schrift */
-  --ink: #16181d;
-  --ink-muted: #535966;
-  --ink-faint: #6f7582;
-
-  /* Linien */
-  --line: #e2e4e8;
-  --line-strong: #a3a8b3;
-
-  /* Akzent: nur für «heute», «jetzt» und den Fokus */
-  --accent: #c8321e;
-  --accent-over: #ad2a18;
-  --accent-down: #932213;
-  --accent-fg: #ffffff;
-
-  /* Zustände */
-  --ok: #1f7a4d;
-  --notice: #8a5a00;
-  --error: #a1260d;
-  --error-bg: #fdf1ee;
-
-  --popover-shadow: 0 8px 28px #16181d2e;
-  --popover-border: transparent;
-
-  --font-text: 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif;
-  --font-display: 'Segoe UI Variable Display', 'Segoe UI', system-ui, sans-serif;
-
-  color-scheme: light;
-  font-family: var(--font-text);
-  font-size: 14px;
-  line-height: 1.5;
-
-  /* FullCalendar (Theme «forma») bekommt dieselben Farben */
-  --fc-forma-primary: var(--accent);
-  --fc-forma-primary-over: var(--accent-over);
-  --fc-forma-primary-down: var(--accent-down);
-  --fc-forma-primary-foreground: var(--accent-fg);
-  --fc-forma-event: #2563a8;
-  --fc-forma-event-contrast: #ffffff;
-  --fc-forma-background-event: var(--accent);
-  --fc-forma-highlight: #c8321e33;
-  --fc-forma-background: var(--paper);
-  --fc-forma-faint: #00000008;
-  --fc-forma-muted: #00000012;
-  --fc-forma-strong: #0000001f;
-  --fc-forma-stronger: #00000029;
-  --fc-forma-strongest: #00000033;
-  --fc-forma-foreground: var(--ink);
-  --fc-forma-faint-foreground: var(--ink-faint);
-  --fc-forma-muted-foreground: var(--ink-muted);
-  --fc-forma-border: var(--line);
-  --fc-forma-muted-border: var(--line);
-  --fc-forma-strong-border: var(--line-strong);
-}
-
-:root[data-color-scheme='dark'] {
-  --paper: #17181b;
-  --panel: #101113;
-  --hover: #ffffff14;
-
-  --ink: #ecedef;
-  --ink-muted: #a4a9b3;
-  --ink-faint: #838995;
-
-  --line: #2c2e33;
-  --line-strong: #5a5e68;
-
-  --accent: #ff7a66;
-  --accent-over: #ff8f7d;
-  --accent-down: #ffa394;
-  --accent-fg: #1c0a07;
-
-  --ok: #5fcf9a;
-  --notice: #e0b252;
-  --error: #ff8f7d;
-  --error-bg: #3a1a15;
-
-  /* Im Dunkeln trägt ein Schatten nicht. Die Kante übernimmt. */
-  --popover-shadow: none;
-  --popover-border: var(--line-strong);
-
-  color-scheme: dark;
-
-  --fc-forma-highlight: #ff7a6640;
-  --fc-forma-faint: #ffffff0a;
-  --fc-forma-muted: #ffffff14;
-  --fc-forma-strong: #ffffff1f;
-  --fc-forma-stronger: #ffffff29;
-  --fc-forma-strongest: #ffffff33;
-}
 
 *,
 *::before,
@@ -114,22 +25,51 @@ body,
   margin: 0;
 }
 
+html,
 body {
-  background: var(--paper);
-  color: var(--ink);
-  overflow: hidden;
+  overflow: clip;
+}
+
+html {
+  scrollbar-color: var(--color-muted) transparent;
+}
+
+body {
+  background: var(--grain), var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  caret-color: var(--color-accent);
   user-select: none;
 }
 
-button {
+::selection {
+  background: var(--color-accent-wash);
+  color: var(--color-ink);
+}
+
+button,
+input,
+select,
+textarea {
   font: inherit;
   color: inherit;
 }
 
 h1,
-h2 {
+h2,
+h3 {
   margin: 0;
+  font-family: var(--font-display);
+  font-weight: var(--display-weight);
+  font-synthesis: none;
+  letter-spacing: var(--tracking-display);
+  line-height: 1.1;
   text-wrap: balance;
+  overflow-wrap: break-word;
+  min-width: 0;
 }
 
 p {
@@ -138,28 +78,37 @@ p {
 }
 
 :focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--color-focus);
   outline-offset: 2px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 /* Aufbau: Seitenleiste und Kalender, getrennt durch eine einzige Linie */
 
 .app {
   display: grid;
-  grid-template-columns: 248px minmax(0, 1fr);
+  grid-template-columns: var(--sidebar) minmax(0, 1fr);
   height: 100%;
 }
 
 .app.with-assistant {
-  grid-template-columns: 248px minmax(0, 1fr) 320px;
+  grid-template-columns: var(--sidebar) minmax(0, 1fr) var(--assistant);
 }
 
 .sidebar {
   display: flex;
   flex-direction: column;
   min-height: 0;
-  background: var(--panel);
-  border-right: 1px solid var(--line);
+  background: var(--color-paper-2);
+  border-right: var(--rule-hair) solid var(--color-rule);
 }
 
 .content {
@@ -172,30 +121,31 @@ p {
 /* Seitenleiste */
 
 .wordmark {
-  padding: 20px 20px 14px;
-  font-family: var(--font-display);
-  font-size: 18px;
-  font-weight: 650;
-  line-height: 1.2;
+  padding: var(--space-lg) var(--space-lg) var(--space-md);
+  font-size: var(--text-2xl);
+  line-height: 1;
 }
 
 .sidebar-hint {
   flex: 1;
-  padding: 28px 20px 0;
-  color: var(--ink-muted);
+  padding: var(--space-lg) var(--space-lg) 0;
+  color: var(--color-muted);
 }
 
 .calendar-list {
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: 24px;
+  gap: var(--space-lg);
   min-height: 0;
-  padding: 28px 12px 20px;
+  padding: var(--space-lg) var(--space-sm) var(--space-md);
   overflow-y: auto;
 }
 
 .calendar-list ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3xs);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -205,10 +155,12 @@ p {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 8px;
-  padding: 0 8px 4px;
-  font-size: 13px;
-  font-weight: 600;
+  gap: var(--space-xs);
+  padding: 0 var(--space-sm) var(--space-xs);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  letter-spacing: 0;
 }
 
 .account-email {
@@ -219,30 +171,31 @@ p {
 
 .account-provider {
   flex-shrink: 0;
-  color: var(--ink-muted);
-  font-size: 12px;
+  color: var(--color-muted);
+  font-size: var(--text-xs);
   font-weight: 400;
 }
 
 .calendar-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  min-height: 32px;
-  padding: 0 8px;
-  border-radius: 4px;
+  gap: var(--space-sm);
+  min-height: var(--control-sm);
+  padding: 0 var(--space-sm);
+  border-radius: var(--radius-input);
   cursor: pointer;
-  transition: background-color 120ms ease-out;
+  transition: background-color var(--dur-micro) var(--ease-out);
 }
 
 .calendar-item:hover {
-  background: var(--hover);
+  background: var(--color-hover);
 }
 
+/* Die Farbe des Kalenders steckt im Häkchen selbst (accent-color im Markup). */
 .calendar-item input {
   flex-shrink: 0;
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   margin: 0;
   cursor: pointer;
 }
@@ -252,8 +205,6 @@ p {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
-/* Zeile eines Kalenders mit dem Knopf für seine Einstellungen */
 
 .calendar-row {
   display: flex;
@@ -267,51 +218,55 @@ p {
 
 .calendar-more {
   flex-shrink: 0;
-  width: 28px;
-  height: 28px;
+  width: var(--control-sm);
+  height: var(--control-sm);
   border: 0;
-  border-radius: 4px;
+  border-radius: var(--radius-input);
   background: transparent;
-  color: var(--ink-faint);
-  font-size: 13px;
-  letter-spacing: 1px;
+  color: var(--color-muted);
+  font-size: var(--text-sm);
   cursor: pointer;
+  transition: background-color var(--dur-micro) var(--ease-out);
 }
 
 .calendar-more:hover,
 .calendar-more[aria-expanded='true'] {
-  background: var(--hover);
-  color: var(--ink);
+  background: var(--color-hover);
+  color: var(--color-ink);
+}
+
+.calendar-more:active {
+  background: var(--color-paper-3);
 }
 
 .calendar-options {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  margin: 2px 0 8px 34px;
-  font-size: 13px;
+  gap: var(--space-2xs);
+  margin: var(--space-3xs) 0 var(--space-xs) calc(var(--space-lg) + var(--space-sm));
+  font-size: var(--text-sm);
 }
 
 .calendar-options .link-button,
 .new-calendar + .link-button {
   align-self: flex-start;
-  margin-left: -8px;
+  margin-left: calc(var(--space-xs) * -1);
 }
 
 .option-color {
   display: flex;
   align-items: center;
-  gap: 8px;
-  min-height: 28px;
+  gap: var(--space-xs);
+  min-height: var(--control-sm);
   cursor: pointer;
 }
 
 .option-color input {
-  width: 32px;
-  height: 22px;
+  width: 36px;
+  height: 24px;
   padding: 0;
-  border: 1px solid var(--line-strong);
-  border-radius: 4px;
+  border: var(--rule-hair) solid var(--color-muted);
+  border-radius: var(--radius-swatch);
   background: none;
   cursor: pointer;
 }
@@ -319,18 +274,18 @@ p {
 .new-calendar {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 8px;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
 }
 
 .hidden-calendars {
-  padding: 0 8px;
-  font-size: 13px;
-  color: var(--ink-muted);
+  padding: 0 var(--space-sm);
+  font-size: var(--text-sm);
+  color: var(--color-muted);
 }
 
 .hidden-calendars summary {
-  min-height: 28px;
+  min-height: var(--control-sm);
   cursor: pointer;
 }
 
@@ -344,7 +299,7 @@ p {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: var(--space-xs);
 }
 
 /* Assistent: eine Spalte rechts neben dem Kalender */
@@ -353,57 +308,54 @@ p {
   display: flex;
   flex-direction: column;
   min-height: 0;
-  background: var(--panel);
-  border-left: 1px solid var(--line);
+  background: var(--color-paper-2);
+  border-left: var(--rule-hair) solid var(--color-rule);
 }
 
 .assistant-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 18px 16px 10px 20px;
+  padding: var(--space-lg) var(--space-md) var(--space-sm) var(--space-lg);
 }
 
 .assistant-head h2 {
-  font-family: var(--font-display);
-  font-size: 16px;
-  font-weight: 650;
+  font-size: var(--text-xl);
 }
 
 .assistant-messages {
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--space-sm);
   min-height: 0;
-  padding: 4px 20px 16px;
+  padding: var(--space-2xs) var(--space-lg) var(--space-md);
   overflow-y: auto;
   user-select: text;
 }
 
 .assistant-hint,
 .assistant-thinking {
-  color: var(--ink-muted);
-  font-size: 13px;
+  color: var(--color-muted);
 }
 
 .assistant-setup {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  font-size: 13px;
+  gap: var(--space-xs);
 }
 
 .assistant-setup ol {
   margin: 0;
-  padding-left: 18px;
+  padding-left: var(--space-md);
 }
 
 .assistant-setup code {
-  padding: 1px 4px;
-  border-radius: 3px;
-  background: var(--hover);
-  font-family: Consolas, monospace;
+  padding: var(--space-3xs) var(--space-2xs);
+  border-radius: var(--radius-swatch);
+  background: var(--color-hover);
+  font-family: var(--font-outlier);
+  font-size: var(--text-xs);
 }
 
 .assistant-message {
@@ -414,38 +366,40 @@ p {
 .assistant-message.from-user {
   align-self: flex-end;
   max-width: 85%;
-  padding: 6px 10px;
-  border-radius: 8px;
-  background: var(--paper);
-  border: 1px solid var(--line);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-card) var(--radius-card) var(--radius-swatch) var(--radius-card);
+  background: var(--color-surface);
+  box-shadow: 0 0 0 var(--rule-hair) var(--color-rule);
 }
 
 .assistant-message.is-problem p {
-  color: var(--error);
+  color: var(--color-error);
 }
 
+/* Ein Vorschlag des Assistenten ist ein Etikett: Papier, gestrichelte Abrisskante */
 .assistant-proposal {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  margin-top: 8px;
-  padding: 10px 12px;
-  border: 1px solid var(--line-strong);
-  border-radius: 6px;
-  background: var(--paper);
+  gap: var(--space-3xs);
+  margin-top: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-input);
+  background: var(--grain), var(--color-surface);
+  box-shadow: var(--shadow-lift);
 }
 
 .assistant-calendar {
-  color: var(--ink-muted);
-  font-size: 13px;
+  color: var(--color-muted);
 }
 
 .assistant-actions {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
-  margin-top: 8px;
+  gap: var(--space-xs);
+  margin-top: var(--space-sm);
+  padding-top: var(--space-sm);
+  border-top: var(--rule-hair) dashed var(--color-rule);
 }
 
 .assistant-actions .button {
@@ -455,67 +409,108 @@ p {
 .assistant-input {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 12px 16px 16px 20px;
-  border-top: 1px solid var(--line);
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md) var(--space-md) var(--space-lg);
+  border-top: var(--rule-hair) solid var(--color-rule);
 }
 
 .assistant-input textarea {
   width: 100%;
-  padding: 6px 8px;
-  border: 1px solid var(--line-strong);
-  border-radius: 4px;
-  background: var(--paper);
-  color: var(--ink);
-  font: inherit;
+  padding: var(--space-xs) var(--space-sm);
+  border: var(--rule-hair) solid var(--color-muted);
+  border-radius: var(--radius-input);
+  background: var(--color-surface);
+  color: var(--color-ink);
   resize: none;
 }
 
-/* Aktionen */
+/* Knöpfe: gegossener Kunststoff mit Rand unten, sinkt beim Drücken ein */
 
 .button {
   width: 100%;
-  min-height: 32px;
-  padding: 0 12px;
-  border: 1px solid var(--line-strong);
-  border-radius: 4px;
-  background: var(--paper);
+  min-height: var(--control);
+  padding: 0 var(--space-md);
+  border: 0;
+  border-radius: var(--radius-input);
+  background: var(--color-surface);
+  box-shadow: var(--rim);
+  font-weight: 500;
+  white-space: nowrap;
   cursor: pointer;
-  transition: background-color 120ms ease-out;
+  transition:
+    transform var(--dur-micro) var(--ease-out),
+    box-shadow var(--dur-micro) var(--ease-out),
+    background-color var(--dur-micro) var(--ease-out);
 }
 
 .button:hover:not(:disabled) {
-  background: var(--hover);
+  background: var(--color-paper-2);
+}
+
+.button:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow: var(--rim-down);
 }
 
 .button:disabled {
-  color: var(--ink-muted);
-  cursor: default;
+  color: var(--color-muted);
+  box-shadow: 0 0 0 var(--rule-hair) var(--color-rule);
+  cursor: not-allowed;
+}
+
+.button-strong {
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+  box-shadow: var(--rim-accent);
+}
+
+.button-strong:hover:not(:disabled) {
+  background: var(--color-accent-deep);
+}
+
+.button-strong:active:not(:disabled) {
+  box-shadow: var(--rim-accent-down);
+}
+
+.button-strong:disabled {
+  background: var(--color-paper-3);
+  color: var(--color-muted);
 }
 
 .link-button {
-  min-height: 28px;
-  margin-top: 2px;
-  padding: 0 8px;
+  min-height: var(--control-sm);
+  margin-top: var(--space-3xs);
+  padding: 0 var(--space-xs);
   border: 0;
-  border-radius: 4px;
+  border-radius: var(--radius-input);
   background: transparent;
-  color: var(--ink-muted);
-  font-size: 12px;
+  color: var(--color-muted);
+  font-size: var(--text-sm);
+  text-decoration-color: var(--color-accent);
+  text-underline-offset: 0.2em;
   cursor: pointer;
-  transition: color 120ms ease-out;
+  transition: color var(--dur-micro) var(--ease-out);
 }
 
-.link-button:hover {
-  color: var(--ink);
-  text-decoration: underline;
+.link-button:hover:not(:disabled) {
+  color: var(--color-ink);
+  text-decoration-line: underline;
+}
+
+.link-button:active:not(:disabled) {
+  color: var(--color-accent-deep);
+}
+
+.link-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .sidebar-actions {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 0 20px 16px;
+  gap: var(--space-sm);
+  padding: 0 var(--space-lg) var(--space-md);
 }
 
 /* Der mittlere Teil der Seitenleiste scrollt, Titel und Status bleiben stehen. */
@@ -530,32 +525,15 @@ p {
 .sidebar-scroll .calendar-list,
 .sidebar-scroll .sidebar-hint {
   flex: none;
-  padding-bottom: 20px;
+  padding-bottom: var(--space-lg);
 }
 
 .demo-note {
-  margin: 0 20px 16px;
-  padding-left: 10px;
-  border-left: 2px solid var(--line-strong);
-  font-size: 13px;
-  color: var(--ink-muted);
-}
-
-.button-strong {
-  border-color: var(--ink);
-  background: var(--ink);
-  color: var(--paper);
-  font-weight: 600;
-}
-
-.button-strong:hover:not(:disabled) {
-  background: var(--ink-muted);
-}
-
-.button-strong:disabled {
-  border-color: var(--line-strong);
-  background: var(--line-strong);
-  color: var(--paper);
+  margin: 0 var(--space-lg) var(--space-md);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-input);
+  background: var(--color-paper-3);
+  color: var(--color-ink-2);
 }
 
 /* Abschnitte der Seitenleiste: eine Trennlinie, kein eigener Kasten */
@@ -564,26 +542,25 @@ p {
 .settings {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 16px 20px;
-  border-top: 1px solid var(--line);
+  gap: var(--space-xs);
+  padding: var(--space-lg) var(--space-lg) var(--space-md);
+  border-top: var(--rule-hair) solid var(--color-rule);
 }
 
 .section-title {
-  font-size: 13px;
-  font-weight: 650;
+  margin-bottom: var(--space-2xs);
+  font-size: var(--text-lg);
 }
 
 .section-hint,
 .sync-status {
-  font-size: 13px;
-  color: var(--ink-muted);
+  color: var(--color-muted);
 }
 
 .pair-list {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--space-xs);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -597,20 +574,19 @@ p {
 .pair-list .link-button,
 .sync > .link-button {
   align-self: flex-start;
-  margin-left: -8px;
+  margin-left: calc(var(--space-xs) * -1);
 }
 
 .pair-form {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-xs);
 }
 
 .sync-problems {
   margin: 0;
-  padding-left: 16px;
-  font-size: 13px;
-  color: var(--error);
+  padding-left: var(--space-md);
+  color: var(--color-error);
   overflow-wrap: anywhere;
 }
 
@@ -620,26 +596,51 @@ p {
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-2xs);
   min-width: 0;
 }
 
 .field > span {
-  font-size: 13px;
-  color: var(--ink-muted);
+  color: var(--color-muted);
+  font-weight: 500;
 }
 
 .field input,
 .field select,
 .field textarea {
   width: 100%;
-  min-height: 32px;
-  padding: 4px 8px;
-  border: 1px solid var(--line-strong);
-  border-radius: 4px;
-  background: var(--paper);
-  color: var(--ink);
-  font: inherit;
+  min-height: var(--control);
+  padding: var(--space-2xs) var(--space-sm);
+  border: var(--rule-hair) solid var(--color-muted);
+  border-radius: var(--radius-input);
+  background: var(--color-surface);
+  color: var(--color-ink);
+  transition: border-color var(--dur-micro) var(--ease-out);
+}
+
+.field input:hover:not(:disabled),
+.field select:hover:not(:disabled),
+.field textarea:hover:not(:disabled) {
+  border-color: var(--color-ink-2);
+}
+
+.field input:focus-visible,
+.field select:focus-visible,
+.field textarea:focus-visible {
+  outline-offset: 0;
+}
+
+.field input:disabled,
+.field select:disabled,
+.field textarea:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.field input[type='date'],
+.field input[type='time'] {
+  font-family: var(--font-outlier);
+  font-variant-numeric: tabular-nums;
 }
 
 .field textarea {
@@ -648,139 +649,129 @@ p {
 
 .field-row {
   display: flex;
-  gap: 12px;
+  gap: var(--space-sm);
 }
 
 .field-time {
-  flex: 0 0 112px;
+  flex: 0 0 120px;
 }
 
 .check {
   display: flex;
   align-items: center;
-  gap: 8px;
-  min-height: 28px;
+  gap: var(--space-xs);
+  min-height: var(--control-sm);
   cursor: pointer;
 }
 
 .check input {
-  width: 16px;
-  height: 16px;
-  accent-color: var(--ink);
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--color-accent);
 }
 
-/* Termin erstellen und ändern: Popover in der Fenstermitte */
+/* Termin erstellen und ändern: Blatt in der Fenstermitte */
 
 .event-form {
   position: fixed;
   inset: 0;
-  width: 400px;
-  max-width: calc(100vw - 24px);
+  width: 420px;
+  max-width: calc(100% - var(--space-lg));
   height: fit-content;
-  max-height: calc(100vh - 24px);
+  max-height: calc(100% - var(--space-lg));
   margin: auto;
-  padding: 20px;
+  padding: var(--space-lg);
   overflow-y: auto;
-  border: 1px solid var(--popover-border);
-  border-radius: 8px;
-  background: var(--paper);
-  color: var(--ink);
-  box-shadow: var(--popover-shadow);
+  border: 0;
+  border-radius: var(--radius-card);
+  background: var(--grain), var(--color-surface);
+  color: var(--color-ink);
+  box-shadow: var(--shadow-lift);
 }
 
 .event-form:popover-open {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--space-md);
 }
 
-:root[data-color-scheme='dark'] .event-form {
-  background: #202226;
+.event-form::backdrop {
+  background: var(--color-scrim);
 }
 
 .event-form h2 {
-  font-family: var(--font-display);
-  font-size: 18px;
-  font-weight: 650;
+  font-size: var(--text-display);
 }
 
 .form-note {
-  font-size: 13px;
-  color: var(--ink-muted);
+  color: var(--color-muted);
 }
 
 .form-problem {
-  padding: 8px 10px;
-  border-radius: 4px;
-  background: var(--error-bg);
-  color: var(--error);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-input);
+  background: var(--color-error-bg);
+  color: var(--color-error);
 }
 
 .form-actions,
 .details-actions {
   display: flex;
-  gap: 8px;
-  margin-top: 4px;
-}
-
-.details-actions {
-  margin-top: 16px;
+  gap: var(--space-xs);
+  margin-top: var(--space-2xs);
 }
 
 .login-help {
-  margin-top: 10px;
-  font-size: 13px;
-  color: var(--ink-muted);
+  margin-top: var(--space-xs);
+  color: var(--color-muted);
 }
 
 .login-help p {
-  margin: 0 0 4px;
+  margin: 0 0 var(--space-2xs);
 }
 
 .login-help .link-button {
   display: block;
-  margin-left: -8px;
+  margin-left: calc(var(--space-xs) * -1);
 }
 
-/* Status der Datenbank: eine Zeile mit Trennlinie, kein eigener Kasten */
+/* Status der Datenbank: ein Stempel, wie auf einem Etikett */
 
 .status {
-  padding: 14px 20px 16px;
-  border-top: 1px solid var(--line);
-  font-size: 13px;
+  padding: var(--space-md) var(--space-lg) var(--space-lg);
+  border-top: var(--rule-hair) solid var(--color-rule);
 }
 
 .status-label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 600;
-}
-
-.status-dot {
-  flex-shrink: 0;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: currentColor;
+  display: inline-block;
+  padding: var(--space-3xs) var(--space-xs);
+  border: 1.5px solid currentColor;
+  border-radius: var(--radius-swatch);
+  outline: 1px solid currentColor;
+  outline-offset: 2px;
+  font-family: var(--font-outlier);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  transform: rotate(-2deg);
 }
 
 .status-ok .status-label {
-  color: var(--ok);
+  color: var(--color-ok);
 }
 
 .status-notice .status-label {
-  color: var(--notice);
+  color: var(--color-notice);
 }
 
 .status-error .status-label {
-  color: var(--error);
+  color: var(--color-error);
 }
 
 .status-message {
-  margin-top: 2px;
-  color: var(--ink-muted);
-  font-size: 12px;
+  margin-top: var(--space-xs);
+  color: var(--color-muted);
+  font-size: var(--text-xs);
   overflow-wrap: anywhere;
   user-select: text;
 }
@@ -791,70 +782,128 @@ p {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  padding: 10px 20px;
-  background: var(--error-bg);
-  color: var(--error);
+  gap: var(--space-md);
+  padding: var(--space-sm) var(--space-lg);
+  background: var(--color-error-bg);
+  color: var(--color-error);
   user-select: text;
 }
 
 .error-banner button {
   flex-shrink: 0;
-  min-height: 28px;
-  padding: 0 12px;
-  border: 1px solid currentColor;
-  border-radius: 4px;
+  min-height: var(--control-sm);
+  padding: 0 var(--space-sm);
+  border: var(--rule-hair) solid currentColor;
+  border-radius: var(--radius-input);
   background: transparent;
   cursor: pointer;
+  transition: background-color var(--dur-micro) var(--ease-out);
 }
 
-/* Kalender: füllt die Fläche randlos, ohne zusätzlichen Rahmen */
+.error-banner button:hover {
+  background: var(--color-hover);
+}
+
+.error-banner button:active {
+  transform: translateY(1px);
+}
+
+/* Kalender: füllt die Fläche randlos. Farben über die Variablen von FullCalendar. */
 
 .calendar-view {
   flex: 1;
   min-height: 0;
+  padding: var(--space-xs) var(--space-md) 0;
+
+  --fc-forma-primary: var(--color-accent);
+  --fc-forma-primary-over: var(--color-accent-deep);
+  --fc-forma-primary-down: var(--color-accent-deep);
+  --fc-forma-primary-foreground: var(--color-accent-ink);
+  --fc-forma-event: var(--color-accent);
+  --fc-forma-event-contrast: var(--color-accent-ink);
+  --fc-forma-background-event: var(--color-accent);
+  --fc-forma-highlight: var(--color-accent-wash);
+  --fc-forma-background: transparent;
+  --fc-forma-faint: color-mix(in oklab, var(--color-ink) 3%, transparent);
+  --fc-forma-muted: color-mix(in oklab, var(--color-ink) 7%, transparent);
+  --fc-forma-strong: color-mix(in oklab, var(--color-ink) 12%, transparent);
+  --fc-forma-stronger: color-mix(in oklab, var(--color-ink) 16%, transparent);
+  --fc-forma-strongest: color-mix(in oklab, var(--color-ink) 20%, transparent);
+  --fc-forma-foreground: var(--color-ink);
+  --fc-forma-faint-foreground: var(--color-muted);
+  --fc-forma-muted-foreground: var(--color-muted);
+  --fc-forma-border: var(--color-rule);
+  --fc-forma-muted-border: var(--color-rule);
+  --fc-forma-strong-border: var(--color-muted);
+  --fc-forma-ring-color: var(--color-focus);
 }
 
-/* Termin-Details: Popover neben dem Termin */
+/* Titel der Ansicht in der Display-Schrift, Uhrzeiten wie auf einem Etikett */
+
+.cal-title {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: var(--display-weight);
+  letter-spacing: var(--tracking-display);
+}
+
+.cal-time {
+  font-family: var(--font-outlier);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Termin-Details: ein Etikett neben dem Termin, oben in der Farbe des Kalenders */
 
 .event-details {
+  --cal: var(--p-thu);
   position: fixed;
   inset: auto;
-  width: 320px;
-  max-width: calc(100vw - 24px);
+  width: 340px;
+  max-width: calc(100% - var(--space-lg));
   margin: 0;
-  padding: 16px 20px 20px;
-  border: 1px solid var(--popover-border);
-  border-radius: 8px;
-  background: var(--paper);
-  color: var(--ink);
-  box-shadow: var(--popover-shadow);
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: var(--radius-card);
+  background: var(--grain), var(--color-surface);
+  color: var(--color-ink);
+  box-shadow: var(--shadow-lift);
   user-select: text;
   opacity: 1;
-  transition: opacity 120ms ease-out;
+  transform: none;
+  transition:
+    opacity var(--dur-micro) var(--ease-out),
+    transform var(--dur-short) var(--ease-out);
 }
 
 @starting-style {
   .event-details:popover-open {
     opacity: 0;
+    transform: translateY(4px);
   }
 }
 
-:root[data-color-scheme='dark'] .event-details {
-  background: #202226;
+/* Der Kopf ist getönter Kunststoff: die Kalenderfarbe, aufgehellt, mit Lichtkante */
+.event-details-head {
+  padding: var(--space-md) var(--space-lg) var(--space-md);
+  background: color-mix(in oklab, var(--cal) 22%, var(--color-surface));
+  box-shadow:
+    inset 0 1.5px 0 var(--glint),
+    inset 0 calc(var(--rule-hair) * -1) 0 color-mix(in oklab, var(--cal) 40%, var(--color-rule));
 }
 
 .event-details h2 {
-  font-family: var(--font-display);
-  font-size: 18px;
-  font-weight: 650;
-  line-height: 1.25;
-  overflow-wrap: anywhere;
+  font-size: var(--text-xl);
+  line-height: 1.15;
 }
 
 .event-when {
-  margin-top: 4px;
-  color: var(--ink-muted);
+  margin-top: var(--space-xs);
+  color: var(--color-ink-2);
+  font-family: var(--font-outlier);
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
 }
 
 .event-when span {
@@ -863,32 +912,49 @@ p {
 
 .event-details dl {
   display: grid;
-  grid-template-columns: max-content 1fr;
-  gap: 6px 16px;
-  margin: 16px 0 0;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: var(--space-xs) var(--space-md);
+  margin: 0;
+  padding: var(--space-md) var(--space-lg) 0;
 }
 
 .event-details dt {
-  color: var(--ink-muted);
+  color: var(--color-muted);
 }
 
 .event-details dd {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-xs);
   margin: 0;
   overflow-wrap: anywhere;
 }
 
+/* Abrisskante über den Aktionen */
+.details-actions {
+  margin-top: var(--space-md);
+  padding: var(--space-md) var(--space-lg) var(--space-lg);
+  border-top: var(--rule-hair) dashed var(--color-rule);
+}
+
 .calendar-swatch {
   flex-shrink: 0;
-  width: 10px;
-  height: 10px;
-  border-radius: 2px;
+  width: 12px;
+  height: 12px;
+  border-radius: var(--radius-swatch);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  * {
-    transition: none !important;
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+
+  .button:active:not(:disabled),
+  .error-banner button:active {
+    transform: none;
   }
 }

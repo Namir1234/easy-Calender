@@ -6,12 +6,45 @@ Laufendes Protokoll des Projekts. Der neuste Eintrag steht oben.
 
 ## Aktueller Stand
 
-|                     |                                                                                     |
-| ------------------- | ----------------------------------------------------------------------------------- |
-| **Etappe**          | Alle sieben Etappen sind gebaut. Version 0.14.0: im Monat durch die Monate blättern |
-| **Als Nächstes**    | Handy-Version mit dem echten Google-Konto prüfen. Danach: Personen einladen         |
-| **Blockiert durch** | –                                                                                   |
+|                     |                                                                                                               |
+| ------------------- | ------------------------------------------------------------------------------------------------------------- |
+| **Etappe**          | Alle sieben Etappen sind gebaut. Version 0.15.0: neues Design nach Hallmark                                   |
+| **Als Nächstes**    | Handy-Version mit dem echten Google-Konto prüfen. Danach: Personen einladen                                   |
+| **Blockiert durch** | –                                                                                                             |
 | **Offen bei Namir** | Handy-Version auf dem iPhone ausprobieren. Am 22.2. prüfen, ob der BMS-Plan im zweiten Semester gleich bleibt |
+
+---
+
+## 2026-11-19 · Neues Design nach Hallmark (0.15.0)
+
+Namir wollte eine neue App-Version im Design von [Hallmark](https://github.com/Nutlope/hallmark).
+
+**Gemacht**
+
+- Hallmark hat drei Themes vorgeschlagen (Ultraviolet, Console, Dose). Gewählt ist **Dose**: warmes Papier, getönter Kunststoff, ein einziges Grün. Es passt zum bisherigen Grundsatz, dass Farbe den Kalendern gehört.
+- Alle Farben, Abstände, Radien und Schriften in die neue Datei `tokens.css` gezogen, hell und dunkel. `main.css` und `web.css` neu geschrieben, ohne einen einzigen Farbwert ausserhalb der Tokens.
+- Schriften: Schibsted Grotesk (Titel), Instrument Sans (Text), DM Mono (Uhrzeiten). Sie liegen als `@fontsource`-Pakete in der App, damit die Content-Security-Policy nichts aus dem Netz erlauben muss.
+- Knöpfe als gegossener Kunststoff, der Hauptknopf grün. Das Rot für «heute» und «jetzt» ist jetzt Grün.
+- Termin-Details (Desktop) und Termin-Blatt (Handy) sind ein Etikett: Kopf in der Kalenderfarbe getönt, Zeit in DM Mono, gestrichelte Abrisskante.
+- Der Datenbank-Status ist ein Stempel statt Punkt und Text.
+- Auf dem Handy sind die Ansichten Kunststofftasten, die gewählte in Mint, der Plus-Knopf ist grün.
+- `docs/DESIGN.md` auf das neue Design umgeschrieben.
+
+**Geprüft**
+
+- `sloplint` (Hallmark): 0 FAIL, 0 WARN, zwei beantwortete Hinweise.
+- Typprüfung, 133 Tests, Web-Build und Electron-Build laufen durch.
+- Handy-Version mit `?demo` im Browser angeschaut, hell und dunkel, mit Termin-Blatt.
+- Desktop-Oberfläche in einer Browser-Vorschau mit Beispieldaten angeschaut (Woche, Etikett, hell und dunkel). In Electron selbst noch nicht.
+
+**Aufgefallen**
+
+- Die Knöpfe von FullCalendar («Heute», «Monat», «Woche», «Tag») haben noch den Stil des Themes «forma», nur in den neuen Farben.
+- Die Screenshots unter `docs/screenshots/` zeigen noch das alte Design.
+
+**Als Nächstes**
+
+- Die App mit `npm run dev` in Electron anschauen. Danach die Screenshots erneuern.
 
 ---
 

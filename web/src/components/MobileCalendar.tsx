@@ -1,6 +1,12 @@
 import { useCallback, useMemo, useRef } from 'react'
 import FullCalendar, { useCalendarController } from '@fullcalendar/react'
-import type { DateSelectInfo, DatesSetInfo, EventClickInfo, EventInput } from '@fullcalendar/react'
+import type {
+  DateSelectInfo,
+  DatesSetInfo,
+  EventClickInfo,
+  EventInput,
+  EventTextInfo
+} from '@fullcalendar/react'
 import interactionPlugin from '@fullcalendar/react/interaction'
 import dayGridPlugin from '@fullcalendar/react/daygrid'
 import timeGridPlugin from '@fullcalendar/react/timegrid'
@@ -36,6 +42,9 @@ interface Props {
 }
 
 const PLUGINS = [dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin, themePlugin]
+/** Uhrzeiten in der Etikett-Schrift, «Ganztägig» nicht. */ const timeClass = (
+  info: EventTextInfo
+): string | undefined => (info.event.allDay ? undefined : 'cal-time')
 
 const VIEWS: Array<[ViewName, string]> = [
   ['listWeek', 'Liste'],
@@ -192,6 +201,8 @@ function MobileCalendar({
           dayMaxEvents
           eventDisplay="block"
           events={calendarEvents}
+          slotHeaderInnerClass="cal-time"
+          eventTimeClass={timeClass}
           datesSet={handleDatesSet}
           eventClick={select}
           selectable

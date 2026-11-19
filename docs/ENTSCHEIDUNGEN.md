@@ -168,3 +168,11 @@ Wichtige technische Entscheidungen mit Begründung. Neue Entscheidungen kommen u
 **Begründung:** FullCalendar zeigt einen Monat als Raster, das die ganze Höhe füllt. Eine endlose Liste von Monaten gäbe es nur mit der Jahresansicht (`multiMonth`), die nach zwölf Monaten aufhört und andere Zellen hat. Blättern passt zu den Knöpfen «‹ ›», lädt Termine weiter pro Monat und funktioniert in beiden Apps mit demselben Code (`monthScroll.ts`).
 
 **Preis:** Ein Touchpad-Wisch blättert genau einen Monat, auch ein schneller. Wer weit springen will, wischt mehrmals oder nimmt das Mausrad. Die Werte (60 px pro Schritt, 250 ms Ruhe) sind geschätzt und am echten Touchpad noch nicht geprüft.
+
+## E-021: Design nach Hallmark, Theme «Dose»
+
+**Entscheidung:** Die Oberfläche folgt seit 0.15.0 [Hallmark](https://github.com/Nutlope/hallmark) mit dem Theme «Dose» statt den eigenen Regeln nach Impeccable. Alle Farben, Abstände und Schriften stehen in `tokens.css`. Die Schriften kommen als `@fontsource`-Pakete mit.
+
+**Begründung:** Namir wollte das Hallmark-Design. Von den drei vorgeschlagenen Themes trägt Dose den bisherigen Grundsatz am besten: Die Fläche ist Papier, ein einziges Grün macht alle Signale, und Farbe bleibt Information der Kalender. Lokale Schriftpakete statt Google Fonts, weil die Desktop-App keine Verbindung nach aussen erlauben soll (CSP `default-src 'self'`).
+
+**Preis:** Die Systemschrift von Windows (Segoe UI Variable) ist weg, die App fühlt sich weniger wie ein Windows-Programm an. Drei Schriftpakete machen den Build etwas grösser. FullCalendar lässt sich nur über seine Variablen und ein paar Klassen-Hooks einfärben, nicht ganz umgestalten.

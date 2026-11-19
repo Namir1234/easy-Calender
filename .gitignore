@@ -14,3 +14,6 @@ out
 .claude/worktrees
 
 out-web
+
+# Hallmark-Arbeitsordner (Vorschau, Gerüst)
+.hallmark/

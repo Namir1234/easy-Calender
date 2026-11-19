@@ -16,10 +16,7 @@ function StatusBadge({ status }: Props): React.JSX.Element | null {
 
   return (
     <footer className={`status status-${kind}`}>
-      <p className="status-label">
-        <span className="status-dot" aria-hidden="true" />
-        {label}
-      </p>
+      <p className="status-label">{label}</p>
       {status.message && <p className="status-message">{status.message}</p>}
     </footer>
   )

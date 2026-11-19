@@ -1,6 +1,6 @@
 {
   "name": "easy-calender",
-  "version": "0.14.0",
+  "version": "0.15.0",
   "description": "Desktop-App, die Google- und Outlook-Kalender bidirektional synchronisiert",
   "main": "./out/main/index.js",
   "author": "Namir",
@@ -34,6 +34,9 @@
     "@electron-toolkit/eslint-config-prettier": "^3.0.1",
     "@electron-toolkit/eslint-config-ts": "^4.0.0",
     "@electron-toolkit/tsconfig": "^2.0.0",
+    "@fontsource-variable/instrument-sans": "^5.3.0",
+    "@fontsource-variable/schibsted-grotesk": "^5.3.0",
+    "@fontsource/dm-mono": "^5.3.0",
     "@fullcalendar/react": "^7.1.5",
     "@types/node": "^24.19.2",
     "@types/react": "^19.3.0",
