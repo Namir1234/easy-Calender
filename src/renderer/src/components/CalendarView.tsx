@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import FullCalendar from '@fullcalendar/react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import FullCalendar, { useCalendarController } from '@fullcalendar/react'
 import type { DateSelectInfo, DatesSetInfo, EventClickInfo, EventInput } from '@fullcalendar/react'
 import interactionPlugin from '@fullcalendar/react/interaction'
 import dayGridPlugin from '@fullcalendar/react/daygrid'
@@ -11,6 +11,7 @@ import '@fullcalendar/react/themes/forma/theme.css'
 import type { Calendar, CalendarEvent, DateRange } from '../../../shared/types'
 import type { ColorScheme } from '../useColorScheme'
 import type { AnchorRect } from './EventDetails'
+import { useMonthScroll } from '../monthScroll'
 
 interface Props {
   calendars: Calendar[]
@@ -48,8 +49,17 @@ function CalendarView({
 }: Props): React.JSX.Element {
   const [range, setRange] = useState<DateRange | null>(null)
   const [events, setEvents] = useState<CalendarEvent[]>([])
+  const [viewType, setViewType] = useState('timeGridWeek')
+  const controller = useCalendarController()
+  const viewRef = useRef<HTMLDivElement>(null)
+
+  // In der Monatsansicht blättern Mausrad und Touchpad durch die Monate.
+  useMonthScroll(viewRef, viewType === 'dayGridMonth', (step) =>
+    step > 0 ? controller.next() : controller.prev()
+  )
 
   const handleDatesSet = useCallback((info: DatesSetInfo) => {
+    setViewType(info.view.type)
     const start = toLocalDate(info.start)
     const end = toLocalDate(info.end)
     setRange((current) =>
@@ -119,8 +129,9 @@ function CalendarView({
   )
 
   return (
-    <div className="calendar-view">
+    <div className="calendar-view" ref={viewRef}>
       <FullCalendar
+        controller={controller}
         plugins={PLUGINS}
         locale={deLocale}
         colorScheme={colorScheme}

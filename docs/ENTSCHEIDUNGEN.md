@@ -160,3 +160,11 @@ Wichtige technische Entscheidungen mit Begründung. Neue Entscheidungen kommen u
 - Das Token gilt eine Stunde. Danach braucht es einen Tipp auf «Wieder anmelden». Einen dauerhaften Zugang (Refresh-Token) gäbe es nur mit einem Server, der das Client-Secret hält.
 - Kein Assistent auf dem Handy, weil Ollama auf dem PC läuft.
 - Für die Web-App braucht es einen eigenen Google-Client vom Typ «Webanwendung». Die Client-ID ist öffentlich, Google lässt sie nur von den eingetragenen Adressen aus zu.
+
+## E-020: Im Monat blättern statt endlos scrollen
+
+**Entscheidung:** In der Monatsansicht blättern Mausrad, Touchpad und Wischen ganze Monate weiter. Die Monate laufen nicht als eine lange Liste untereinander.
+
+**Begründung:** FullCalendar zeigt einen Monat als Raster, das die ganze Höhe füllt. Eine endlose Liste von Monaten gäbe es nur mit der Jahresansicht (`multiMonth`), die nach zwölf Monaten aufhört und andere Zellen hat. Blättern passt zu den Knöpfen «‹ ›», lädt Termine weiter pro Monat und funktioniert in beiden Apps mit demselben Code (`monthScroll.ts`).
+
+**Preis:** Ein Touchpad-Wisch blättert genau einen Monat, auch ein schneller. Wer weit springen will, wischt mehrmals oder nimmt das Mausrad. Die Werte (60 px pro Schritt, 250 ms Ruhe) sind geschätzt und am echten Touchpad noch nicht geprüft.
