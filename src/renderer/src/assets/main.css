@@ -963,6 +963,9 @@ p {
 
 /* Design-Auswahl in den Einstellungen */
 .design-picker {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
   margin-bottom: var(--space-xs);
 }
 

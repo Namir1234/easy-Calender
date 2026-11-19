@@ -8,10 +8,26 @@ Laufendes Protokoll des Projekts. Der neuste Eintrag steht oben.
 
 |                     |                                                                                                               |
 | ------------------- | ------------------------------------------------------------------------------------------------------------- |
-| **Etappe**          | Alle sieben Etappen sind gebaut. Version 0.16.0: vier Designs zur Wahl                                        |
+| **Etappe**          | Alle sieben Etappen sind gebaut. Version 0.17.0: Design und Hell/Dunkel selbst wählen                         |
 | **Als Nächstes**    | Handy-Version mit dem echten Google-Konto prüfen. Danach: Personen einladen                                   |
 | **Blockiert durch** | –                                                                                                             |
 | **Offen bei Namir** | Handy-Version auf dem iPhone ausprobieren. Am 22.2. prüfen, ob der BMS-Plan im zweiten Semester gleich bleibt |
+
+---
+
+## 2026-11-19 · Hell oder dunkel selbst wählen (0.17.0)
+
+Namir hat in der App nur die dunklen Varianten gesehen, weil Windows auf dunkel steht und die App dem System gefolgt ist.
+
+**Gemacht**
+
+- Unter «Design» gibt es jetzt «Hell oder dunkel» mit «Wie das System» (Standard), «Hell» und «Dunkel». Auf dem Handy steht es ebenfalls im Kalender-Blatt.
+- Die Wahl steht im `localStorage` (`easy-calender.mode`) und wird vor dem ersten Bild gesetzt. `useColorScheme` hört jetzt auf diese Wahl und auf das System.
+
+**Geprüft**
+
+- In der Desktop-Vorschau bei dunklem System auf «Hell» gestellt: Die App wird sofort hell und bleibt es nach dem Neuladen.
+- 140 Tests (zwei neue für hell/dunkel), Typprüfung, Lint, `sloplint`, Web- und Electron-Build.
 
 ---
 

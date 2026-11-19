@@ -6,7 +6,7 @@ Seit Version 0.15.0 folgt die Oberfläche [Hallmark](https://github.com/Nutlope/
 
 ## Vier Designs zur Wahl
 
-In den Einstellungen (Desktop) und im Kalender-Blatt (Handy) lässt sich das Design wechseln. Die Wahl gilt nur auf dem Gerät und wird im `localStorage` gespeichert. Jedes Design gibt es hell und dunkel.
+In den Einstellungen (Desktop) und im Kalender-Blatt (Handy) lässt sich das Design wechseln. Die Wahl gilt nur auf dem Gerät und wird im `localStorage` gespeichert. Jedes Design gibt es hell und dunkel. Darunter steht «Hell oder dunkel» mit «Wie das System» (Standard), «Hell» und «Dunkel», gespeichert unter `easy-calender.mode`.
 
 | Design              | Aussehen                                                  | Schriften                                   |
 | ------------------- | --------------------------------------------------------- | ------------------------------------------- |
@@ -91,7 +91,7 @@ Alle Abstände laufen über die Skala `--space-3xs` (2 px) bis `--space-2xl` (64
 
 - Termin-Details erscheinen als Etikett neben dem Termin, nicht als Modal. Ein Klick daneben oder Escape schliesst es.
 - Jeder Text steht nur einmal.
-- Hell und dunkel folgen der Einstellung des Systems.
+- Hell und dunkel folgen der Einstellung des Systems, ausser in den Einstellungen ist «Hell» oder «Dunkel» gewählt.
 
 ## Prüfen
 
@@ -99,4 +99,4 @@ Alle Abstände laufen über die Skala `--space-3xs` (2 px) bis `--space-2xl` (64
 node <hallmark>/scripts/sloplint.mjs src/renderer/src/assets src/renderer/src/components web/src --genre modern-minimal --scope app
 ```
 
-Stand 0.16.0: 0 FAIL, 0 WARN, 2 beantwortete Hinweise (F4) und eine begründete Ausnahme (37: mehr als drei Schriftfamilien, weil vier Designs).
+Stand 0.17.0: 0 FAIL, 0 WARN, 2 beantwortete Hinweise (F4) und eine begründete Ausnahme (37: mehr als drei Schriftfamilien, weil vier Designs).
