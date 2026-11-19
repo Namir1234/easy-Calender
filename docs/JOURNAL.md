@@ -11,7 +11,29 @@ Laufendes Protokoll des Projekts. Der neuste Eintrag steht oben.
 | **Etappe**          | Alle sieben Etappen sind gebaut. Version 0.13.0 bringt die Handy-Version als Web-App |
 | **Als Nächstes**    | Handy-Version mit dem echten Google-Konto prüfen. Danach: Personen einladen          |
 | **Blockiert durch** | –                                                                                    |
-| **Offen bei Namir** | Handy-Version auf dem iPhone ausprobieren. Wo die Stundenpläne liegen                |
+| **Offen bei Namir** | Handy-Version auf dem iPhone ausprobieren. Enddatum der Stundenplan-Serien bestätigen |
+
+---
+
+## 2026-11-19 · Stundenpläne BMS und TBZ eingetragen
+
+Namir hat die Stundenpläne als Screenshots aus schulNetz geschickt: Montag BMS, Dienstag TBZ.
+
+**Gemacht**
+
+- Sieben Wochenserien im Google-Kalender «Claude» angelegt (der wird in Outlook abonniert und ist so in der App, auf dem Handy und in Outlook sichtbar). Aufeinanderfolgende Lektionen desselben Fachs sind ein Block, die einzelnen Lektionen stehen in der Notiz.
+- Montag (BMS, Klasse BIN26a): Chemie 07:50–09:30 (L337), Wirtschaft und Recht 09:45–10:30 (L437), Geschichte und Politik 10:40–11:25 (L143), Mathematik 12:30–15:05 (L444), Französisch 15:20–17:00 (L216).
+- Dienstag (TBZ, Klasse AP 26b): Modul 231 08:10–11:40 (AU-060), Modul 319 12:35–16:05 (AU-U61).
+- Ab der Woche vom 16.11.2026 bis Ende Januar 2027, ohne die Weihnachtsferien (21.12.–1.1.). Ohne Erinnerungen.
+
+**Geprüft**
+
+- Woche vom 23.11.: alle sieben Blöcke mit richtigen Zeiten. 21.12. bis 1.1.: keine. 4. und 5.1.: wieder da.
+
+**Annahmen**
+
+- Enddatum Ende Januar (Semesterende) und die Ferien sind geschätzt. TBZ-Module wechseln pro Quartal, dann müssen die Dienstags-Serien angepasst werden.
+- Code wurde nicht geändert. Ein automatischer Import aus schulNetz (iCal-Abo) wäre eine eigene Etappe.
 
 ---
 
