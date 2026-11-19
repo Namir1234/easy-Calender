@@ -815,6 +815,13 @@ p {
   min-height: 0;
 }
 
+/* Mit den Pfeiltasten gewählter Tag: Rahmen in der Akzentfarbe, ohne das Raster zu verschieben */
+
+.is-focused-day {
+  box-shadow: inset 0 0 0 2px var(--accent);
+  background-color: var(--fc-forma-faint);
+}
+
 /* Termin-Details: Popover neben dem Termin */
 
 .event-details {
