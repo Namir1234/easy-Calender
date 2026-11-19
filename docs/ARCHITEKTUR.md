@@ -48,7 +48,7 @@ flowchart LR
 
 ## Projektstruktur
 
-Die aktuelle Struktur steht im [README](../README.md#-architektur). Geplant und noch nicht vorhanden sind der Microsoft-Login, `providers/microsoft.ts` und `sync/` (Engine, Mapper, Scheduler).
+Die aktuelle Struktur steht im [README](../README.md#architektur). Geplant und noch nicht vorhanden sind der Microsoft-Login, `providers/microsoft.ts` und `sync/` (Engine, Mapper, Scheduler).
 
 ## Normalisiertes Event-Modell
 

@@ -1,0 +1,153 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 420" width="1000" height="420" role="img" aria-labelledby="ft-t ft-d">
+  <title id="ft-t">Features</title>
+  <desc id="ft-d">Zwölf Funktionen: bidirektionaler Sync, beliebig viele Konten, kombinierte Ansicht, Termine in der App, Kalender-Paare, wiederkehrende Termine, Loop-Schutz, Konfliktlösung, sichere Tokens, Tray, Handy-Version, Assistent.</desc>
+  <style>
+    svg {
+      --paper: #ffffff; --ink: #16181d; --muted: #535966; --line: #e2e4e8;
+      --cg: #188038; --co: #0f6cbd; --ct: #00796b; --ca: #b06000;
+      font-family: "Segoe UI Variable Display", "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+    }
+    @media (prefers-color-scheme: dark) {
+      svg { --paper: #17181b; --ink: #ecedef; --muted: #a4a9b3; --line: #2c2e33; --cg: #5fcf9a; --co: #6cb4f0; --ct: #4fd1c0; --ca: #e0b252; }
+    }
+    .box { fill: var(--paper); stroke: var(--line); }
+    .h { fill: var(--ink); font-size: 15px; font-weight: 600; }
+    .p { fill: var(--muted); font-size: 13px; }
+    .g { fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .cg { stroke: var(--cg); } .co { stroke: var(--co); } .ct { stroke: var(--ct); } .ca { stroke: var(--ca); }
+    .tile { animation: rise 0.6s ease-out both; }
+    .g > * { stroke-dasharray: 1; animation: draw 1.1s ease-out both; }
+    @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+    @keyframes draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+    .turn { transform-box: fill-box; transform-origin: center; animation: turn 6s ease-in-out 2s infinite both; }
+    @keyframes turn { 0%, 80%, 100% { transform: none; } 92% { transform: rotate(180deg); } 92.01%, 99.99% { transform: rotate(180deg); } }
+    .blink { animation: blink 3s ease-in-out 2s infinite both; }
+    @keyframes blink { 0%, 70%, 100% { opacity: 1; } 80%, 90% { opacity: 0.25; } }
+    @media (prefers-reduced-motion: reduce) { .tile, .g > *, .turn, .blink { animation: none !important; } }
+  </style>
+
+  <!-- Reihe 1 -->
+  <g transform="translate(0,0)"><g class="tile" style="animation-delay:0.05s">
+    <rect class="box" x="0.5" y="0.5" width="235" height="128" rx="8"/>
+    <g transform="translate(20,18)"><g class="turn"><g class="g cg">
+      <path pathLength="1" style="animation-delay:0.25s" d="M4 12 A10 10 0 0 1 21 6"/><path pathLength="1" style="animation-delay:0.6s" d="M16 4 L21 6 L21 1"/>
+      <path pathLength="1" style="animation-delay:0.25s" d="M24 16 A10 10 0 0 1 7 22"/><path pathLength="1" style="animation-delay:0.6s" d="M12 24 L7 22 L7 27"/>
+    </g></g></g>
+    <text class="h" x="20" y="74">Bidirektionaler Sync</text>
+    <text class="p" x="20" y="96">Erstellen, Ändern, Löschen</text>
+    <text class="p" x="20" y="114">in beide Richtungen</text>
+  </g></g>
+  <g transform="translate(255,0)"><g class="tile" style="animation-delay:0.12s">
+    <rect class="box" x="0.5" y="0.5" width="235" height="128" rx="8"/>
+    <g class="g co" transform="translate(20,18)">
+      <circle pathLength="1" style="animation-delay:0.3s" cx="10" cy="9" r="5"/><path pathLength="1" style="animation-delay:0.5s" d="M1 26 C1 19 5 16 10 16 C15 16 19 19 19 26"/>
+      <circle pathLength="1" style="animation-delay:0.6s" cx="21" cy="7" r="4"/><path pathLength="1" style="animation-delay:0.8s" d="M20 14 C24 14 27 17 27 22"/>
+    </g>
+    <text class="h" x="20" y="74">Beliebig viele Konten</text>
+    <text class="p" x="20" y="96">Google, Outlook, Schule</text>
+    <text class="p" x="20" y="114">und Firma</text>
+  </g></g>
+  <g transform="translate(510,0)"><g class="tile" style="animation-delay:0.19s">
+    <rect class="box" x="0.5" y="0.5" width="235" height="128" rx="8"/>
+    <g class="g ct" transform="translate(20,18)">
+      <rect pathLength="1" style="animation-delay:0.35s" x="1" y="3" width="26" height="24" rx="3"/><line pathLength="1" style="animation-delay:0.7s" x1="1" y1="10" x2="27" y2="10"/>
+      <line pathLength="1" style="animation-delay:0.8s" x1="9.5" y1="10" x2="9.5" y2="27"/><line pathLength="1" style="animation-delay:0.9s" x1="18.5" y1="10" x2="18.5" y2="27"/>
+      <line pathLength="1" style="animation-delay:1s" x1="1" y1="18.5" x2="27" y2="18.5"/>
+    </g>
+    <text class="h" x="20" y="74">Kombinierte Ansicht</text>
+    <text class="p" x="20" y="96">Monat, Woche und Tag</text>
+    <text class="p" x="20" y="114">mit allen Kalendern</text>
+  </g></g>
+  <g transform="translate(765,0)"><g class="tile" style="animation-delay:0.26s">
+    <rect class="box" x="0.5" y="0.5" width="234" height="128" rx="8"/>
+    <g class="g ca" transform="translate(20,18)">
+      <path pathLength="1" style="animation-delay:0.4s" d="M4 24 L5 18 L19 4 L24 9 L10 23 Z"/><line pathLength="1" style="animation-delay:0.9s" x1="16" y1="7" x2="21" y2="12"/>
+      <line pathLength="1" style="animation-delay:1s" x1="14" y1="27" x2="27" y2="27"/>
+    </g>
+    <text class="h" x="20" y="74">Termine in der App</text>
+    <text class="p" x="20" y="96">Erstellen und bearbeiten,</text>
+    <text class="p" x="20" y="114">direkt beim Anbieter</text>
+  </g></g>
+
+  <!-- Reihe 2 -->
+  <g transform="translate(0,146)"><g class="tile" style="animation-delay:0.33s">
+    <rect class="box" x="0.5" y="0.5" width="235" height="128" rx="8"/>
+    <g class="g co" transform="translate(20,18)">
+      <rect pathLength="1" style="animation-delay:0.5s" x="1" y="10" width="15" height="9" rx="4.5"/><rect pathLength="1" style="animation-delay:0.7s" x="12" y="10" width="15" height="9" rx="4.5"/>
+    </g>
+    <text class="h" x="20" y="74">Kalender-Paare</text>
+    <text class="p" x="20" y="96">Du bestimmst, welche</text>
+    <text class="p" x="20" y="114">Kalender gekoppelt sind</text>
+  </g></g>
+  <g transform="translate(255,146)"><g class="tile" style="animation-delay:0.4s">
+    <rect class="box" x="0.5" y="0.5" width="235" height="128" rx="8"/>
+    <g class="g ct" transform="translate(20,18)">
+      <path pathLength="1" style="animation-delay:0.55s" d="M3 8 H21 A6 6 0 0 1 21 20 H7"/><path pathLength="1" style="animation-delay:1s" d="M11 16 L7 20 L11 24"/>
+    </g>
+    <text class="h" x="20" y="74">Wiederkehrende Termine</text>
+    <text class="p" x="20" y="96">Serien mit verschobenen</text>
+    <text class="p" x="20" y="114">und abgesagten Terminen</text>
+  </g></g>
+  <g transform="translate(510,146)"><g class="tile" style="animation-delay:0.47s">
+    <rect class="box" x="0.5" y="0.5" width="235" height="128" rx="8"/>
+    <g class="g cg" transform="translate(20,18)">
+      <path pathLength="1" style="animation-delay:0.6s" d="M14 2 L25 6 V14 C25 21 20 25 14 27 C8 25 3 21 3 14 V6 Z"/><polyline pathLength="1" style="animation-delay:1.1s" points="9,14 13,18 20,10"/>
+    </g>
+    <text class="h" x="20" y="74">Loop-Schutz</text>
+    <text class="p" x="20" y="96">Erkennt das Echo der</text>
+    <text class="p" x="20" y="114">eigenen Änderungen</text>
+  </g></g>
+  <g transform="translate(765,146)"><g class="tile" style="animation-delay:0.54s">
+    <rect class="box" x="0.5" y="0.5" width="234" height="128" rx="8"/>
+    <g class="g ca" transform="translate(20,18)">
+      <line pathLength="1" style="animation-delay:0.65s" x1="14" y1="3" x2="14" y2="27"/><line pathLength="1" style="animation-delay:0.8s" x1="3" y1="8" x2="25" y2="8"/>
+      <path pathLength="1" style="animation-delay:1s" d="M3 8 L0 17 H6 Z"/><path pathLength="1" style="animation-delay:1.1s" d="M25 8 L22 17 H28 Z"/>
+      <line pathLength="1" style="animation-delay:1.2s" x1="8" y1="27" x2="20" y2="27"/>
+    </g>
+    <text class="h" x="20" y="74">Konfliktlösung</text>
+    <text class="p" x="20" y="96">Die neuere Änderung</text>
+    <text class="p" x="20" y="114">gewinnt, mit Eintrag im Log</text>
+  </g></g>
+
+  <!-- Reihe 3 -->
+  <g transform="translate(0,292)"><g class="tile" style="animation-delay:0.61s">
+    <rect class="box" x="0.5" y="0.5" width="235" height="127" rx="8"/>
+    <g class="g ct" transform="translate(20,18)">
+      <rect pathLength="1" style="animation-delay:0.75s" x="4" y="12" width="20" height="15" rx="3"/><path pathLength="1" style="animation-delay:1.1s" d="M8 12 V8 A6 6 0 0 1 20 8 V12"/>
+      <line pathLength="1" style="animation-delay:1.3s" x1="14" y1="18" x2="14" y2="21"/>
+    </g>
+    <text class="h" x="20" y="74">Sichere Tokens</text>
+    <text class="p" x="20" y="96">Verschlüsselt mit</text>
+    <text class="p" x="20" y="114">Windows DPAPI</text>
+  </g></g>
+  <g transform="translate(255,292)"><g class="tile" style="animation-delay:0.68s">
+    <rect class="box" x="0.5" y="0.5" width="235" height="127" rx="8"/>
+    <g class="g co" transform="translate(20,18)">
+      <rect pathLength="1" style="animation-delay:0.8s" x="1" y="16" width="26" height="10" rx="2"/>
+      <path pathLength="1" style="animation-delay:1.3s" d="M14 2 V11 M10 7 L14 11 L18 7"/>
+    </g>
+    <circle class="blink" cx="41" cy="39" r="2.5" fill="var(--co)"/>
+    <text class="h" x="20" y="74">Läuft im Tray</text>
+    <text class="p" x="20" y="96">Der Sync läuft weiter,</text>
+    <text class="p" x="20" y="114">auch wenn das Fenster zu ist</text>
+  </g></g>
+  <g transform="translate(510,292)"><g class="tile" style="animation-delay:0.75s">
+    <rect class="box" x="0.5" y="0.5" width="235" height="127" rx="8"/>
+    <g class="g ca" transform="translate(20,18)">
+      <rect pathLength="1" style="animation-delay:0.85s" x="7" y="1" width="14" height="26" rx="3"/><line pathLength="1" style="animation-delay:1.3s" x1="12" y1="23" x2="16" y2="23"/>
+    </g>
+    <text class="h" x="20" y="74">Handy-Version</text>
+    <text class="p" x="20" y="96">Web-App für iPhone</text>
+    <text class="p" x="20" y="114">und Android</text>
+  </g></g>
+  <g transform="translate(765,292)"><g class="tile" style="animation-delay:0.82s">
+    <rect class="box" x="0.5" y="0.5" width="234" height="127" rx="8"/>
+    <g class="g cg" transform="translate(20,18)">
+      <path pathLength="1" style="animation-delay:0.9s" d="M3 5 H25 V19 H12 L6 25 V19 H3 Z"/>
+      <line pathLength="1" style="animation-delay:1.3s" x1="8" y1="11" x2="20" y2="11"/><line pathLength="1" style="animation-delay:1.4s" x1="8" y1="15" x2="16" y2="15"/>
+    </g>
+    <text class="h" x="20" y="74">Assistent</text>
+    <text class="p" x="20" y="96">Termine per Chat eintragen,</text>
+    <text class="p" x="20" y="114">lokal mit Ollama</text>
+  </g></g>
+</svg>

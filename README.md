@@ -1,8 +1,8 @@
 <div align="center">
 
-# 📅 easy-Calender
+<img src="docs/readme/hero.svg" alt="easy-Calender: Google Kalender und Outlook, endlich synchron. Animation: Ein Termin aus Google erscheint in Outlook und umgekehrt." width="100%">
 
-### Google Kalender ↔ Outlook – endlich synchron.
+<br>
 
 Eine Desktop-App für Windows, die Google- und Outlook-Kalender verbindet,<br>
 alle Termine **bidirektional** synchronisiert und sie in einer einzigen Ansicht zeigt.
@@ -22,12 +22,12 @@ alle Termine **bidirektional** synchronisiert und sie in einer einzigen Ansicht 
 
 <br>
 
-[Features](#-features) ·
-[So funktioniert der Sync](#-so-funktioniert-der-sync) ·
-[Architektur](#-architektur) ·
-[Roadmap](#-roadmap) ·
-[Einrichtung](#-einrichtung) ·
-[Dokumentation](#-dokumentation)
+[Features](#features) ·
+[So funktioniert der Sync](#so-funktioniert-der-sync) ·
+[Architektur](#architektur) ·
+[Roadmap](#roadmap) ·
+[Einrichtung](#einrichtung) ·
+[Dokumentation](#dokumentation)
 
 <br>
 
@@ -41,7 +41,7 @@ alle Termine **bidirektional** synchronisiert und sie in einer einzigen Ansicht 
 > **Projektstatus:** Alle sieben Etappen sind gebaut (Version 0.14.0). Google und Outlook sind verbunden, der Abgleich hat die Tests an zwei echten Testkalendern bestanden.
 > Outlook läuft über das lokal installierte Outlook (classic). Den aktuellen Stand und die offenen Punkte findest du im [Arbeitsjournal](docs/JOURNAL.md).
 
-## 💡 Worum geht es?
+## Worum geht es?
 
 Wer einen privaten Google-Kalender und dazu Outlook-Kalender von Schule oder Firma hat, pflegt Termine oft doppelt.
 **easy-Calender** nimmt einem das ab:
@@ -51,32 +51,48 @@ Wer einen privaten Google-Kalender und dazu Outlook-Kalender von Schule oder Fir
 - Alle Kalender aller Konten sind in einer kombinierten Ansicht sichtbar.
 - Termine lassen sich direkt in der App erstellen.
 
-## ✨ Features
+## Features
 
-Das ist das Ziel der App. Was davon schon gebaut ist, zeigt die [Roadmap](#-roadmap).
+<img src="docs/readme/features.svg" alt="Zwölf Funktionen: bidirektionaler Sync, beliebig viele Konten, kombinierte Ansicht, Termine in der App, Kalender-Paare, wiederkehrende Termine, Loop-Schutz, Konfliktlösung, sichere Tokens, Tray, Handy-Version, Assistent" width="100%">
 
-|     | Feature                    | Beschreibung                                                                                                  |
-| :-: | -------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| 🔄  | **Bidirektionaler Sync**   | Erstellen, Ändern und Löschen wird in beide Richtungen übertragen.                                            |
-| 👥  | **Beliebig viele Konten**  | Privates Google-Konto, privates Outlook-Konto sowie Schul- und Firmenkonten von Microsoft.                    |
-| 🗓️  | **Kombinierte Ansicht**    | Monats-, Wochen- und Tagesansicht mit allen Kalendern zusammen. Im Monat blättern Mausrad und Wischen weiter. |
-| ✏️  | **Termine in der App**     | Erstellen, bearbeiten und löschen, direkt beim jeweiligen Anbieter.                                           |
-| 🔗  | **Kalender-Paare**         | Du bestimmst, welche Kalender miteinander gekoppelt sind. Mehrere Paare sind möglich.                         |
-| 🔁  | **Wiederkehrende Termine** | Serien inklusive verschobener oder abgesagter Einzeltermine.                                                  |
-| 🛡️  | **Loop-Schutz**            | Die App erkennt das Echo ihrer eigenen Änderungen, es gibt kein Ping-Pong.                                    |
-| ⚖️  | **Konfliktlösung**         | Wurden beide Seiten geändert, gewinnt die neuere Änderung. Das steht danach im Sync-Log.                      |
-| 🔐  | **Sichere Tokens**         | Verschlüsselt gespeichert über Electron `safeStorage` (Windows DPAPI).                                        |
-| 📌  | **Läuft im Tray**          | Der Sync läuft weiter, auch wenn das Fenster minimiert ist.                                                   |
-| 📱  | **Handy-Version**          | Web-App für iPhone und Android, auf den Home-Bildschirm legbar: https://namir1234.github.io/easy-Calender/    |
-| 💬  | **Assistent**              | Termine per Chat eintragen, mit einem lokalen Sprachmodell (Ollama).                                          |
+Die Handy-Version läuft als Web-App im Browser und lässt sich auf den Home-Bildschirm legen: https://namir1234.github.io/easy-Calender/
+
+<details>
+<summary><b>Alle Features im Detail</b></summary>
+
+<br>
+
+| Feature                    | Beschreibung                                                                                                  |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| **Bidirektionaler Sync**   | Erstellen, Ändern und Löschen wird in beide Richtungen übertragen.                                            |
+| **Beliebig viele Konten**  | Privates Google-Konto, privates Outlook-Konto sowie Schul- und Firmenkonten von Microsoft.                    |
+| **Kombinierte Ansicht**    | Monats-, Wochen- und Tagesansicht mit allen Kalendern zusammen. Im Monat blättern Mausrad und Wischen weiter. |
+| **Termine in der App**     | Erstellen, bearbeiten und löschen, direkt beim jeweiligen Anbieter.                                           |
+| **Kalender-Paare**         | Du bestimmst, welche Kalender miteinander gekoppelt sind. Mehrere Paare sind möglich.                         |
+| **Wiederkehrende Termine** | Serien inklusive verschobener oder abgesagter Einzeltermine.                                                  |
+| **Loop-Schutz**            | Die App erkennt das Echo ihrer eigenen Änderungen, es gibt kein Ping-Pong.                                    |
+| **Konfliktlösung**         | Wurden beide Seiten geändert, gewinnt die neuere Änderung. Das steht danach im Sync-Log.                      |
+| **Sichere Tokens**         | Verschlüsselt gespeichert über Electron `safeStorage` (Windows DPAPI).                                        |
+| **Läuft im Tray**          | Der Sync läuft weiter, auch wenn das Fenster minimiert ist.                                                   |
+| **Handy-Version**          | Web-App für iPhone und Android, auf den Home-Bildschirm legbar.                                               |
+| **Assistent**              | Termine per Chat eintragen, mit einem lokalen Sprachmodell (Ollama).                                          |
+
+</details>
 
 <div align="center">
 <img src="docs/screenshots/monat-dunkel.png" alt="Monatsansicht im dunklen Modus" width="820">
 </div>
 
-## 🔄 So funktioniert der Sync
+## So funktioniert der Sync
 
 Der Sync läuft pro Kalender-Paar, alle 2 Minuten, beim Fokussieren des Fensters oder manuell.
+
+<img src="docs/readme/sync-steps.svg" alt="Ein Sync-Durchlauf in vier Schritten: Änderungen holen, Gegenstück suchen, Fingerabdruck prüfen, andere Seite schreiben" width="100%">
+
+<details>
+<summary><b>Ablauf als Sequenzdiagramm</b></summary>
+
+<br>
 
 ```mermaid
 sequenceDiagram
@@ -84,7 +100,7 @@ sequenceDiagram
     participant G as Google Calendar
     participant E as Sync-Engine
     participant DB as Supabase
-    participant M as Microsoft Graph
+    participant M as Outlook
 
     E->>G: Änderungen seit letztem Sync (syncToken)
     E->>M: Änderungen seit letztem Sync (deltaLink)
@@ -106,7 +122,9 @@ sequenceDiagram
     end
 ```
 
-Das Diagramm zeigt die Richtung Google → Outlook. Die Gegenrichtung läuft identisch.
+Das Diagramm zeigt die Richtung Google nach Outlook. Die Gegenrichtung läuft identisch.
+
+</details>
 
 <details>
 <summary><b>Was passiert bei Konflikten und Fehlern?</b></summary>
@@ -124,7 +142,16 @@ Das Diagramm zeigt die Richtung Google → Outlook. Die Gegenrichtung läuft ide
 
 </details>
 
-## 🧱 Architektur
+## Architektur
+
+<img src="docs/readme/architektur.svg" alt="Architektur: Kalender-UI, IPC-API, Scheduler, Sync-Engine, Datenschicht, Google- und Outlook-Provider, dazu Google Calendar, Outlook und Supabase. Datenpakete zeigen einen Sync-Durchlauf." width="100%">
+
+Der Scheduler stösst die Sync-Engine an. Sie holt über die beiden Provider die Änderungen, schreibt die Gegenseite, speichert den Stand über die Datenschicht in Supabase und meldet das Ergebnis über die IPC-API an die Oberfläche.
+
+<details>
+<summary><b>Als Mermaid-Diagramm</b></summary>
+
+<br>
 
 ```mermaid
 flowchart LR
@@ -138,12 +165,12 @@ flowchart LR
         SCH["Scheduler<br>Polling alle 2 Min."]
         ST["Datenschicht"]
         GP["Google-Provider"]
-        MP["Microsoft-Provider"]
+        MP["Outlook-Provider"]
     end
 
     SB[("Supabase<br>Postgres")]
     GAPI(["Google Calendar API v3"])
-    GRAPH(["Microsoft Graph"])
+    OUT(["Outlook (classic)<br>oder Microsoft Graph"])
 
     UI <-->|contextBridge| IPC
     IPC --> ENG
@@ -153,10 +180,10 @@ flowchart LR
     ENG <--> GP
     ENG <--> MP
     GP <--> GAPI
-    MP <--> GRAPH
+    MP <--> OUT
 ```
 
-Sync-Engine, Scheduler und die beiden Provider sind geplant. Gebaut sind bis jetzt Oberfläche, IPC-API, Datenschicht und ein Demo-Provider.
+</details>
 
 <details>
 <summary><b>Projektstruktur</b></summary>
@@ -185,7 +212,7 @@ Dazu gekommen: `accounts.ts` (Konten verbinden und entfernen), `auth/` (Anmeldun
 
 Die Details zu Datenmodell, Event-Modell und Sync-Algorithmus stehen in [docs/ARCHITEKTUR.md](docs/ARCHITEKTUR.md).
 
-## 🧰 Tech-Stack
+## Tech-Stack
 
 | Bereich        | Technologie                                                                                    |
 | -------------- | ---------------------------------------------------------------------------------------------- |
@@ -198,7 +225,9 @@ Die Details zu Datenmodell, Event-Modell und Sync-Algorithmus stehen in [docs/AR
 | Tests          | Vitest                                                                                         |
 | Installer      | electron-builder                                                                               |
 
-## 🚀 Roadmap
+## Roadmap
+
+<img src="docs/readme/roadmap.svg" alt="Roadmap: Etappe 0 bis 7 und die Abnahme sind erledigt. Offen ist nur noch: Personen zu Terminen einladen." width="100%">
 
 - [x] **Etappe 0:** Plan, README und Dokumentation
 - [x] **Etappe 1:** Grundgerüst (Projekt, Supabase-Datenschicht, IPC, FullCalendar-UI mit Demo-Daten)
@@ -215,7 +244,7 @@ Die Details zu Datenmodell, Event-Modell und Sync-Algorithmus stehen in [docs/AR
 - [x] **Extra:** Mit Mausrad, Touchpad und Wischen durch die Monate blättern
 - [ ] **Extra:** Personen zu Terminen einladen
 
-## 🔑 Einrichtung
+## Einrichtung
 
 ### Starten
 
@@ -244,25 +273,27 @@ Die Schritt-für-Schritt-Anleitung steht in [docs/SETUP.md](docs/SETUP.md).
 > Bei Schul- oder Firmenkonten kann die Organisation die Zustimmung für Dritt-Apps blockieren.
 > Dann funktionieren nur private Microsoft-Konten, bis ein Admin die App freigibt.
 
-## 🚧 Bewusste Grenzen (v1)
+## Bewusste Grenzen (v1)
 
 - **Polling statt Push:** Webhooks bräuchten einen öffentlich erreichbaren Server. Der Sync läuft deshalb nur, solange die App offen ist. Im Tray minimiert reicht.
 - **Keine Teilnehmer und Einladungen:** Sie werden nicht gespiegelt, um ungewollte Einladungsmails zu vermeiden. Gespiegelt werden Titel, Zeit, Ort, Beschreibung und Wiederholung.
 - **Datenbank in der Cloud:** Der Sync-Zustand liegt in Supabase. Die App braucht dafür Internet, was der Sync ohnehin voraussetzt. Tokens von Google und Microsoft bleiben auf dem Gerät.
 
-## 📚 Dokumentation
+## Dokumentation
 
-| Dokument                                    | Inhalt                                                                 |
-| ------------------------------------------- | ---------------------------------------------------------------------- |
-| 📓 [Arbeitsjournal](docs/JOURNAL.md)        | Laufendes Protokoll: was wann gemacht wurde und was als Nächstes kommt |
-| 🏗️ [Architektur](docs/ARCHITEKTUR.md)       | Aufbau, Datenmodell, Event-Modell, Sync-Algorithmus                    |
-| 🧭 [Entscheidungen](docs/ENTSCHEIDUNGEN.md) | Wichtige technische Entscheidungen mit Begründung                      |
-| 🎨 [Design](docs/DESIGN.md)                 | Gestaltungsregeln der Oberfläche: Farben, Schrift, Formen              |
-| 🔑 [Setup](docs/SETUP.md)                   | Supabase, Google Cloud und Azure einrichten, `.env`                    |
-| 🧪 [Testplan](docs/TESTPLAN.md)             | Unit-Tests und manuelle Testfälle mit Status                           |
+| Dokument                                 | Inhalt                                                                 |
+| ---------------------------------------- | ---------------------------------------------------------------------- |
+| [Arbeitsjournal](docs/JOURNAL.md)        | Laufendes Protokoll: was wann gemacht wurde und was als Nächstes kommt |
+| [Architektur](docs/ARCHITEKTUR.md)       | Aufbau, Datenmodell, Event-Modell, Sync-Algorithmus                    |
+| [Entscheidungen](docs/ENTSCHEIDUNGEN.md) | Wichtige technische Entscheidungen mit Begründung                      |
+| [Design](docs/DESIGN.md)                 | Gestaltungsregeln der Oberfläche: Farben, Schrift, Formen              |
+| [Setup](docs/SETUP.md)                   | Supabase, Google Cloud und Azure einrichten, `.env`                    |
+| [Testplan](docs/TESTPLAN.md)             | Unit-Tests und manuelle Testfälle mit Status                           |
+
+Die Animationen in diesem README sind SVG-Dateien in [docs/readme/](docs/readme/). Sie halten sich an `prefers-color-scheme` und schalten sich bei `prefers-reduced-motion` ab.
 
 ---
 
 <div align="center">
-<sub>Gebaut von Namir · Electron, React und viel Kalender-Frust als Motivation</sub>
+<img src="docs/readme/footer.svg" alt="Gebaut von Namir · Electron, React und viel Kalender-Frust als Motivation" width="100%">
 </div>

@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 250" width="1000" height="250" role="img" aria-labelledby="rm-t rm-d">
+  <title id="rm-t">Roadmap</title>
+  <desc id="rm-d">Etappe 0 bis 7 und die Abnahme sind erledigt. Extras: Farben pro Kalender, Assistent, Handy-Version und Monate blättern sind erledigt, Personen einladen ist offen.</desc>
+  <style>
+    svg {
+      --paper: #ffffff; --ink: #16181d; --muted: #535966; --faint: #6f7582; --line: #e2e4e8; --ok: #1f7a4d; --on-ok: #ffffff;
+      font-family: "Segoe UI Variable Display", "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+    }
+    @media (prefers-color-scheme: dark) {
+      svg { --paper: #17181b; --ink: #ecedef; --muted: #a4a9b3; --faint: #838995; --line: #2c2e33; --ok: #5fcf9a; --on-ok: #17181b; }
+    }
+    .bg { fill: var(--paper); stroke: var(--line); }
+    .top { fill: var(--muted); font-size: 13px; }
+    .rail { stroke: var(--line); stroke-width: 3; stroke-linecap: round; }
+    .prog { stroke: var(--ok); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 1; animation: draw 3s linear 0.3s both; }
+    .ring { fill: var(--paper); stroke: var(--line); stroke-width: 2; }
+    .fill { fill: var(--ok); animation: grow 0.35s ease-out both; }
+    .chk { fill: none; stroke: var(--on-ok); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; animation: draw 0.3s ease-out both; }
+    .lab, .pop { animation: rise 0.4s ease-out both; }
+    .h { fill: var(--ink); font-size: 13px; font-weight: 600; text-anchor: middle; }
+    .p { fill: var(--muted); font-size: 12px; text-anchor: middle; }
+    .chip { fill: var(--paper); stroke: var(--ok); stroke-width: 1.2; }
+    .chip.open { stroke: var(--faint); stroke-dasharray: 4 3; }
+    .chk2 { fill: none; stroke: var(--ok); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .ct { fill: var(--ink); font-size: 13px; }
+    .ct2 { fill: var(--muted); font-size: 13px; }
+    .pulse { fill: var(--faint); animation: pulse 2.4s ease-in-out 4.5s infinite both; }
+    @keyframes draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+    @keyframes grow { from { transform: scale(0); } to { transform: scale(1); } }
+    @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+    @media (prefers-reduced-motion: reduce) { .prog, .fill, .chk, .lab, .pop, .pulse { animation: none !important; } }
+  </style>
+  <rect class="bg" x="0.5" y="0.5" width="999" height="249" rx="8"/>
+  <text class="top" x="20" y="36">Etappen</text>
+  <line class="rail" x1="60" y1="96" x2="940" y2="96"/>
+  <line class="prog" pathLength="1" x1="60" y1="96" x2="940" y2="96"/>
+  <g>
+    <circle class="ring" cx="60" cy="96" r="13"/>
+    <g transform="translate(60,96)"><circle class="fill" r="13" style="animation-delay:0.30s"/></g>
+    <polyline class="chk" pathLength="1" points="55,96 58.5,100 65.5,92" style="animation-delay:0.45s"/>
+    <g class="lab" style="animation-delay:0.30s"><text class="h" x="60" y="134">Etappe 0</text><text class="p" x="60" y="152">Plan</text></g>
+  </g>
+  <g>
+    <circle class="ring" cx="170" cy="96" r="13"/>
+    <g transform="translate(170,96)"><circle class="fill" r="13" style="animation-delay:0.68s"/></g>
+    <polyline class="chk" pathLength="1" points="165,96 168.5,100 175.5,92" style="animation-delay:0.83s"/>
+    <g class="lab" style="animation-delay:0.68s"><text class="h" x="170" y="134">Etappe 1</text><text class="p" x="170" y="152">Grundgerüst</text></g>
+  </g>
+  <g>
+    <circle class="ring" cx="280" cy="96" r="13"/>
+    <g transform="translate(280,96)"><circle class="fill" r="13" style="animation-delay:1.05s"/></g>
+    <polyline class="chk" pathLength="1" points="275,96 278.5,100 285.5,92" style="animation-delay:1.20s"/>
+    <g class="lab" style="animation-delay:1.05s"><text class="h" x="280" y="134">Etappe 2</text><text class="p" x="280" y="152">Google</text></g>
+  </g>
+  <g>
+    <circle class="ring" cx="390" cy="96" r="13"/>
+    <g transform="translate(390,96)"><circle class="fill" r="13" style="animation-delay:1.43s"/></g>
+    <polyline class="chk" pathLength="1" points="385,96 388.5,100 395.5,92" style="animation-delay:1.57s"/>
+    <g class="lab" style="animation-delay:1.43s"><text class="h" x="390" y="134">Etappe 3</text><text class="p" x="390" y="152">Outlook</text></g>
+  </g>
+  <g>
+    <circle class="ring" cx="500" cy="96" r="13"/>
+    <g transform="translate(500,96)"><circle class="fill" r="13" style="animation-delay:1.80s"/></g>
+    <polyline class="chk" pathLength="1" points="495,96 498.5,100 505.5,92" style="animation-delay:1.95s"/>
+    <g class="lab" style="animation-delay:1.80s"><text class="h" x="500" y="134">Etappe 4</text><text class="p" x="500" y="152">Termine</text></g>
+  </g>
+  <g>
+    <circle class="ring" cx="610" cy="96" r="13"/>
+    <g transform="translate(610,96)"><circle class="fill" r="13" style="animation-delay:2.17s"/></g>
+    <polyline class="chk" pathLength="1" points="605,96 608.5,100 615.5,92" style="animation-delay:2.32s"/>
+    <g class="lab" style="animation-delay:2.17s"><text class="h" x="610" y="134">Etappe 5</text><text class="p" x="610" y="152">Sync-Engine</text></g>
+  </g>
+  <g>
+    <circle class="ring" cx="720" cy="96" r="13"/>
+    <g transform="translate(720,96)"><circle class="fill" r="13" style="animation-delay:2.55s"/></g>
+    <polyline class="chk" pathLength="1" points="715,96 718.5,100 725.5,92" style="animation-delay:2.70s"/>
+    <g class="lab" style="animation-delay:2.55s"><text class="h" x="720" y="134">Etappe 6</text><text class="p" x="720" y="152">Serien</text></g>
+  </g>
+  <g>
+    <circle class="ring" cx="830" cy="96" r="13"/>
+    <g transform="translate(830,96)"><circle class="fill" r="13" style="animation-delay:2.92s"/></g>
+    <polyline class="chk" pathLength="1" points="825,96 828.5,100 835.5,92" style="animation-delay:3.07s"/>
+    <g class="lab" style="animation-delay:2.92s"><text class="h" x="830" y="134">Etappe 7</text><text class="p" x="830" y="152">Feinschliff</text></g>
+  </g>
+  <g>
+    <circle class="ring" cx="940" cy="96" r="13"/>
+    <g transform="translate(940,96)"><circle class="fill" r="13" style="animation-delay:3.30s"/></g>
+    <polyline class="chk" pathLength="1" points="935,96 938.5,100 945.5,92" style="animation-delay:3.45s"/>
+    <g class="lab" style="animation-delay:3.30s"><text class="h" x="940" y="134">Abnahme</text><text class="p" x="940" y="152">Tests M-1 bis M-5</text></g>
+  </g>
+  <text class="top" x="20" y="186">Extras</text>
+  <g class="pop" style="animation-delay:3.60s">
+    <rect class="chip" x="20" y="198" width="188" height="32" rx="16"/>
+    <polyline class="chk2" points="34,214 37.5,218 44,210"/>
+    <text class="ct" x="52" y="219">Farben pro Kalender</text>
+  </g>
+  <g class="pop" style="animation-delay:3.75s">
+    <rect class="chip" x="220" y="198" width="112" height="32" rx="16"/>
+    <polyline class="chk2" points="234,214 237.5,218 244,210"/>
+    <text class="ct" x="252" y="219">Assistent</text>
+  </g>
+  <g class="pop" style="animation-delay:3.90s">
+    <rect class="chip" x="344" y="198" width="143" height="32" rx="16"/>
+    <polyline class="chk2" points="358,214 361.5,218 368,210"/>
+    <text class="ct" x="376" y="219">Handy-Version</text>
+  </g>
+  <g class="pop" style="animation-delay:4.05s">
+    <rect class="chip" x="499" y="198" width="158" height="32" rx="16"/>
+    <polyline class="chk2" points="513,214 516.5,218 523,210"/>
+    <text class="ct" x="531" y="219">Monate blättern</text>
+  </g>
+  <g class="pop" style="animation-delay:4.20s">
+    <rect class="chip open" x="669" y="198" width="173" height="32" rx="16"/>
+    <circle class="pulse" cx="688" cy="214" r="4"/>
+    <text class="ct2" x="701" y="219">Personen einladen</text>
+  </g>
+</svg>

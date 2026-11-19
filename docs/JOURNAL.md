@@ -2,7 +2,7 @@
 
 Laufendes Protokoll des Projekts. Der neuste Eintrag steht oben.
 
-**So wird das Journal geführt:** Nach jedem Arbeitsschritt kommt ein Eintrag mit Datum dazu. Er hält fest, was gemacht wurde, was dabei aufgefallen ist und was als Nächstes ansteht. Grössere technische Entscheidungen wandern zusätzlich nach [ENTSCHEIDUNGEN.md](ENTSCHEIDUNGEN.md), erledigte Etappen werden in der [Roadmap im README](../README.md#-roadmap) abgehakt.
+**So wird das Journal geführt:** Nach jedem Arbeitsschritt kommt ein Eintrag mit Datum dazu. Er hält fest, was gemacht wurde, was dabei aufgefallen ist und was als Nächstes ansteht. Grössere technische Entscheidungen wandern zusätzlich nach [ENTSCHEIDUNGEN.md](ENTSCHEIDUNGEN.md), erledigte Etappen werden in der [Roadmap im README](../README.md#roadmap) abgehakt.
 
 ## Aktueller Stand
 
@@ -12,6 +12,29 @@ Laufendes Protokoll des Projekts. Der neuste Eintrag steht oben.
 | **Als Nächstes**    | Handy-Version mit dem echten Google-Konto prüfen. Danach: Personen einladen         |
 | **Blockiert durch** | –                                                                                   |
 | **Offen bei Namir** | Handy-Version auf dem iPhone ausprobieren. Am 22.2. prüfen, ob der BMS-Plan im zweiten Semester gleich bleibt |
+
+---
+
+## 2026-11-19 · README mit Animationen, ohne Emojis
+
+Namir wollte im README viel mehr Animation und keine Emojis.
+
+**Gemacht**
+
+- Sechs animierte SVGs unter `docs/readme/`: Kopfbild (ein Termin wandert von Google nach Outlook und zurück, eine Verschiebung folgt, das Echo wird erkannt), Sync-Ablauf in vier Schritten, Feature-Kacheln mit gezeichneten Symbolen, Architektur mit laufenden Datenpaketen, Roadmap mit Fortschrittslinie und eine Fusszeile.
+- Alle Emojis aus dem README entfernt. Die Anker heissen jetzt `#features`, `#roadmap` usw., die Links in `JOURNAL.md` und `ARCHITEKTUR.md` sind angepasst.
+- Mermaid-Diagramme und die Feature-Tabelle stehen weiter im README, eingeklappt unter den Animationen.
+- Den veralteten Satz «Sync-Engine, Scheduler und Provider sind geplant» ersetzt, die sind längst gebaut.
+
+**Aufgefallen**
+
+- Die SVGs nutzen die Farben aus [DESIGN.md](DESIGN.md) und folgen hell/dunkel über `prefers-color-scheme`. Das richtet sich nach dem System, nicht nach dem GitHub-Thema. Weicht beides ab, sieht man die Bilder als Karten in der anderen Farbe.
+- Die Regel «keine Daueranimation» in DESIGN.md gilt für die App, nicht fürs README. Bei `prefers-reduced-motion` stehen die SVGs trotzdem still.
+- Im Browser geprüft (dunkel): alle Phasen der Animationen laufen. Auf GitHub selbst noch nicht angeschaut.
+
+**Als Nächstes**
+
+- README auf GitHub ansehen, ob alle Animationen dort laufen.
 
 ---
 

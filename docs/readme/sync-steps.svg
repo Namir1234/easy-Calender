@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 230" width="1000" height="230" role="img" aria-labelledby="ss-t ss-d">
+  <title id="ss-t">Ein Sync-Durchlauf</title>
+  <desc id="ss-d">Vier Schritte pro Kalender-Paar: Änderungen holen, Gegenstück suchen, Fingerabdruck prüfen, andere Seite schreiben.</desc>
+  <style>
+    svg {
+      --paper: #ffffff; --ink: #16181d; --muted: #535966; --faint: #6f7582; --line: #e2e4e8; --ok: #1f7a4d; --on-ink: #ffffff;
+      font-family: "Segoe UI Variable Display", "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+    }
+    @media (prefers-color-scheme: dark) {
+      svg { --paper: #17181b; --ink: #ecedef; --muted: #a4a9b3; --faint: #838995; --line: #2c2e33; --ok: #5fcf9a; --on-ink: #17181b; }
+    }
+    .bg { fill: var(--paper); stroke: var(--line); }
+    .card { fill: var(--paper); stroke: var(--line); }
+    .hl { fill: none; stroke: var(--ink); stroke-width: 1.5; }
+    .num { fill: none; stroke: var(--line); stroke-width: 1.5; }
+    .numt { fill: var(--muted); font-size: 13px; font-weight: 600; text-anchor: middle; }
+    .numf { fill: var(--ink); }
+    .numft { fill: var(--on-ink); font-size: 13px; font-weight: 600; text-anchor: middle; }
+    .h { fill: var(--ink); font-size: 15px; font-weight: 600; }
+    .p { fill: var(--muted); font-size: 13px; }
+    .code { fill: var(--muted); font-size: 13px; font-family: Consolas, "Cascadia Mono", Menlo, monospace; }
+    .top { fill: var(--muted); font-size: 13px; }
+    .topr { fill: var(--faint); font-size: 13px; text-anchor: end; }
+    .rail { stroke: var(--line); stroke-width: 2; }
+    .prog { stroke: var(--ink); stroke-width: 2; }
+    .dot { fill: var(--paper); stroke: var(--line); stroke-width: 2; }
+    .dotf { fill: var(--ink); }
+    .done { fill: var(--ok); font-size: 13px; font-weight: 600; text-anchor: middle; }
+
+    .a { animation-duration: 8s; animation-iteration-count: infinite; animation-fill-mode: both; animation-timing-function: ease-out; }
+    .prog { transform-box: fill-box; transform-origin: left center; animation-name: prog; animation-timing-function: linear; }
+    .h1 { animation-name: h1; } .h2 { animation-name: h2; } .h3 { animation-name: h3; } .h4 { animation-name: h4; }
+    .f1 { animation-name: f1; } .f2 { animation-name: f2; } .f3 { animation-name: f3; } .f4 { animation-name: f4; }
+    .fin { animation-name: fin; }
+    @keyframes prog { 0%, 5% { transform: scaleX(0); opacity: 1; } 65%, 94% { transform: scaleX(1); opacity: 1; } 98%, 100% { transform: scaleX(1); opacity: 0; } }
+    @keyframes h1 { 0%, 4% { opacity: 0; } 6%, 23% { opacity: 1; } 25%, 100% { opacity: 0; } }
+    @keyframes h2 { 0%, 24% { opacity: 0; } 26%, 43% { opacity: 1; } 45%, 100% { opacity: 0; } }
+    @keyframes h3 { 0%, 44% { opacity: 0; } 46%, 63% { opacity: 1; } 65%, 100% { opacity: 0; } }
+    @keyframes h4 { 0%, 64% { opacity: 0; } 66%, 83% { opacity: 1; } 85%, 100% { opacity: 0; } }
+    @keyframes f1 { 0%, 4% { opacity: 0; } 6%, 94% { opacity: 1; } 98%, 100% { opacity: 0; } }
+    @keyframes f2 { 0%, 24% { opacity: 0; } 26%, 94% { opacity: 1; } 98%, 100% { opacity: 0; } }
+    @keyframes f3 { 0%, 44% { opacity: 0; } 46%, 94% { opacity: 1; } 98%, 100% { opacity: 0; } }
+    @keyframes f4 { 0%, 64% { opacity: 0; } 66%, 94% { opacity: 1; } 98%, 100% { opacity: 0; } }
+    @keyframes fin { 0%, 84% { opacity: 0; transform: translateY(4px); } 87%, 94% { opacity: 1; transform: none; } 98%, 100% { opacity: 0; transform: none; } }
+    @media (prefers-reduced-motion: reduce) {
+      .a, .prog { animation: none !important; }
+      .hl, .fin { display: none; }
+    }
+  </style>
+
+  <rect class="bg" x="0.5" y="0.5" width="999" height="229" rx="8"/>
+  <text class="top" x="20" y="32">Ein Durchlauf pro Kalender-Paar, für jede Richtung</text>
+  <text class="topr" x="980" y="32">alle 2 Minuten · beim Fokussieren · manuell</text>
+
+  <line class="rail" x1="132" y1="186" x2="867" y2="186"/>
+  <line class="prog a" x1="132" y1="186" x2="867" y2="186"/>
+
+  <g>
+    <rect class="card" x="20" y="50" width="225" height="112" rx="8"/>
+    <rect class="hl a h1" x="20" y="50" width="225" height="112" rx="8"/>
+    <circle class="num" cx="44" cy="76" r="12"/><text class="numt" x="44" y="81">1</text>
+    <g class="a f1"><circle class="numf" cx="44" cy="76" r="12"/><text class="numft" x="44" y="81">1</text></g>
+    <text class="h" x="66" y="81">Änderungen holen</text>
+    <text class="p" x="36" y="116">bei Google mit <tspan class="code">syncToken</tspan></text>
+    <text class="p" x="36" y="138">bei Outlook mit <tspan class="code">deltaLink</tspan></text>
+    <circle class="dot" cx="132" cy="186" r="7"/><circle class="dotf a f1" cx="132" cy="186" r="7"/>
+  </g>
+  <g>
+    <rect class="card" x="265" y="50" width="225" height="112" rx="8"/>
+    <rect class="hl a h2" x="265" y="50" width="225" height="112" rx="8"/>
+    <circle class="num" cx="289" cy="76" r="12"/><text class="numt" x="289" y="81">2</text>
+    <g class="a f2"><circle class="numf" cx="289" cy="76" r="12"/><text class="numft" x="289" y="81">2</text></g>
+    <text class="h" x="311" y="81">Gegenstück suchen</text>
+    <text class="p" x="281" y="116">in der Tabelle <tspan class="code">event_links</tspan></text>
+    <text class="p" x="281" y="138">oder über die ID im Termin</text>
+    <circle class="dot" cx="377" cy="186" r="7"/><circle class="dotf a f2" cx="377" cy="186" r="7"/>
+  </g>
+  <g>
+    <rect class="card" x="510" y="50" width="225" height="112" rx="8"/>
+    <rect class="hl a h3" x="510" y="50" width="225" height="112" rx="8"/>
+    <circle class="num" cx="534" cy="76" r="12"/><text class="numt" x="534" y="81">3</text>
+    <g class="a f3"><circle class="numf" cx="534" cy="76" r="12"/><text class="numft" x="534" y="81">3</text></g>
+    <text class="h" x="556" y="81">Fingerabdruck prüfen</text>
+    <text class="p" x="526" y="116">Hash gleich: eigenes Echo,</text>
+    <text class="p" x="526" y="138">wird übersprungen</text>
+    <circle class="dot" cx="622" cy="186" r="7"/><circle class="dotf a f3" cx="622" cy="186" r="7"/>
+  </g>
+  <g>
+    <rect class="card" x="755" y="50" width="225" height="112" rx="8"/>
+    <rect class="hl a h4" x="755" y="50" width="225" height="112" rx="8"/>
+    <circle class="num" cx="779" cy="76" r="12"/><text class="numt" x="779" y="81">4</text>
+    <g class="a f4"><circle class="numf" cx="779" cy="76" r="12"/><text class="numft" x="779" y="81">4</text></g>
+    <text class="h" x="801" y="81">Andere Seite schreiben</text>
+    <text class="p" x="771" y="116">erstellen, ändern oder löschen,</text>
+    <text class="p" x="771" y="138">dann den Hash speichern</text>
+    <circle class="dot" cx="867" cy="186" r="7"/><circle class="dotf a f4" cx="867" cy="186" r="7"/>
+  </g>
+  <text class="done a fin" x="500" y="214">Beide Seiten sind wieder gleich</text>
+</svg>

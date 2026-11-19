@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 380" width="1000" height="380" role="img" aria-labelledby="ar-t ar-d">
+  <title id="ar-t">Architektur</title>
+  <desc id="ar-d">Der Scheduler stösst die Sync-Engine an. Sie fragt über den Google- und den Outlook-Provider die Kalender ab, speichert den Stand über die Datenschicht in Supabase und meldet das Ergebnis über die IPC-API an die Oberfläche.</desc>
+  <style>
+    svg {
+      --paper: #ffffff; --ink: #16181d; --muted: #535966; --faint: #6f7582; --line: #e2e4e8; --edge: #c4c8cf; --ok: #1f7a4d;
+      font-family: "Segoe UI Variable Display", "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+    }
+    @media (prefers-color-scheme: dark) {
+      svg { --paper: #17181b; --ink: #ecedef; --muted: #a4a9b3; --faint: #838995; --line: #2c2e33; --edge: #464a52; --ok: #5fcf9a; }
+    }
+    .bg { fill: var(--paper); stroke: var(--line); }
+    .grp { fill: none; stroke: var(--edge); stroke-dasharray: 4 4; }
+    .box { fill: var(--paper); stroke: var(--edge); stroke-width: 1.2; }
+    .lbl { fill: var(--faint); font-size: 12px; }
+    .h { fill: var(--ink); font-size: 14px; font-weight: 600; text-anchor: middle; }
+    .p { fill: var(--muted); font-size: 12px; text-anchor: middle; }
+    .e { fill: none; stroke: var(--edge); stroke-width: 1.5; }
+    .el { fill: var(--faint); font-size: 12px; text-anchor: middle; }
+    .pk { stroke: var(--paper); stroke-width: 2; }
+    .pi { fill: var(--ink); } .pg { fill: #188038; } .po { fill: #0f6cbd; } .pd { fill: #3ecf8e; }
+    .hl { fill: none; stroke: var(--ink); stroke-width: 1.8; opacity: 0; animation: 6s ease-out infinite both; }
+    .hs { animation-name: hs; } .he { animation-name: he; } .hd { animation-name: hd; } .hu { animation-name: hu; }
+    @keyframes hs { 0% { opacity: 1; } 8%, 100% { opacity: 0; } }
+    @keyframes he { 0%, 14% { opacity: 0; } 16%, 22% { opacity: 1; } 28%, 60% { opacity: 0; } 64%, 68% { opacity: 1; } 72%, 100% { opacity: 0; } }
+    @keyframes hd { 0%, 87% { opacity: 0; } 89%, 93% { opacity: 1; } 97%, 100% { opacity: 0; } }
+    @keyframes hu { 0%, 96% { opacity: 0; } 98% { opacity: 1; } 100% { opacity: 0.6; } }
+    @media (prefers-reduced-motion: reduce) { .pk { display: none; } .hl { animation: none; } }
+  </style>
+
+  <rect class="bg" x="0.5" y="0.5" width="999" height="379" rx="8"/>
+
+  <!-- Gruppen -->
+  <rect class="grp" x="226" y="24" width="532" height="334" rx="8"/>
+  <text class="lbl" x="242" y="46">Main-Prozess (Electron)</text>
+  <text class="lbl" x="20" y="136">Renderer</text>
+  <text class="lbl" x="800" y="96">Dienste</text>
+
+  <!-- Kanten -->
+  <path id="ea" class="e" d="M190 190 H250"/>
+  <path id="eb" class="e" d="M370 190 H420"/>
+  <path id="ec" class="e" d="M495 116 V160"/>
+  <path id="ed" class="e" d="M495 220 V270"/>
+  <path id="ee" class="e" d="M570 298 H800"/>
+  <path id="ef" class="e" d="M570 180 C590 180 590 138 610 138"/>
+  <path id="eg" class="e" d="M570 200 C590 200 590 242 610 242"/>
+  <path id="eh" class="e" d="M734 138 H800"/>
+  <path id="ei" class="e" d="M734 242 H800"/>
+  <text class="el" x="220" y="181">IPC</text>
+
+  <!-- Knoten -->
+  <rect class="box" x="20" y="150" width="170" height="80" rx="8"/>
+  <text class="h" x="105" y="184">Kalender-UI</text><text class="p" x="105" y="204">React · FullCalendar</text>
+  <rect class="hl hu" x="20" y="150" width="170" height="80" rx="8"/>
+
+  <rect class="box" x="250" y="160" width="120" height="60" rx="6"/>
+  <text class="h" x="310" y="186">IPC-API</text><text class="p" x="310" y="204">contextBridge</text>
+
+  <rect class="box" x="420" y="60" width="150" height="56" rx="6"/>
+  <text class="h" x="495" y="84">Scheduler</text><text class="p" x="495" y="102">alle 2 Minuten</text>
+  <rect class="hl hs" x="420" y="60" width="150" height="56" rx="6"/>
+
+  <rect class="box" x="420" y="160" width="150" height="60" rx="6"/>
+  <text class="h" x="495" y="186">Sync-Engine</text><text class="p" x="495" y="204">Loop-Schutz, Konflikte</text>
+  <rect class="hl he" x="420" y="160" width="150" height="60" rx="6"/>
+
+  <rect class="box" x="420" y="270" width="150" height="56" rx="6"/>
+  <text class="h" x="495" y="294">Datenschicht</text><text class="p" x="495" y="312">Konten, Links, Hashes</text>
+
+  <rect class="box" x="610" y="110" width="124" height="56" rx="6"/>
+  <text class="h" x="672" y="134">Google-</text><text class="h" x="672" y="152">Provider</text>
+  <rect class="box" x="610" y="214" width="124" height="56" rx="6"/>
+  <text class="h" x="672" y="238">Outlook-</text><text class="h" x="672" y="256">Provider</text>
+
+  <rect class="box" x="800" y="110" width="180" height="56" rx="28"/>
+  <text class="h" x="890" y="134">Google Calendar</text><text class="p" x="890" y="152">API v3</text>
+  <rect class="box" x="800" y="214" width="180" height="56" rx="28"/>
+  <text class="h" x="890" y="238">Outlook (classic)</text><text class="p" x="890" y="256">oder Microsoft Graph</text>
+
+  <path class="box" d="M800 278 A90 9 0 0 1 980 278 V320 A90 9 0 0 1 800 320 Z"/>
+  <path class="e" d="M800 278 A90 9 0 0 0 980 278"/>
+  <text class="h" x="890" y="303">Supabase</text><text class="p" x="890" y="319">Postgres</text>
+  <rect class="hl hd" x="800" y="268" width="180" height="62" rx="10"/>
+
+  <!-- Datenpakete: laufen nacheinander, 6 s pro Runde -->
+  <g class="pk">
+    <circle class="pi" r="5" opacity="0">
+      <animateMotion dur="6s" repeatCount="indefinite" keyPoints="0;0;1;1" keyTimes="0;0.04;0.14;1" calcMode="linear"><mpath href="#ec"/></animateMotion>
+      <animate attributeName="opacity" dur="6s" repeatCount="indefinite" values="0;1;1;0;0" keyTimes="0;0.04;0.14;0.15;1"/>
+    </circle>
+    <circle class="pg" r="5" opacity="0">
+      <animateMotion dur="6s" repeatCount="indefinite" keyPoints="0;0;1;0;0" keyTimes="0;0.2;0.3;0.4;1" calcMode="linear"><mpath href="#ef"/></animateMotion>
+      <animate attributeName="opacity" dur="6s" repeatCount="indefinite" values="0;1;1;0;0" keyTimes="0;0.2;0.3;0.31;1"/>
+    </circle>
+    <circle class="po" r="5" opacity="0">
+      <animateMotion dur="6s" repeatCount="indefinite" keyPoints="0;0;1;0;0" keyTimes="0;0.2;0.3;0.4;1" calcMode="linear"><mpath href="#eg"/></animateMotion>
+      <animate attributeName="opacity" dur="6s" repeatCount="indefinite" values="0;1;1;0;0" keyTimes="0;0.2;0.3;0.31;1"/>
+    </circle>
+    <circle class="pg" r="5" opacity="0">
+      <animateMotion dur="6s" repeatCount="indefinite" keyPoints="0;0;1;1;0;0" keyTimes="0;0.3;0.38;0.44;0.52;1" calcMode="linear"><mpath href="#eh"/></animateMotion>
+      <animate attributeName="opacity" dur="6s" repeatCount="indefinite" values="0;0;1;1;0;0" keyTimes="0;0.3;0.31;0.52;0.53;1"/>
+    </circle>
+    <circle class="po" r="5" opacity="0">
+      <animateMotion dur="6s" repeatCount="indefinite" keyPoints="0;0;1;1;0;0" keyTimes="0;0.3;0.38;0.44;0.52;1" calcMode="linear"><mpath href="#ei"/></animateMotion>
+      <animate attributeName="opacity" dur="6s" repeatCount="indefinite" values="0;0;1;1;0;0" keyTimes="0;0.3;0.31;0.52;0.53;1"/>
+    </circle>
+    <circle class="pg" r="5" opacity="0">
+      <animateMotion dur="6s" repeatCount="indefinite" keyPoints="1;1;0;0" keyTimes="0;0.53;0.63;1" calcMode="linear"><mpath href="#ef"/></animateMotion>
+      <animate attributeName="opacity" dur="6s" repeatCount="indefinite" values="0;0;1;1;0;0" keyTimes="0;0.53;0.54;0.63;0.64;1"/>
+    </circle>
+    <circle class="po" r="5" opacity="0">
+      <animateMotion dur="6s" repeatCount="indefinite" keyPoints="1;1;0;0" keyTimes="0;0.53;0.63;1" calcMode="linear"><mpath href="#eg"/></animateMotion>
+      <animate attributeName="opacity" dur="6s" repeatCount="indefinite" values="0;0;1;1;0;0" keyTimes="0;0.53;0.54;0.63;0.64;1"/>
+    </circle>
+    <circle class="pi" r="5" opacity="0">
+      <animateMotion dur="6s" repeatCount="indefinite" keyPoints="0;0;1;1" keyTimes="0;0.7;0.77;1" calcMode="linear"><mpath href="#ed"/></animateMotion>
+      <animate attributeName="opacity" dur="6s" repeatCount="indefinite" values="0;0;1;1;0;0" keyTimes="0;0.7;0.71;0.77;0.78;1"/>
+    </circle>
+    <circle class="pd" r="5" opacity="0">
+      <animateMotion dur="6s" repeatCount="indefinite" keyPoints="0;0;1;1" keyTimes="0;0.78;0.89;1" calcMode="linear"><mpath href="#ee"/></animateMotion>
+      <animate attributeName="opacity" dur="6s" repeatCount="indefinite" values="0;0;1;1;0;0" keyTimes="0;0.78;0.79;0.89;0.9;1"/>
+    </circle>
+    <circle class="pi" r="5" opacity="0">
+      <animateMotion dur="6s" repeatCount="indefinite" keyPoints="1;1;0;0" keyTimes="0;0.7;0.8;1" calcMode="linear"><mpath href="#eb"/></animateMotion>
+      <animate attributeName="opacity" dur="6s" repeatCount="indefinite" values="0;0;1;1;0;0" keyTimes="0;0.7;0.71;0.8;0.81;1"/>
+    </circle>
+    <circle class="pi" r="5" opacity="0">
+      <animateMotion dur="6s" repeatCount="indefinite" keyPoints="1;1;0;0" keyTimes="0;0.84;0.96;1" calcMode="linear"><mpath href="#ea"/></animateMotion>
+      <animate attributeName="opacity" dur="6s" repeatCount="indefinite" values="0;0;1;1;0;0" keyTimes="0;0.84;0.85;0.96;0.97;1"/>
+    </circle>
+  </g>
+</svg>

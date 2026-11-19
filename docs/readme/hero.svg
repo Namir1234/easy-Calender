@@ -1,0 +1,178 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 360" width="1040" height="360" role="img" aria-labelledby="hero-t hero-d">
+  <title id="hero-t">easy-Calender</title>
+  <desc id="hero-d">Ein Termin entsteht im Google-Kalender und erscheint in Outlook. Ein Termin aus Outlook erscheint in Google. Eine Verschiebung wird gespiegelt, und das Echo der eigenen Änderung wird erkannt.</desc>
+  <style>
+    svg {
+      --paper: #ffffff; --panel: #f3f4f5; --ink: #16181d; --muted: #535966; --faint: #6f7582;
+      --line: #e2e4e8; --accent: #c8321e; --ok: #1f7a4d;
+      font-family: "Segoe UI Variable Display", "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+    }
+    @media (prefers-color-scheme: dark) {
+      svg { --paper: #17181b; --panel: #101113; --ink: #ecedef; --muted: #a4a9b3; --faint: #838995; --line: #2c2e33; --accent: #ff7a66; --ok: #5fcf9a; }
+    }
+    .bg { fill: var(--paper); stroke: var(--line); }
+    .card { fill: var(--paper); stroke: var(--line); }
+    .grid { stroke: var(--line); stroke-width: 1; }
+    .title { fill: var(--ink); font-size: 46px; font-weight: 650; letter-spacing: -0.5px; }
+    .sub { fill: var(--muted); font-size: 20px; }
+    .meta { fill: var(--faint); font-size: 14px; }
+    .status { fill: var(--ok); font-size: 13px; font-weight: 600; }
+    .head { fill: var(--ink); font-size: 13px; font-weight: 600; }
+    .headsub { fill: var(--faint); font-size: 12px; }
+    .day { fill: var(--muted); font-size: 12px; }
+    .evt { fill: #ffffff; font-size: 12px; font-weight: 600; }
+    .cap { fill: var(--muted); font-size: 13px; text-anchor: middle; }
+    .now { stroke: var(--accent); stroke-width: 1.5; }
+    .nowdot { fill: var(--accent); }
+    .ring { fill: var(--paper); stroke: var(--line); stroke-width: 1.5; }
+    .arrows { fill: none; stroke: var(--ink); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .badge { fill: var(--paper); stroke: var(--ok); stroke-width: 1.5; }
+    .badget { fill: var(--ok); font-size: 12px; font-weight: 600; text-anchor: middle; }
+    .dotg { fill: #188038; }
+    .doto { fill: #0f6cbd; }
+
+    .a { animation-duration: 10s; animation-iteration-count: infinite; animation-fill-mode: both; animation-timing-function: ease-in-out; }
+    .spin { transform-box: fill-box; transform-origin: center; animation-name: spin; }
+    .e1g { animation-name: e1g; } .m1g { animation-name: m1g; }
+    .e1o { animation-name: e1o; } .m1o { animation-name: m1o; }
+    .e2o { animation-name: e2o; } .e2g { animation-name: e2g; }
+    .t1 { animation-name: t1; } .t1c { animation-name: t1c; }
+    .t2 { animation-name: t2; } .t2c { animation-name: t2c; }
+    .p1 { animation-name: p1; } .p2 { animation-name: p2; } .bd { animation-name: bd; }
+    .nw { animation-name: nw; animation-timing-function: linear; }
+    .c1 { animation-name: c1; } .c2 { animation-name: c2; } .c3 { animation-name: c3; } .c4 { animation-name: c4; }
+
+    @keyframes spin { 0%, 10% { transform: rotate(0deg); } 22% { transform: rotate(360deg); } 38% { transform: rotate(360deg); } 50% { transform: rotate(720deg); } 63% { transform: rotate(720deg); } 70% { transform: rotate(1080deg); } 100% { transform: rotate(1080deg); } }
+    @keyframes e1g { 0%, 3% { opacity: 0; transform: translateY(8px); } 6%, 88% { opacity: 1; transform: none; } 94%, 100% { opacity: 0; transform: none; } }
+    @keyframes m1g { 0%, 57% { transform: none; } 62%, 100% { transform: translateY(60px); } }
+    @keyframes e1o { 0%, 20.5% { opacity: 0; } 22.5%, 88% { opacity: 1; } 94%, 100% { opacity: 0; } }
+    @keyframes m1o { 0%, 69% { transform: none; } 74%, 100% { transform: translateY(60px); } }
+    @keyframes e2o { 0%, 29% { opacity: 0; transform: translateY(8px); } 32%, 88% { opacity: 1; transform: none; } 94%, 100% { opacity: 0; transform: none; } }
+    @keyframes e2g { 0%, 47.5% { opacity: 0; } 49.5%, 88% { opacity: 1; } 94%, 100% { opacity: 0; } }
+    @keyframes t1 { 0%, 10% { opacity: 0; transform: none; } 11% { opacity: 1; transform: none; } 16% { transform: translate(150px, -40px); } 21% { opacity: 1; transform: translate(300px, 0); } 22.5%, 100% { opacity: 0; transform: translate(300px, 0); } }
+    @keyframes t1c { 0%, 13% { fill: #188038; } 19%, 100% { fill: #0f6cbd; } }
+    @keyframes t2 { 0%, 37% { opacity: 0; transform: none; } 38% { opacity: 1; transform: none; } 43% { transform: translate(-150px, -40px); } 48% { opacity: 1; transform: translate(-300px, 0); } 49.5%, 100% { opacity: 0; transform: translate(-300px, 0); } }
+    @keyframes t2c { 0%, 40% { fill: #0f6cbd; } 46%, 100% { fill: #188038; } }
+    @keyframes p1 { 0%, 62.5% { opacity: 0; transform: none; } 63.5% { opacity: 1; transform: none; } 66.5% { transform: translate(150px, -30px); } 69.5% { opacity: 1; transform: translate(300px, 0); } 70.5%, 100% { opacity: 0; transform: translate(300px, 0); } }
+    @keyframes p2 { 0%, 76% { opacity: 0; transform: none; } 77% { opacity: 1; transform: none; } 81% { opacity: 1; transform: translate(-56px, -26px); } 83%, 100% { opacity: 0; transform: translate(-56px, -26px); } }
+    @keyframes bd { 0%, 81% { opacity: 0; transform: translateY(6px); } 83%, 89% { opacity: 1; transform: none; } 92%, 100% { opacity: 0; transform: none; } }
+    @keyframes nw { 0% { transform: translateY(0); } 100% { transform: translateY(150px); } }
+    @keyframes c1 { 0%, 3% { opacity: 0; } 5%, 25% { opacity: 1; } 27%, 100% { opacity: 0; } }
+    @keyframes c2 { 0%, 27% { opacity: 0; } 29%, 52% { opacity: 1; } 54%, 100% { opacity: 0; } }
+    @keyframes c3 { 0%, 54% { opacity: 0; } 56%, 74% { opacity: 1; } 76%, 100% { opacity: 0; } }
+    @keyframes c4 { 0%, 76% { opacity: 0; } 78%, 92% { opacity: 1; } 94%, 100% { opacity: 0; } }
+
+    @media (prefers-reduced-motion: reduce) {
+      .a { animation: none !important; }
+      .t1, .t2, .p1, .p2, .bd, .c2, .c3, .c4 { display: none; }
+    }
+  </style>
+
+  <rect class="bg" x="0.5" y="0.5" width="1039" height="359" rx="8"/>
+
+  <!-- Linke Seite: Titel -->
+  <defs>
+    <clipPath id="type1"><rect x="40" y="160" height="32" width="420"><animate attributeName="width" values="0;0;420" keyTimes="0;0.3;1" dur="1.4s" fill="freeze"/></rect></clipPath>
+    <clipPath id="type2"><rect x="40" y="194" height="32" width="420"><animate attributeName="width" values="0;0;420" keyTimes="0;0.6;1" dur="2.4s" fill="freeze"/></rect></clipPath>
+  </defs>
+  <text class="title" x="40" y="138">easy-Calender</text>
+  <text class="sub" x="40" y="184" clip-path="url(#type1)">Google Kalender und Outlook,</text>
+  <text class="sub" x="40" y="214" clip-path="url(#type2)">endlich synchron.</text>
+  <text class="meta" x="40" y="262">Desktop-App für Windows · Electron · React</text>
+  <circle cx="45" cy="294" r="4" fill="var(--ok)"/>
+  <text class="status" x="56" y="298">Sync aktiv, alle 2 Minuten</text>
+
+  <!-- Karte Google -->
+  <g transform="translate(500,40)">
+    <rect class="card" x="0.5" y="0.5" width="200" height="250" rx="8"/>
+    <rect x="12" y="13" width="10" height="10" rx="2" fill="#188038"/>
+    <text class="head" x="28" y="22">Google</text>
+    <text class="headsub" x="78" y="22">Privat</text>
+    <text class="day" x="36" y="52" text-anchor="middle">Mo</text>
+    <text class="day" x="100" y="52" text-anchor="middle">Di</text>
+    <text class="day" x="164" y="52" text-anchor="middle">Mi</text>
+    <line class="grid" x1="0" y1="62" x2="201" y2="62"/>
+    <line class="grid" x1="4" y1="102" x2="196" y2="102" stroke-dasharray="2 4"/>
+    <line class="grid" x1="4" y1="142" x2="196" y2="142" stroke-dasharray="2 4"/>
+    <line class="grid" x1="4" y1="182" x2="196" y2="182" stroke-dasharray="2 4"/>
+    <line class="grid" x1="4" y1="222" x2="196" y2="222" stroke-dasharray="2 4"/>
+    <line class="grid" x1="68" y1="62" x2="68" y2="246"/>
+    <line class="grid" x1="132" y1="62" x2="132" y2="246"/>
+    <g class="a m1g"><g class="a e1g">
+      <rect x="7" y="68" width="58" height="46" rx="4" fill="#188038"/>
+      <text class="evt" x="13" y="86">Mathe</text>
+    </g></g>
+    <g class="a e2g">
+      <rect x="135" y="148" width="58" height="56" rx="4" fill="#188038"/>
+      <text class="evt" x="141" y="166">Meeting</text>
+    </g>
+    <g class="a nw">
+      <circle class="nowdot" cx="4" cy="74" r="3.5"/>
+      <line class="now" x1="4" y1="74" x2="196" y2="74"/>
+    </g>
+  </g>
+
+  <!-- Karte Outlook -->
+  <g transform="translate(800,40)">
+    <rect class="card" x="0.5" y="0.5" width="200" height="250" rx="8"/>
+    <rect x="12" y="13" width="10" height="10" rx="2" fill="#0f6cbd"/>
+    <text class="head" x="28" y="22">Outlook</text>
+    <text class="headsub" x="86" y="22">Schule</text>
+    <text class="day" x="36" y="52" text-anchor="middle">Mo</text>
+    <text class="day" x="100" y="52" text-anchor="middle">Di</text>
+    <text class="day" x="164" y="52" text-anchor="middle">Mi</text>
+    <line class="grid" x1="0" y1="62" x2="201" y2="62"/>
+    <line class="grid" x1="4" y1="102" x2="196" y2="102" stroke-dasharray="2 4"/>
+    <line class="grid" x1="4" y1="142" x2="196" y2="142" stroke-dasharray="2 4"/>
+    <line class="grid" x1="4" y1="182" x2="196" y2="182" stroke-dasharray="2 4"/>
+    <line class="grid" x1="4" y1="222" x2="196" y2="222" stroke-dasharray="2 4"/>
+    <line class="grid" x1="68" y1="62" x2="68" y2="246"/>
+    <line class="grid" x1="132" y1="62" x2="132" y2="246"/>
+    <g class="a m1o"><g class="a e1o">
+      <rect x="7" y="68" width="58" height="46" rx="4" fill="#0f6cbd"/>
+      <text class="evt" x="13" y="86">Mathe</text>
+    </g></g>
+    <g class="a e2o">
+      <rect x="135" y="148" width="58" height="56" rx="4" fill="#0f6cbd"/>
+      <text class="evt" x="141" y="166">Meeting</text>
+    </g>
+    <g class="a nw">
+      <circle class="nowdot" cx="4" cy="74" r="3.5"/>
+      <line class="now" x1="4" y1="74" x2="196" y2="74"/>
+    </g>
+  </g>
+
+  <!-- Sync-Symbol in der Mitte -->
+  <g transform="translate(750,165)">
+    <circle class="ring" r="24"/>
+    <g class="a spin">
+      <circle r="24" fill="none"/>
+      <path class="arrows" d="M-11 2 A11 11 0 0 1 8 -8"/>
+      <path class="arrows" d="M3 -10 L8 -8 L8 -13"/>
+      <path class="arrows" d="M11 -2 A11 11 0 0 1 -8 8"/>
+      <path class="arrows" d="M-3 10 L-8 8 L-8 13"/>
+    </g>
+  </g>
+
+  <!-- Unterwegs: neue Termine, Änderung, Echo -->
+  <g class="a t1">
+    <rect class="a t1c" x="507" y="108" width="58" height="46" rx="4" fill="#188038"/>
+    <text class="evt" x="513" y="126">Mathe</text>
+  </g>
+  <g class="a t2">
+    <rect class="a t2c" x="935" y="188" width="58" height="56" rx="4" fill="#0f6cbd"/>
+    <text class="evt" x="941" y="206">Meeting</text>
+  </g>
+  <circle class="a p1 dotg" cx="571" cy="191" r="6"/>
+  <circle class="a p2 doto" cx="806" cy="191" r="6"/>
+  <g class="a bd">
+    <rect class="badge" x="702" y="114" width="96" height="24" rx="12"/>
+    <text class="badget" x="750" y="130">Echo erkannt</text>
+  </g>
+
+  <!-- Bildunterschriften -->
+  <text class="cap a c1" x="750" y="324">Neuer Termin in Google: die App spiegelt ihn nach Outlook</text>
+  <text class="cap a c2" x="750" y="324">Neuer Termin in Outlook: er erscheint auch in Google</text>
+  <text class="cap a c3" x="750" y="324">Termin verschoben: die Änderung folgt auf die andere Seite</text>
+  <text class="cap a c4" x="750" y="324">Kein Ping-Pong: das Echo der eigenen Änderung wird ignoriert</text>
+</svg>
