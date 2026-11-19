@@ -12,6 +12,7 @@ import type { Calendar, CalendarEvent, DateRange } from '../../../shared/types'
 import type { ColorScheme } from '../useColorScheme'
 import type { AnchorRect } from './EventDetails'
 import { useMonthScroll } from '../monthScroll'
+import { toDayKey, useDayKeys } from '../dayKeys'
 
 interface Props {
   calendars: Calendar[]
@@ -32,13 +33,6 @@ const TOOLBAR = {
   end: 'dayGridMonth,timeGridWeek,timeGridDay'
 }
 
-/** Lokales Datum als `YYYY-MM-DD`, ohne Umweg über UTC. */
-function toLocalDate(date: Date): string {
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-  return `${date.getFullYear()}-${month}-${day}`
-}
-
 function CalendarView({
   calendars,
   colorScheme,
@@ -50,6 +44,7 @@ function CalendarView({
   const [range, setRange] = useState<DateRange | null>(null)
   const [events, setEvents] = useState<CalendarEvent[]>([])
   const [viewType, setViewType] = useState('timeGridWeek')
+  const [current, setCurrent] = useState<DateRange | null>(null)
   const controller = useCalendarController()
   const viewRef = useRef<HTMLDivElement>(null)
 
@@ -58,10 +53,24 @@ function CalendarView({
     step > 0 ? controller.next() : controller.prev()
   )
 
+  // Mit den Pfeiltasten von Tag zu Tag, der gewählte Tag wird markiert.
+  const { dayClass, headerClass } = useDayKeys({
+    viewType,
+    range: current,
+    gotoDate: (day) => controller.gotoDate(day)
+  })
+
   const handleDatesSet = useCallback((info: DatesSetInfo) => {
     setViewType(info.view.type)
-    const start = toLocalDate(info.start)
-    const end = toLocalDate(info.end)
+    const currentStart = toDayKey(info.view.currentStart)
+    const currentEnd = toDayKey(info.view.currentEnd)
+    setCurrent((before) =>
+      before && before.start === currentStart && before.end === currentEnd
+        ? before
+        : { start: currentStart, end: currentEnd }
+    )
+    const start = toDayKey(info.start)
+    const end = toDayKey(info.end)
     setRange((current) =>
       current && current.start === start && current.end === end ? current : { start, end }
     )
@@ -149,6 +158,9 @@ function CalendarView({
         eventClick={handleEventClick}
         selectable
         select={handleSelect}
+        dayCellClass={dayClass}
+        dayHeaderClass={headerClass}
+        dayLaneClass={dayClass}
       />
     </div>
   )

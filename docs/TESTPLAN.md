@@ -71,6 +71,8 @@ Diese Fälle werden an der gestarteten App geprüft, ohne echte Konten.
 | A-30 | Assistent: «morgen 14 Uhr Zahnarzt»                                         | Vorschlag mit richtigem Tag, Zeit und Kalender                                                    | ✅ Vorschlag geprüft, «Eintragen» nicht gedrückt |
 | A-31 | Assistent: unklare Nachricht («Kino mit Lea»)                               | Rückfrage statt Eintrag, die Antwort darauf ergibt den Vorschlag                                  | ✅                                               |
 | A-32 | Monatsansicht: Mausrad und Touchpad nach unten und oben                     | Je Raste bzw. Wisch ein Monat weiter oder zurück, in Woche und Tag scrollt das Rad die Stunden    | ⬜                                               |
+| A-33 | Pfeiltasten in Monat, Woche und Tag                                         | ←/→ ein Tag, im Monat ↑/↓ eine Woche, Markierung sichtbar, über den Rand blättert mit             | ⬜                                               |
+| H-6  | Handy-Version mit Tastatur: Pfeiltasten in Monat, Tag und Liste             | Wie A-33, in der Liste ←/→ eine Woche. Bei offenem Blatt passiert nichts                          | ✅ (Browser)                                     |
 | H-1  | Handy-Version mit `?demo` in Handygrösse                                    | Liste, Tag und Monat, Details als Blatt, Ändern und Neu im Vollbild-Formular, Kalender ausblenden | ✅                                               |
 | H-2  | Fertiger Build                                                              | Content-Security-Policy aktiv, Service Worker registriert, Manifest lesbar                        | ✅                                               |
 | H-3  | Anmeldung mit echtem Google-Konto auf dem Handy                             | Kalender und Termine wie am PC, neuer Termin erscheint in Google                                  | ⬜                                               |
@@ -78,6 +80,12 @@ Diese Fälle werden an der gestarteten App geprüft, ohne echte Konten.
 | H-5  | Handy, Monat: nach oben, unten, links und rechts wischen                    | Oben und links: nächster Monat, unten und rechts: voriger. Antippen öffnet weiter den Termin      | ✅ (Browser)                                     |
 | A-22 | Fenster schliessen mit «im Hintergrund weiterlaufen»                        | Die App bleibt im Infobereich, ein Klick auf das Symbol öffnet sie wieder                         | ⬜                                               |
 | A-23 | «Mit Windows starten» einschalten, neu anmelden                             | Die App startet ohne Fenster im Infobereich                                                       | ⬜                                               |
+
+### 2026-11-19 · Version 0.15.0
+
+- `npm test`: 143 von 143 Tests bestanden. `npm run typecheck` und ESLint ohne Befund.
+- H-6 im Browser geprüft (Tastendrücke per Skript ausgelöst).
+- **Nicht geprüft:** A-33 an der Desktop-App.
 
 ### 2026-11-19 · Version 0.14.0
 

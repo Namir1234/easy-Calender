@@ -8,10 +8,38 @@ Laufendes Protokoll des Projekts. Der neuste Eintrag steht oben.
 
 |                     |                                                                                     |
 | ------------------- | ----------------------------------------------------------------------------------- |
-| **Etappe**          | Alle sieben Etappen sind gebaut. Version 0.14.0: im Monat durch die Monate blättern |
+| **Etappe**          | Alle sieben Etappen sind gebaut. Version 0.15.0: mit den Pfeiltasten durch die Tage |
 | **Als Nächstes**    | Handy-Version mit dem echten Google-Konto prüfen. Danach: Personen einladen         |
 | **Blockiert durch** | –                                                                                   |
 | **Offen bei Namir** | Handy-Version auf dem iPhone ausprobieren. Wo die Stundenpläne liegen               |
+
+---
+
+## 2026-11-19 · Mit den Pfeiltasten durch die Tage (Version 0.15.0)
+
+Namir wollte mit den Pfeiltasten durch die Tage navigieren können.
+
+**Gemacht**
+
+- ← und → gehen einen Tag zurück oder weiter, in jeder Ansicht. Im Monat gehen ↑ und ↓ eine Woche. In Woche und Tag scrollen ↑ und ↓ weiter durch die Stunden.
+- Der gewählte Tag hat einen Rahmen in der Akzentfarbe (Monatsfeld, Wochenspalte samt Kopf). In der Tagesansicht ist er einfach der angezeigte Tag.
+- Der erste Druck startet bei heute, wenn heute sichtbar ist, sonst beim ersten Tag der Ansicht.
+- Geht der Tag über den Rand, springt der Kalender mit: in die nächste Woche oder in den nächsten Monat. Im Monat zählen die grauen Tage davor und danach schon zum Nachbarmonat.
+- Der Kalender merkt sich den Tag: Wer danach auf «Tag» wechselt, sieht genau diesen Tag.
+- Blättert man mit Knöpfen oder Mausrad weg, verschwindet die Markierung.
+- Die Pfeile bleiben in Eingabefeldern, im Formular, im Termin-Popover und in offenen Blättern, wo sie sind. Mit Shift, Ctrl, Alt oder Win passiert nichts.
+- Handy-Version mit Tastatur: gleich, nur springen ← und → in der Liste eine Woche, weil dort Tage ohne Termine fehlen.
+- Die Logik steht in `src/renderer/src/dayKeys.ts` und wird von beiden Apps benutzt (E-021).
+
+**Geprüft**
+
+- 143 Unit-Tests bestanden (neu: Tasten pro Ansicht, Monats-, Jahres- und Schaltjahrgrenze, Zeitumstellung, Starttag).
+- `npm run typecheck` und ESLint ohne Befund.
+- Handy-Version mit `?demo` im Browser: Monat (→ und ↓ über die Monatsgrenze), Wechsel auf «Tag» landet auf dem markierten Tag, Tag ←/→, Liste →. Mit Shift und bei offenem Blatt passiert nichts.
+
+**Nicht geprüft**
+
+- Die Desktop-App selbst (Electron), vor allem die Markierung in der Wochenansicht. Sie benutzt denselben Code.
 
 ---
 
