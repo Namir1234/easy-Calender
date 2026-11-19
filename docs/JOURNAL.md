@@ -42,7 +42,8 @@ Namirs Wunsch: TBZ und BMS sollen immer im Hintergrund liegen. Andere Termine wi
 - Mit einer Testseite im Browser (die echte `CalendarView` mit nachgebauten Lektionen, dunkler Modus): Arzttermin liegt in voller Breite über dem TBZ-Block. Klick auf die Lektion ergibt die Details, Klick auf den Arzttermin ebenfalls, Klick auf ein freies Feld und Ziehen über die Lektion ergeben einen neuen Termin.
 - `npm test`: 133 von 133 Tests bestanden. `npm run typecheck` ohne Befund.
 - Lesbarkeit mit der Testseite geprüft (Montag 16.11. nachgebaut): «BMS · Chemie» steht unter der Mathe-Prüfung, die Probeprüfung zeigt «BMS · Französisch». 141 Tests bestanden.
-- **Nicht geprüft:** die Lesbarkeit und der Klick auf eine Lektion in der installierten App. Der neue Build ist installiert, startete aber nicht, weil eine andere Sitzung eine Entwicklungsversion offen hatte (eine Instanz pro Rechner).
+- An der installierten App (Woche vom 16.11.): «BMS · Chemie» steht unter der Mathe-Prüfung, die Probeprüfung hat die Zusatzzeile. Vorher lief eine Entwicklungsversion der Sitzung `app-version-hallmark-design` und blockierte den Start (eine Instanz pro Rechner). Auf Namirs Wunsch geschlossen.
+- **Nicht geprüft:** der Klick auf eine Lektion in der installierten App.
 - **Achtung:** Die installierte App enthält jetzt die Pfeiltasten-Navigation nicht mehr, bis die Branches in `main` zusammengeführt sind. Beim Mergen die Versionsnummern bereinigen.
 
 **Als Nächstes**
