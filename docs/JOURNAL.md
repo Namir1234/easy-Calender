@@ -32,7 +32,7 @@ Namir hat die Stundenpläne als Screenshots aus schulNetz geschickt: Montag BMS,
 
 **Nachtrag:** Namir: TBZ gilt bis Ende Semester, BMS bis Ende Schuljahr. Die TBZ-Serien enden darum Ende Januar 2027. Die BMS-Serien sind neu angelegt bis zum 5.7.2027 (letzter Montag vor den Sommerferien), die alten gelöscht. Ausgelassen sind die Weihnachtsferien, die Sportferien (8.2. und 15.2.), Ostermontag (29.3.), die Frühlingsferien (19.4. und 26.4.) und Pfingstmontag (17.5.). Geprüft: keine doppelten Termine, Sportferien leer, Sommerzeit richtig.
 
-**App aktualisiert:** Installiert war noch 0.12.1. Version 0.13.0 gebaut (124 Tests bestanden), installiert und gestartet. Ob die Lektionen in der App erscheinen, ist nicht am Bildschirm geprüft. Sie stehen im Google-Kalender «Claude» und erscheinen, wenn dieser in der App eingeblendet ist.
+**App aktualisiert:** Installiert war noch 0.12.1. Version 0.13.0 gebaut (124 Tests bestanden), installiert und gestartet. Der Kalender «Claude» war in der App unter «Entfernte Kalender» ausgeblendet. Mit Namirs Erlaubnis über «Wieder zeigen» eingeblendet. Danach erscheinen die Lektionen in der Wochenansicht (geprüft an der Woche vom 23.11.).
 
 **Annahmen**
 
