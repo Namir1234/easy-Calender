@@ -11,7 +11,31 @@ Laufendes Protokoll des Projekts. Der neuste Eintrag steht oben.
 | **Etappe**          | Alle sieben Etappen sind gebaut. Version 0.13.0 bringt die Handy-Version als Web-App |
 | **Als Nächstes**    | Handy-Version mit dem echten Google-Konto prüfen. Danach: Personen einladen          |
 | **Blockiert durch** | –                                                                                    |
-| **Offen bei Namir** | Handy-Version auf dem iPhone ausprobieren. Zugriff auf den BMS-Stundenplan geben |
+| **Offen bei Namir** | Handy-Version auf dem iPhone ausprobieren. Entscheiden, ob die BMS-Ferien nach dem TBZ-Plan gerichtet werden |
+
+---
+
+## 2026-11-19 · BMS-Stundenplan mit dem Intranet verglichen
+
+Namir hat das BMS-Intranet (intranet.tam.ch/bmz) im eingebauten Browser geöffnet. Unterwegs lief die Anmeldung einmal ab, Namir hat sich neu angemeldet.
+
+**Gefunden**
+
+- Das Intranet hat den BMS-Plan nur bis zum 11.1.2027. Danach liefert es nichts mehr, auch keine Ferien. Das zweite Semester ist wohl noch nicht veröffentlicht.
+- Bis dahin ist jeder Montag gleich und stimmt mit den fünf Serien im Kalender überein (Fächer, Zeiten, Zimmer). Die Weihnachtsferien (21.12.–2.1.) sind schon ausgelassen.
+- Am 23.11. ist Französisch mit «(!)» markiert. Mehr steht in den Daten nicht. Zeit und Zimmer bleiben gleich.
+
+**Gemacht**
+
+- Am Kalender nichts geändert, weil er bis zum 11.1. schon stimmt.
+
+**Aufgefallen**
+
+- Die geschätzten BMS-Ferien weichen vom TBZ-Plan ab. Die TBZ hat Sportferien vom 1. bis 14.2. (geschätzt war 8.2. und 15.2.), Sechseläuten am 19.4., Frühlingsferien vom 26.4. bis 9.5. (geschätzt war nur der 26.4.) und Sommerferien ab dem 19.7. (geschätzt war ab dem 12.7.).
+
+**Als Nächstes**
+
+- Wenn Namir will, die BMS-Ferien nach dem TBZ-Plan richten. Sobald das zweite Semester im Intranet steht, die BMS noch einmal vergleichen.
 
 ---
 
