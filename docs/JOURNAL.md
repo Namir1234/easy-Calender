@@ -11,7 +11,7 @@ Laufendes Protokoll des Projekts. Der neuste Eintrag steht oben.
 | **Etappe**          | Alle sieben Etappen sind gebaut. Version 0.13.0 bringt die Handy-Version als Web-App |
 | **Als Nächstes**    | Handy-Version mit dem echten Google-Konto prüfen. Danach: Personen einladen          |
 | **Blockiert durch** | –                                                                                    |
-| **Offen bei Namir** | Handy-Version auf dem iPhone ausprobieren. Enddatum der Stundenplan-Serien bestätigen |
+| **Offen bei Namir** | Handy-Version auf dem iPhone ausprobieren. Ferien im Stundenplan mit dem Ferienplan vergleichen |
 
 ---
 
@@ -30,9 +30,11 @@ Namir hat die Stundenpläne als Screenshots aus schulNetz geschickt: Montag BMS,
 
 - Woche vom 23.11.: alle sieben Blöcke mit richtigen Zeiten. 21.12. bis 1.1.: keine. 4. und 5.1.: wieder da.
 
+**Nachtrag:** Namir: TBZ gilt bis Ende Semester, BMS bis Ende Schuljahr. Die TBZ-Serien enden darum Ende Januar 2027. Die BMS-Serien sind neu angelegt bis zum 5.7.2027 (letzter Montag vor den Sommerferien), die alten gelöscht. Ausgelassen sind die Weihnachtsferien, die Sportferien (8.2. und 15.2.), Ostermontag (29.3.), die Frühlingsferien (19.4. und 26.4.) und Pfingstmontag (17.5.). Geprüft: keine doppelten Termine, Sportferien leer, Sommerzeit richtig.
+
 **Annahmen**
 
-- Enddatum Ende Januar (Semesterende) und die Ferien sind geschätzt. TBZ-Module wechseln pro Quartal, dann müssen die Dienstags-Serien angepasst werden.
+- Die Ferien der Schulen und der Beginn der Sommerferien (12.7.2027) sind geschätzt, nicht aus dem Ferienplan der Schulen.
 - Code wurde nicht geändert. Ein automatischer Import aus schulNetz (iCal-Abo) wäre eine eigene Etappe.
 
 ---
