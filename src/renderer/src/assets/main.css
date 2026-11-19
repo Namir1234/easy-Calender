@@ -815,14 +815,32 @@ p {
   min-height: 0;
 }
 
-/* Hintergrund-Kalender (Stundenplan): kräftiger als FullCalendars blasse
-   Vorgabe, damit die Lektion lesbar bleibt, aber klar hinter den Terminen. */
+/* Hintergrund-Kalender (Stundenplan): sieht aus wie ein normaler Termin
+   (Fläche, Farbbalken links, Uhrzeit und Titel), nimmt aber immer die ganze
+   Spaltenbreite ein. Andere Termine liegen darüber. */
 .calendar-view .is-background-calendar {
-  background-color: color-mix(in oklab, var(--fc-event-color) 28%, transparent) !important;
+  border: 0 !important;
+  border-left: 3px solid var(--fc-event-color) !important;
+  border-radius: 4px;
+  background-color: color-mix(in oklab, var(--fc-event-color) 30%, transparent) !important;
+  overflow: hidden;
 }
 
-.calendar-view .is-background-calendar * {
-  opacity: 0.85 !important;
+.background-event-content {
+  padding: 3px 6px;
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--ink);
+}
+
+.background-event-time {
+  font-size: 11px;
+  opacity: 0.85;
+}
+
+.background-event-title {
+  font-weight: 500;
+  overflow-wrap: anywhere;
 }
 
 /* Termin-Details: Popover neben dem Termin */

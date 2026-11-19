@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import FullCalendar, { useCalendarController } from '@fullcalendar/react'
-import type { DateSelectInfo, DatesSetInfo, EventClickInfo, EventInput } from '@fullcalendar/react'
+import type {
+  DateSelectInfo,
+  DatesSetInfo,
+  EventClickInfo,
+  EventDisplayInfo,
+  EventInput
+} from '@fullcalendar/react'
 import interactionPlugin from '@fullcalendar/react/interaction'
 import dayGridPlugin from '@fullcalendar/react/daygrid'
 import timeGridPlugin from '@fullcalendar/react/timegrid'
@@ -33,6 +39,23 @@ const TOOLBAR = {
   start: 'prev,next today',
   center: 'title',
   end: 'dayGridMonth,timeGridWeek,timeGridDay'
+}
+
+const TIME = new Intl.DateTimeFormat('de-CH', { hour: '2-digit', minute: '2-digit' })
+
+/**
+ * Inhalt eines Hintergrund-Termins. FullCalendar zeigt dort nur den Titel,
+ * blass und kursiv. Die Lektion soll aber aussehen wie ein normaler Termin.
+ */
+function renderBackgroundEvent({ event }: EventDisplayInfo): React.JSX.Element {
+  const time =
+    event.start && event.end ? `${TIME.format(event.start)}–${TIME.format(event.end)} Uhr` : ''
+  return (
+    <div className="background-event-content">
+      {time && <div className="background-event-time">{time}</div>}
+      <div className="background-event-title">{event.title}</div>
+    </div>
+  )
 }
 
 /** Lokales Datum als `YYYY-MM-DD`, ohne Umweg über UTC. */
@@ -190,6 +213,7 @@ function CalendarView({
         eventClick={handleEventClick}
         selectable
         select={handleSelect}
+        backgroundEventContent={renderBackgroundEvent}
       />
     </div>
   )
