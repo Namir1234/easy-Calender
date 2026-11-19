@@ -1,6 +1,7 @@
 import type { WebCalendar } from '../google/api'
 import type { LocalOptions } from '../store'
 import Sheet from './Sheet'
+import DesignPicker from '../../../src/renderer/src/components/DesignPicker'
 
 interface Props {
   email: string
@@ -48,6 +49,7 @@ function CalendarSheet({
       <p className="form-note">
         Outlook-Termine siehst du hier, wenn easy-Calender auf dem PC sie mit Google abgleicht.
       </p>
+      <DesignPicker />
       <div className="sheet-actions">
         <button type="button" className="button" onClick={onClose}>
           Fertig

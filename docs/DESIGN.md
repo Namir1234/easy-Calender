@@ -4,6 +4,21 @@ Die Gestaltungsregeln der Oberfläche. Wer etwas an der UI ändert, hält sich d
 
 Seit Version 0.15.0 folgt die Oberfläche [Hallmark](https://github.com/Nutlope/hallmark), Theme **Dose**: warmes Papier mit feiner Faser, getönter Kunststoff, grün-schwarze Tinte und ein einziges Grün. Hallmark prüft mit `sloplint` gegen eine Liste typischer Merkmale von KI-generierten Oberflächen. Der Stempel oben in [`main.css`](../src/renderer/src/assets/main.css) und [`web.css`](../web/src/web.css) hält fest, welches Theme und welche Entscheidungen gelten.
 
+## Vier Designs zur Wahl
+
+In den Einstellungen (Desktop) und im Kalender-Blatt (Handy) lässt sich das Design wechseln. Die Wahl gilt nur auf dem Gerät und wird im `localStorage` gespeichert. Jedes Design gibt es hell und dunkel.
+
+| Design              | Aussehen                                                  | Schriften                                   |
+| ------------------- | --------------------------------------------------------- | ------------------------------------------- |
+| **Dose** (Standard) | warmes Papier mit Faser, Kunststoffknöpfe, ein Grün       | Schibsted Grotesk, Instrument Sans, DM Mono |
+| **Klassisch**       | das Design bis 0.14: neutral grau, ein Rot                | Segoe UI Variable                           |
+| **Coral**           | warmes Grau wie Briefpapier, geprägte Karten, Korallenrot | Figtree, Geist Mono                         |
+| **Terrazzo**        | Off-White, eckig, harte Tintenkanten, Terrakotta          | Syne, Onest, JetBrains Mono                 |
+
+Ein Design ist ein Block `:root[data-theme='…']` in [`tokens.css`](../src/renderer/src/assets/tokens.css), dazu ein zweiter für dunkel. Was ein Design anders macht als die anderen, steht in Tokens (`--strong-bg`, `--press`, `--label-tint`, `--tear`, `--stamp-*`), nie in eigenen Regeln in `main.css`. Ein neues Design braucht darum nur zwei Blöcke in `tokens.css` und einen Eintrag in [`design.ts`](../src/renderer/src/design.ts).
+
+Die Regeln unten beschreiben Dose. Die anderen Designs halten dieselben Grundsätze ein.
+
 ## Grundsatz
 
 **Die Oberfläche ist Papier. Farbe gehört den Kalendern.**
@@ -84,4 +99,4 @@ Alle Abstände laufen über die Skala `--space-3xs` (2 px) bis `--space-2xl` (64
 node <hallmark>/scripts/sloplint.mjs src/renderer/src/assets src/renderer/src/components web/src --genre modern-minimal --scope app
 ```
 
-Stand 0.15.0: 0 FAIL, 0 WARN, 2 beantwortete Hinweise (F4, im Stempel begründet).
+Stand 0.16.0: 0 FAIL, 0 WARN, 2 beantwortete Hinweise (F4) und eine begründete Ausnahme (37: mehr als drei Schriftfamilien, weil vier Designs).

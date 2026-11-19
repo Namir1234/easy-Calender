@@ -13,6 +13,7 @@ import CalendarView from './components/CalendarView'
 import EventDetails, { type AnchorRect } from './components/EventDetails'
 import AssistantPanel from './components/AssistantPanel'
 import EventForm, { type FormTarget } from './components/EventForm'
+import DesignPicker from './components/DesignPicker'
 import StatusBadge from './components/StatusBadge'
 import SyncPanel from './components/SyncPanel'
 import { useColorScheme } from './useColorScheme'
@@ -341,6 +342,7 @@ function App(): React.JSX.Element {
           {settings && (
             <section className="settings" aria-label="Einstellungen">
               <h2 className="section-title">Einstellungen</h2>
+              <DesignPicker />
               <label className="check">
                 <input
                   type="checkbox"

@@ -8,10 +8,34 @@ Laufendes Protokoll des Projekts. Der neuste Eintrag steht oben.
 
 |                     |                                                                                                               |
 | ------------------- | ------------------------------------------------------------------------------------------------------------- |
-| **Etappe**          | Alle sieben Etappen sind gebaut. Version 0.15.0: neues Design nach Hallmark                                   |
+| **Etappe**          | Alle sieben Etappen sind gebaut. Version 0.16.0: vier Designs zur Wahl                                        |
 | **Als Nächstes**    | Handy-Version mit dem echten Google-Konto prüfen. Danach: Personen einladen                                   |
 | **Blockiert durch** | –                                                                                                             |
 | **Offen bei Namir** | Handy-Version auf dem iPhone ausprobieren. Am 22.2. prüfen, ob der BMS-Plan im zweiten Semester gleich bleibt |
+
+---
+
+## 2026-11-19 · Vier Designs zur Wahl (0.16.0)
+
+Namir hat Mockups von 13 Hallmark-Themes angeschaut und wollte zwei davon zusätzlich, Coral und Terrazzo, neben den zwei, die schon eingebaut waren.
+
+**Gemacht**
+
+- Mockups der Wochenansicht für Dose, Ultraviolet, Console und zehn weitere Themes gebaut und als Bilder geschickt.
+- In den Einstellungen gibt es jetzt «Design» mit vier Möglichkeiten: **Dose** (Standard), **Klassisch** (das Design bis 0.14), **Coral** und **Terrazzo**. Auf dem Handy steht die Auswahl im Kalender-Blatt.
+- Jedes Design ist ein Block in `tokens.css`, hell und dunkel. Was Dose fest verbaut hatte (Hauptknopf, Einsinken, getönter Etikett-Kopf, Abrisskante, Stempel), läuft jetzt über Tokens, damit jedes Design es anders machen kann.
+- Die Wahl steht im `localStorage` des Geräts (`easy-calender.design`) und wird vor dem ersten Bild gesetzt, damit nichts flackert.
+- Coral sollte General Sans haben. Die gibt es nicht als npm-Paket, darum steht dort Figtree, die sehr ähnlich aussieht.
+
+**Geprüft**
+
+- Alle vier Designs in der Desktop-Vorschau, hell und dunkel, mit offenem Termin. Umschalten in den Einstellungen wirkt sofort und bleibt nach dem Neuladen.
+- Handy-Version mit Coral und der Auswahl im Kalender-Blatt.
+- `sloplint`: 0 FAIL, 0 WARN, eine begründete Ausnahme (mehr als drei Schriftfamilien, weil vier Designs). 138 Tests, Typprüfung, Web- und Electron-Build laufen durch.
+
+**Als Nächstes**
+
+- Die App in Electron anschauen (die installierte alte Version muss dafür beendet sein).
 
 ---
 

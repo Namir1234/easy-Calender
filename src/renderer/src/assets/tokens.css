@@ -79,8 +79,23 @@
   --font-display: 'Schibsted Grotesk Variable', 'Schibsted Grotesk', ui-sans-serif, sans-serif;
   --font-body: 'Instrument Sans Variable', 'Instrument Sans', ui-sans-serif, sans-serif;
   --font-outlier: 'DM Mono', ui-monospace, monospace;
+  --font-time: var(--font-outlier);
   --tracking-display: -0.025em;
   --display-weight: 700;
+
+  /* Was jedes Design anders macht: Hauptknopf, Auswahl, Etikett, Stempel */
+  --strong-bg: var(--color-accent);
+  --strong-ink: var(--color-accent-ink);
+  --strong-hover: var(--color-accent-deep);
+  --chosen-bg: var(--color-accent-soft);
+  --chosen-ink: var(--color-ink);
+  --press: 3px;
+  --label-tint: 22%;
+  --tear: dashed;
+  --stamp-border: 1.5px;
+  --stamp-ring: 1px;
+  --stamp-tilt: -2deg;
+  --radius-fab: var(--radius-card);
 
   /* Formen */
   --radius-card: 14px;
@@ -138,4 +153,267 @@
   /* Im Dunkeln trägt ein Schatten nicht. Die Kante übernimmt. */
   --shadow-lift: 0 0 0 1px var(--color-rule), 0 18px 40px -20px oklch(0% 0 0 / 0.6);
   --shadow-fab: 0 3px 0 var(--color-accent-deep), 0 14px 24px -10px oklch(0% 0 0 / 0.6);
+}
+
+/*
+ * Weitere Designs, wählbar in den Einstellungen (data-theme auf <html>).
+ * Jedes Design setzt alle Farben neu, einmal hell, einmal dunkel.
+ */
+
+/* Klassisch: das Design bis 0.14, neutral grau mit einem Rot */
+:root[data-theme='classic'] {
+  --color-paper: #ffffff;
+  --color-paper-2: #f3f4f5;
+  --color-paper-3: #e2e4e8;
+  --color-surface: #ffffff;
+  --color-ink: #16181d;
+  --color-ink-2: #353a44;
+  --color-muted: #535966;
+  --color-rule: #e2e4e8;
+  --color-hover: #0000000f;
+  --color-scrim: #16181d4d;
+  --color-accent: #c8321e;
+  --color-accent-deep: #ad2a18;
+  --color-accent-soft: #fbe3df;
+  --color-accent-wash: #c8321e24;
+  --color-accent-ink: #ffffff;
+  --color-focus: #c8321e;
+  --color-ok: #1f7a4d;
+  --color-notice: #8a5a00;
+  --color-error: #a1260d;
+  --color-error-bg: #fdf1ee;
+  --glint: transparent;
+  --p-thu: #e2e4e8;
+  --grain: none;
+
+  --font-display: 'Segoe UI Variable Display', 'Segoe UI', -apple-system, system-ui, sans-serif;
+  --font-body: 'Segoe UI Variable Text', 'Segoe UI', -apple-system, system-ui, sans-serif;
+  --font-outlier: var(--font-body);
+  --tracking-display: 0;
+  --display-weight: 650;
+
+  --radius-card: 8px;
+  --radius-input: 4px;
+  --radius-sheet: 16px;
+  --shadow-lift: 0 8px 28px #16181d2e;
+  --shadow-fab: 0 6px 18px #16181d40;
+  --rim: 0 0 0 1px #a3a8b3;
+  --rim-down: 0 0 0 1px #a3a8b3;
+  --rim-accent: 0 0 0 1px var(--color-ink);
+  --rim-accent-down: 0 0 0 1px var(--color-ink);
+
+  --strong-bg: var(--color-ink);
+  --strong-ink: var(--color-paper);
+  --strong-hover: var(--color-muted);
+  --chosen-bg: var(--color-surface);
+  --chosen-ink: var(--color-ink);
+  --press: 0px;
+  --label-tint: 0%;
+  --tear: solid;
+  --stamp-border: 0px;
+  --stamp-ring: 0px;
+  --stamp-tilt: 0deg;
+  --radius-fab: 50%;
+}
+
+:root[data-theme='classic'][data-color-scheme='dark'] {
+  --color-paper: #17181b;
+  --color-paper-2: #101113;
+  --color-paper-3: #2c2e33;
+  --color-surface: #202226;
+  --color-ink: #ecedef;
+  --color-ink-2: #c9ccd2;
+  --color-muted: #a4a9b3;
+  --color-rule: #2c2e33;
+  --color-hover: #ffffff14;
+  --color-scrim: #00000080;
+  --color-accent: #ff7a66;
+  --color-accent-deep: #ff8f7d;
+  --color-accent-soft: #3a1a15;
+  --color-accent-wash: #ff7a6640;
+  --color-accent-ink: #1c0a07;
+  --color-focus: #ff7a66;
+  --color-ok: #5fcf9a;
+  --color-notice: #e0b252;
+  --color-error: #ff8f7d;
+  --color-error-bg: #3a1a15;
+  --p-thu: #2c2e33;
+  --shadow-lift: 0 0 0 1px #5a5e68;
+  --shadow-fab: 0 6px 18px #00000080;
+  --rim: 0 0 0 1px #5a5e68;
+  --rim-down: 0 0 0 1px #5a5e68;
+}
+
+/* Coral (Hallmark): warmes Grau wie Briefpapier, geprägte Karten, ein Korallenrot */
+:root[data-theme='coral'] {
+  --color-paper: oklch(97% 0.006 55);
+  --color-paper-2: oklch(94.5% 0.007 55);
+  --color-paper-3: oklch(91.5% 0.009 55);
+  --color-surface: oklch(98.8% 0.0045 80);
+  --color-ink: oklch(21% 0.012 38);
+  --color-ink-2: oklch(29% 0.013 40);
+  --color-muted: oklch(47% 0.013 45);
+  --color-rule: oklch(87% 0.009 55);
+  --color-hover: oklch(21% 0.012 38 / 0.06);
+  --color-scrim: oklch(21% 0.012 38 / 0.32);
+  --color-accent: oklch(54% 0.165 29);
+  --color-accent-deep: oklch(48% 0.16 29);
+  --color-accent-soft: oklch(92% 0.04 30);
+  --color-accent-wash: oklch(54% 0.165 29 / 0.12);
+  --color-accent-ink: oklch(98.8% 0.0045 80);
+  --color-focus: oklch(54% 0.17 30);
+  --color-ok: oklch(48% 0.11 155);
+  --color-notice: oklch(47% 0.013 45);
+  --color-error: oklch(50% 0.17 29);
+  --color-error-bg: oklch(95% 0.025 35);
+  --glint: oklch(100% 0.005 80 / 0.9);
+  --p-thu: oklch(91.5% 0.009 55);
+  --grain: none;
+
+  --font-display: 'Figtree Variable', 'Figtree', ui-sans-serif, sans-serif;
+  --font-body: 'Figtree Variable', 'Figtree', ui-sans-serif, sans-serif;
+  --font-outlier: 'Geist Mono', ui-monospace, monospace;
+  --tracking-display: -0.03em;
+  --display-weight: 650;
+
+  --radius-card: 8px;
+  --radius-input: 6px;
+  --radius-sheet: 16px;
+  --shadow-lift:
+    12px 10px 18px -8px oklch(32% 0.03 50 / 0.3), 0 0 0 0.5px oklch(32% 0.03 50 / 0.22);
+  --shadow-fab: 6px 5px 14px -6px oklch(32% 0.03 50 / 0.45);
+  --rim:
+    inset 0 1px 0 var(--glint), 0 0 0 0.5px oklch(32% 0.03 50 / 0.22),
+    6px 5px 10px -6px oklch(32% 0.03 50 / 0.3);
+  --rim-down: inset 1px 1.5px 2px oklch(32% 0.03 50 / 0.16), 0 0 0 0.5px oklch(32% 0.03 50 / 0.2);
+  --rim-accent: 6px 5px 10px -6px oklch(32% 0.03 50 / 0.45);
+  --rim-accent-down: inset 1px 1.5px 2px oklch(0% 0 0 / 0.3);
+
+  --strong-bg: var(--color-ink);
+  --strong-ink: var(--color-surface);
+  --strong-hover: var(--color-ink-2);
+  --chosen-bg: var(--color-surface);
+  --chosen-ink: var(--color-ink);
+  --press: 1px;
+  --label-tint: 0%;
+  --tear: solid;
+  --stamp-border: 1px;
+  --stamp-ring: 0px;
+  --stamp-tilt: 0deg;
+  --radius-fab: 50%;
+}
+
+:root[data-theme='coral'][data-color-scheme='dark'] {
+  --color-paper: oklch(17% 0.01 45);
+  --color-paper-2: oklch(20% 0.011 45);
+  --color-paper-3: oklch(26% 0.013 45);
+  --color-surface: oklch(23% 0.012 45);
+  --color-ink: oklch(95% 0.008 70);
+  --color-ink-2: oklch(86% 0.01 70);
+  --color-muted: oklch(72% 0.012 60);
+  --color-rule: oklch(31% 0.012 45);
+  --color-hover: oklch(95% 0.008 70 / 0.07);
+  --color-scrim: oklch(5% 0.01 45 / 0.6);
+  --color-accent: oklch(72% 0.14 30);
+  --color-accent-deep: oklch(66% 0.15 30);
+  --color-accent-soft: oklch(32% 0.06 30);
+  --color-accent-wash: oklch(72% 0.14 30 / 0.16);
+  --color-accent-ink: oklch(18% 0.02 38);
+  --color-focus: oklch(76% 0.13 30);
+  --color-ok: oklch(78% 0.12 155);
+  --color-notice: oklch(72% 0.012 60);
+  --color-error: oklch(76% 0.12 30);
+  --color-error-bg: oklch(26% 0.05 30);
+  --glint: oklch(100% 0 0 / 0.06);
+  --p-thu: oklch(26% 0.013 45);
+  --shadow-lift: 0 0 0 1px var(--color-rule), 0 18px 40px -20px oklch(0% 0 0 / 0.6);
+  --shadow-fab: 0 10px 24px -10px oklch(0% 0 0 / 0.7);
+  --rim: inset 0 1px 0 var(--glint), 0 0 0 1px var(--color-rule);
+  --rim-down: inset 1px 1.5px 2px oklch(0% 0 0 / 0.4), 0 0 0 1px var(--color-rule);
+  --rim-accent: 0 0 0 1px var(--color-ink);
+  --strong-ink: var(--color-paper);
+}
+
+/* Terrazzo (Hallmark): Off-White, eckig, harte Tintenkanten, ein Terrakotta */
+:root[data-theme='terrazzo'] {
+  --color-paper: oklch(96% 0.009 82);
+  --color-paper-2: oklch(92% 0.012 82);
+  --color-paper-3: oklch(87.5% 0.014 80);
+  --color-surface: oklch(99.5% 0.003 82);
+  --color-ink: oklch(16% 0.006 60);
+  --color-ink-2: oklch(27% 0.006 60);
+  --color-muted: oklch(46% 0.01 60);
+  --color-rule: oklch(81% 0.012 80);
+  --color-hover: oklch(16% 0.006 60 / 0.06);
+  --color-scrim: oklch(16% 0.006 60 / 0.35);
+  --color-accent: oklch(53% 0.15 38);
+  --color-accent-deep: oklch(47% 0.15 38);
+  --color-accent-soft: oklch(91% 0.035 45);
+  --color-accent-wash: oklch(53% 0.15 38 / 0.12);
+  --color-accent-ink: oklch(99.5% 0.003 82);
+  --color-focus: oklch(50% 0.16 38);
+  --color-ok: oklch(46% 0.11 155);
+  --color-notice: oklch(46% 0.01 60);
+  --color-error: oklch(50% 0.17 30);
+  --color-error-bg: oklch(94% 0.03 40);
+  --glint: transparent;
+  --p-thu: oklch(91% 0.035 45);
+  --grain: none;
+
+  --font-display: 'Syne Variable', 'Syne', ui-sans-serif, sans-serif;
+  --font-body: 'Onest Variable', 'Onest', ui-sans-serif, sans-serif;
+  --font-outlier: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
+  --tracking-display: -0.025em;
+  --display-weight: 700;
+
+  --radius-card: 0px;
+  --radius-input: 0px;
+  --radius-sheet: 0px;
+  --radius-pill: 0px;
+  --radius-swatch: 0px;
+  --shadow-lift: 0 0 0 2px var(--color-ink), 14px 14px 0 2px var(--color-paper-3);
+  --shadow-fab: 0 0 0 2px var(--color-ink), 6px 6px 0 2px var(--color-paper-3);
+  --rim: inset 0 0 0 2px var(--color-ink);
+  --rim-down: inset 0 0 0 2px var(--color-ink);
+  --rim-accent: inset 0 0 0 2px var(--color-ink);
+  --rim-accent-down: inset 0 0 0 2px var(--color-ink);
+
+  --strong-bg: var(--color-ink);
+  --strong-ink: var(--color-surface);
+  --strong-hover: var(--color-ink-2);
+  --chosen-bg: var(--color-ink);
+  --chosen-ink: var(--color-surface);
+  --press: 1px;
+  --label-tint: 22%;
+  --tear: solid;
+  --stamp-border: 2px;
+  --stamp-ring: 0px;
+  --stamp-tilt: 0deg;
+  --radius-fab: 0px;
+}
+
+:root[data-theme='terrazzo'][data-color-scheme='dark'] {
+  --color-paper: oklch(16% 0.006 60);
+  --color-paper-2: oklch(20% 0.007 60);
+  --color-paper-3: oklch(27% 0.009 60);
+  --color-surface: oklch(22% 0.007 60);
+  --color-ink: oklch(95% 0.008 82);
+  --color-ink-2: oklch(86% 0.009 82);
+  --color-muted: oklch(72% 0.01 70);
+  --color-rule: oklch(33% 0.01 70);
+  --color-hover: oklch(95% 0.008 82 / 0.07);
+  --color-scrim: oklch(5% 0.01 60 / 0.6);
+  --color-accent: oklch(70% 0.14 40);
+  --color-accent-deep: oklch(64% 0.15 40);
+  --color-accent-soft: oklch(32% 0.06 45);
+  --color-accent-wash: oklch(70% 0.14 40 / 0.16);
+  --color-accent-ink: oklch(16% 0.006 60);
+  --color-focus: oklch(74% 0.13 40);
+  --color-ok: oklch(78% 0.12 155);
+  --color-notice: oklch(72% 0.01 70);
+  --color-error: oklch(76% 0.12 30);
+  --color-error-bg: oklch(26% 0.05 30);
+  --p-thu: oklch(32% 0.06 45);
+  --shadow-lift: 0 0 0 2px var(--color-ink), 14px 14px 0 2px oklch(8% 0.004 60);
+  --shadow-fab: 0 0 0 2px var(--color-ink), 6px 6px 0 2px oklch(8% 0.004 60);
 }

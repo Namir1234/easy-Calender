@@ -176,3 +176,11 @@ Wichtige technische Entscheidungen mit Begründung. Neue Entscheidungen kommen u
 **Begründung:** Namir wollte das Hallmark-Design. Von den drei vorgeschlagenen Themes trägt Dose den bisherigen Grundsatz am besten: Die Fläche ist Papier, ein einziges Grün macht alle Signale, und Farbe bleibt Information der Kalender. Lokale Schriftpakete statt Google Fonts, weil die Desktop-App keine Verbindung nach aussen erlauben soll (CSP `default-src 'self'`).
 
 **Preis:** Die Systemschrift von Windows (Segoe UI Variable) ist weg, die App fühlt sich weniger wie ein Windows-Programm an. Drei Schriftpakete machen den Build etwas grösser. FullCalendar lässt sich nur über seine Variablen und ein paar Klassen-Hooks einfärben, nicht ganz umgestalten.
+
+## E-022: Vier Designs zur Wahl, gespeichert pro Gerät
+
+**Entscheidung:** Die App bietet vier Designs (Dose, Klassisch, Coral, Terrazzo). Gewählt wird in den Einstellungen, gespeichert im `localStorage` des Geräts, nicht in den Einstellungen des Main-Prozesses und nicht in Supabase.
+
+**Begründung:** Namir wollte zwischen den Designs wählen können. Ein Design ist eine Vorliebe für ein Gerät, kein Teil der Kalenderdaten. Mit `localStorage` funktioniert dieselbe Lösung in der Desktop-App und in der Handy-Version, ohne den Main-Prozess, die IPC-Schnittstelle oder die Datenbank anzufassen.
+
+**Preis:** Desktop und Handy merken sich das Design je für sich. Wer den `localStorage` löscht, ist wieder bei Dose. Alle Schriften aller Designs liegen in der App, geladen wird aber nur, was das gewählte Design braucht. Für Coral steht Figtree statt General Sans, weil General Sans nicht als npm-Paket erhältlich ist.
