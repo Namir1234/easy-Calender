@@ -18,6 +18,7 @@ import type { Calendar, CalendarEvent, DateRange } from '../../../shared/types'
 import type { ColorScheme } from '../useColorScheme'
 import type { AnchorRect } from './EventDetails'
 import { useMonthScroll } from '../monthScroll'
+import { backgroundLabel, type BackgroundLabel } from '../backgroundLabel'
 
 interface Props {
   calendars: Calendar[]
@@ -42,21 +43,6 @@ const TOOLBAR = {
 }
 
 const TIME = new Intl.DateTimeFormat('de-CH', { hour: '2-digit', minute: '2-digit' })
-
-/**
- * Inhalt eines Hintergrund-Termins. FullCalendar zeigt dort nur den Titel,
- * blass und kursiv. Die Lektion soll aber aussehen wie ein normaler Termin.
- */
-function renderBackgroundEvent({ event }: EventDisplayInfo): React.JSX.Element {
-  const time =
-    event.start && event.end ? `${TIME.format(event.start)}–${TIME.format(event.end)} Uhr` : ''
-  return (
-    <div className="background-event-content">
-      {time && <div className="background-event-time">{time}</div>}
-      <div className="background-event-title">{event.title}</div>
-    </div>
-  )
-}
 
 /** Lokales Datum als `YYYY-MM-DD`, ohne Umweg über UTC. */
 function toLocalDate(date: Date): string {
@@ -151,6 +137,75 @@ function CalendarView({
     })
   }, [events, calendars, isTimeGrid])
 
+  // Wo der Text jeder Lektion stehen kann, ohne dass ein anderer Termin ihn
+  // verdeckt. Termine über einer ganz verdeckten Lektion nennen sie selbst.
+  const labels = useMemo(() => {
+    const range = (event: EventInput): [number, number] => [
+      Date.parse(String(event.start)),
+      Date.parse(String(event.end))
+    ]
+    const foreground = calendarEvents.filter(
+      (event) => event.display !== 'background' && !event.allDay
+    )
+    const covers = foreground.map(range)
+    const byId = new Map<string, BackgroundLabel>()
+    const hidden: Array<{ title: string; range: [number, number] }> = []
+    for (const event of calendarEvents) {
+      if (event.display !== 'background') continue
+      const [start, end] = range(event)
+      const label = backgroundLabel(start, end, covers)
+      byId.set(String(event.id), label)
+      if (!label.fits) hidden.push({ title: String(event.title), range: [start, end] })
+    }
+    return { byId, hidden }
+  }, [calendarEvents])
+
+  /**
+   * Inhalt eines Hintergrund-Termins. FullCalendar zeigt dort nur den Titel,
+   * blass und kursiv. Die Lektion soll aber aussehen wie ein normaler Termin,
+   * und ihr Text darf nicht unter einem anderen Termin verschwinden: Liegt
+   * einer über dem oberen Rand, rutscht der Text in die nächste freie Lücke.
+   */
+  const renderBackgroundEvent = useCallback(
+    ({ event }: EventDisplayInfo): React.JSX.Element => {
+      const offset = labels.byId.get(event.id)?.offset ?? 0
+      const time =
+        event.start && event.end ? `${TIME.format(event.start)}–${TIME.format(event.end)} Uhr` : ''
+      return (
+        <div className="background-event-content" style={{ top: `${offset * 100}%` }}>
+          {time && <div className="background-event-time">{time}</div>}
+          <div className="background-event-title">{event.title}</div>
+        </div>
+      )
+    },
+    [labels]
+  )
+
+  /**
+   * Inhalt eines normalen Termins: wie bei FullCalendar Zeit und Titel. Liegt
+   * er über einer Lektion, deren Text nirgends Platz hat, steht sie darunter.
+   */
+  const renderEvent = useCallback(
+    (info: EventDisplayInfo): React.JSX.Element | true => {
+      const { event } = info
+      if (event.allDay || !event.start || !event.end) return true
+      const start = event.start.getTime()
+      const end = event.end.getTime()
+      const covered = labels.hidden
+        .filter(({ range: [from, to] }) => from < end && start < to)
+        .map(({ title }) => title)
+      if (covered.length === 0) return true
+      return (
+        <>
+          {info.timeText && <div className={info.timeClass}>{info.timeText}</div>}
+          <div className={info.titleClass}>{event.title}</div>
+          <div className="covered-lesson">{covered.join(' · ')}</div>
+        </>
+      )
+    },
+    [labels]
+  )
+
   const handleEventClick = useCallback(
     (info: EventClickInfo) => {
       const { top, bottom, left, right } = info.el.getBoundingClientRect()
@@ -214,6 +269,7 @@ function CalendarView({
         selectable
         select={handleSelect}
         backgroundEventContent={renderBackgroundEvent}
+        eventContent={renderEvent}
       />
     </div>
   )

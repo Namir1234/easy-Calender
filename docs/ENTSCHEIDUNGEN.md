@@ -167,6 +167,8 @@ Wichtige technische Entscheidungen mit Begründung. Neue Entscheidungen kommen u
 
 **Begründung:** FullCalendar teilt die Spalte unter überlappenden Terminen auf. Ein Arzttermin während der Schule wird dann schmal neben die Lektion gequetscht. Eine eigene Reihenfolge (`eventOrder`) ändert nur, wer links steht, nicht die Breite. Hintergrund-Termine zählen bei der Aufteilung nicht mit. Die Einstellung hängt am Kalender und nicht an Namen wie «TBZ», damit sie für jeden Stundenplan passt.
 
+Damit die Lektion lesbar bleibt, rutscht ihr Text unter einen Termin, der ihn verdeckt. Ist sie ganz verdeckt, nennt der Termin darüber sie in einer eigenen Zeile.
+
 **Preis:** Hintergrund-Termine bekommen selbst keinen Klick, weil die Ebene der übrigen Termine darüberliegt. Die App leitet einen einfachen Klick auf eine Lektion selbst auf deren Details um. In der Monatsansicht bleiben die Termine normal, weil FullCalendar dort nur ganztägige Hintergrund-Termine zeigt.
 
 ## E-020: Im Monat blättern statt endlos scrollen

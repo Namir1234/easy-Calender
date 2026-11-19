@@ -26,6 +26,7 @@ Namirs Wunsch: TBZ und BMS sollen immer im Hintergrund liegen. Andere Termine wi
 - In der Monatsansicht bleiben sie normale Termine, weil FullCalendar Hintergrund-Termine dort nur ganztägig zeigt. Ganztägige Termine solcher Kalender bleiben ebenfalls normal.
 - Ein Klick auf eine Lektion öffnet weiterhin die Details. Wer über die Lektion zieht, legt wie überall einen neuen Termin an.
 - Nach Namirs erstem Test: Die Lektionen sehen jetzt aus wie normale Termine (Fläche, Farbbalken links, Uhrzeit und Titel) statt wie FullCalendars blasse, kursive Hintergrundfläche. Dafür zeichnet `backgroundEventContent` den Inhalt selbst.
+- Nach dem dritten Test («man soll noch lesen können, was im Hintergrund ist»): Liegt ein Termin über dem Titel einer Lektion, rutschen Uhrzeit und Titel in die erste freie Lücke von mindestens 25 Minuten, bei Chemie also unter die Mathe-Prüfung. Ist eine Lektion ganz verdeckt (Probeprüfung über Französisch), nennt der Termin darüber sie in einer zusätzlichen, gedämpften Zeile. Die Berechnung steht in `src/renderer/src/backgroundLabel.ts`, mit Tests.
 - Installer `easy-calender-0.15.0-setup.exe` gebaut. Im Arbeitsordner gibt es kein eigenes `node_modules`, darum braucht electron-builder dort `-c.electronVersion=44.11.3`. Die `.env` muss für den Build in den Arbeitsordner kopiert werden.
 
 **Aufgefallen**
@@ -40,7 +41,8 @@ Namirs Wunsch: TBZ und BMS sollen immer im Hintergrund liegen. Andere Termine wi
 - An der installierten App (Woche vom 16.11.): Mathe-Prüfung 08:00 liegt in voller Breite über BMS · Chemie, die Probeprüfung 15:20 über BMS · Französisch, die Lektionen haben alle die ganze Spaltenbreite.
 - Mit einer Testseite im Browser (die echte `CalendarView` mit nachgebauten Lektionen, dunkler Modus): Arzttermin liegt in voller Breite über dem TBZ-Block. Klick auf die Lektion ergibt die Details, Klick auf den Arzttermin ebenfalls, Klick auf ein freies Feld und Ziehen über die Lektion ergeben einen neuen Termin.
 - `npm test`: 133 von 133 Tests bestanden. `npm run typecheck` ohne Befund.
-- **Nicht geprüft:** Klick auf eine Lektion in der installierten App.
+- Lesbarkeit mit der Testseite geprüft (Montag 16.11. nachgebaut): «BMS · Chemie» steht unter der Mathe-Prüfung, die Probeprüfung zeigt «BMS · Französisch». 141 Tests bestanden.
+- **Nicht geprüft:** die Lesbarkeit und der Klick auf eine Lektion in der installierten App. Der neue Build ist installiert, startete aber nicht, weil eine andere Sitzung eine Entwicklungsversion offen hatte (eine Instanz pro Rechner).
 - **Achtung:** Die installierte App enthält jetzt die Pfeiltasten-Navigation nicht mehr, bis die Branches in `main` zusammengeführt sind. Beim Mergen die Versionsnummern bereinigen.
 
 **Als Nächstes**

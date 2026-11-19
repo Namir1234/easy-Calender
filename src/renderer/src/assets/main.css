@@ -827,6 +827,9 @@ p {
 }
 
 .background-event-content {
+  position: absolute;
+  left: 0;
+  right: 0;
   padding: 3px 6px;
   font-size: 12px;
   line-height: 1.35;
@@ -836,6 +839,16 @@ p {
 .background-event-time {
   font-size: 11px;
   opacity: 0.85;
+}
+
+/* Termin über einer ganz verdeckten Lektion: nennt sie in einer eigenen Zeile. */
+.covered-lesson {
+  margin-top: 2px;
+  font-size: 11px;
+  opacity: 0.75;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .background-event-title {
