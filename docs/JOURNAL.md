@@ -11,7 +11,27 @@ Laufendes Protokoll des Projekts. Der neuste Eintrag steht oben.
 | **Etappe**          | Alle sieben Etappen sind gebaut. Version 0.13.0 bringt die Handy-Version als Web-App |
 | **Als Nächstes**    | Handy-Version mit dem echten Google-Konto prüfen. Danach: Personen einladen          |
 | **Blockiert durch** | –                                                                                    |
-| **Offen bei Namir** | Handy-Version auf dem iPhone ausprobieren. Entscheiden, ob die BMS-Ferien nach dem TBZ-Plan gerichtet werden |
+| **Offen bei Namir** | Handy-Version auf dem iPhone ausprobieren. Am 22.2. prüfen, ob der BMS-Plan im zweiten Semester gleich bleibt |
+
+---
+
+## 2026-11-19 · BMS-Ferien nach dem TBZ-Plan gerichtet
+
+Namir wollte die geschätzten BMS-Ferien nach dem TBZ-Plan richten.
+
+**Gemacht**
+
+- Die fünf BMS-Serien neu angelegt und die alten gelöscht, weil sich die Wiederholung nicht nachträglich ändern lässt.
+- Ausgelassen sind jetzt diese Montage: 21.12., 28.12., 1.2., 8.2., 29.3. (Ostermontag), 19.4. (Sechseläuten), 26.4., 3.5. und 17.5. (Pfingstmontag). Letzter Montag ist der 12.7.
+
+**Geprüft**
+
+- 25.1.: alle fünf Blöcke da. 1.2. und 8.2.: keine. 15.2. und 22.2.: wieder da, ohne doppelte Termine.
+- Chemie von April bis Juli: 19.4., 26.4., 3.5. und 17.5. fehlen. 10.5. ist da, der 12.7. ist der letzte Termin.
+
+**Annahme**
+
+- Die BMS hat dieselben Ferien wie die TBZ (beide im Kanton Zürich). Das ist nicht aus dem BMS-Plan bestätigt. Am 22.2. steht schon die Erinnerung «BMS-Stundenplan prüfen» im Kalender.
 
 ---
 
