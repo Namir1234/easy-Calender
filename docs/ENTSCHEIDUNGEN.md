@@ -161,6 +161,16 @@ Wichtige technische Entscheidungen mit Begründung. Neue Entscheidungen kommen u
 - Kein Assistent auf dem Handy, weil Ollama auf dem PC läuft.
 - Für die Web-App braucht es einen eigenen Google-Client vom Typ «Webanwendung». Die Client-ID ist öffentlich, Google lässt sie nur von den eingetragenen Adressen aus zu.
 
+## E-021: Stundenplan als Hintergrund-Termine
+
+**Entscheidung:** Ein Kalender kann «im Hintergrund» stehen. Seine Termine zeichnet FullCalendar in Woche und Tag als Fläche (`display: 'background'`), alle anderen Termine liegen in voller Breite darüber.
+
+**Begründung:** FullCalendar teilt die Spalte unter überlappenden Terminen auf. Ein Arzttermin während der Schule wird dann schmal neben die Lektion gequetscht. Eine eigene Reihenfolge (`eventOrder`) ändert nur, wer links steht, nicht die Breite. Hintergrund-Termine zählen bei der Aufteilung nicht mit. Die Einstellung hängt am Kalender und nicht an Namen wie «TBZ», damit sie für jeden Stundenplan passt.
+
+Damit die Lektion lesbar bleibt, rutscht ihr Text unter einen Termin, der ihn verdeckt. Ist sie ganz verdeckt, nennt der Termin darüber sie in einer eigenen Zeile.
+
+**Preis:** Hintergrund-Termine bekommen selbst keinen Klick, weil die Ebene der übrigen Termine darüberliegt. Die App leitet einen einfachen Klick auf eine Lektion selbst auf deren Details um. In der Monatsansicht bleiben die Termine normal, weil FullCalendar dort nur ganztägige Hintergrund-Termine zeigt.
+
 ## E-020: Im Monat blättern statt endlos scrollen
 
 **Entscheidung:** In der Monatsansicht blättern Mausrad, Touchpad und Wischen ganze Monate weiter. Die Monate laufen nicht als eine lange Liste untereinander.

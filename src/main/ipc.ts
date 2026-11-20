@@ -72,7 +72,8 @@ export function registerIpc(ready: Promise<AppContext>, settings: SettingsAccess
       ...calendar,
       color: options.color ?? calendar.color,
       hidden: Boolean(options.hidden),
-      allDayOnly: Boolean(options.allDayOnly)
+      allDayOnly: Boolean(options.allDayOnly),
+      background: Boolean(options.background)
     }
   }
 

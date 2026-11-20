@@ -815,6 +815,47 @@ p {
   min-height: 0;
 }
 
+/* Hintergrund-Kalender (Stundenplan): sieht aus wie ein normaler Termin
+   (Fläche, Farbbalken links, Uhrzeit und Titel), nimmt aber immer die ganze
+   Spaltenbreite ein. Andere Termine liegen darüber. */
+.calendar-view .is-background-calendar {
+  border: 0 !important;
+  border-left: 3px solid var(--fc-event-color) !important;
+  border-radius: 4px;
+  background-color: color-mix(in oklab, var(--fc-event-color) 30%, transparent) !important;
+  overflow: hidden;
+}
+
+.background-event-content {
+  position: absolute;
+  left: 0;
+  right: 0;
+  padding: 3px 6px;
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--ink);
+}
+
+.background-event-time {
+  font-size: 11px;
+  opacity: 0.85;
+}
+
+/* Termin über einer ganz verdeckten Lektion: nennt sie in einer eigenen Zeile. */
+.covered-lesson {
+  margin-top: 2px;
+  font-size: 11px;
+  opacity: 0.75;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.background-event-title {
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
 /* Termin-Details: Popover neben dem Termin */
 
 .event-details {

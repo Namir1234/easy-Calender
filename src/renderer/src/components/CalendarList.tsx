@@ -23,6 +23,7 @@ function optionsOf(calendar: Calendar, overrideColor: boolean): CalendarOptions 
   return {
     hidden: calendar.hidden,
     allDayOnly: calendar.allDayOnly,
+    background: calendar.background,
     color: overrideColor ? calendar.color : undefined
   }
 }
@@ -132,6 +133,22 @@ function CalendarList({
                           }
                         />
                         <span>Nur ganztägige Termine zeigen</span>
+                      </label>
+                      <label
+                        className="check"
+                        title="Andere Termine liegen darüber, z. B. für einen Stundenplan"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={Boolean(calendar.background)}
+                          onChange={(event) =>
+                            onOptions(calendar, {
+                              ...optionsOf(calendar, true),
+                              background: event.target.checked
+                            })
+                          }
+                        />
+                        <span>Im Hintergrund zeigen</span>
                       </label>
                       <button
                         type="button"

@@ -17,7 +17,7 @@ describe('parseSettings', () => {
       closeToTray: false,
       boese: 1,
       calendars: {
-        a: { hidden: true, color: '#AABBCC', allDayOnly: true, fremd: 'x' },
+        a: { hidden: true, color: '#AABBCC', allDayOnly: true, background: true, fremd: 'x' },
         b: { color: 'rot' },
         c: {}
       }
@@ -25,14 +25,14 @@ describe('parseSettings', () => {
     expect(settings).toEqual({
       autostart: true,
       closeToTray: false,
-      calendars: { a: { hidden: true, color: '#aabbcc', allDayOnly: true } }
+      calendars: { a: { hidden: true, color: '#aabbcc', allDayOnly: true, background: true } }
     })
   })
 })
 
 describe('parseCalendarOptions', () => {
   it('behält nur, was eingeschaltet oder gültig ist', () => {
-    expect(parseCalendarOptions({ hidden: false, allDayOnly: 'ja', color: '#12345' })).toEqual({})
+    expect(parseCalendarOptions({ hidden: false, allDayOnly: 'ja', background: 1, color: '#12345' })).toEqual({})
     expect(parseCalendarOptions({ color: '#123456' })).toEqual({ color: '#123456' })
   })
 })

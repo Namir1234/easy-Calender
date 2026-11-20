@@ -12,6 +12,7 @@ export function parseCalendarOptions(input: unknown): CalendarOptions {
   const options: CalendarOptions = {}
   if (raw.hidden === true) options.hidden = true
   if (raw.allDayOnly === true) options.allDayOnly = true
+  if (raw.background === true) options.background = true
   if (typeof raw.color === 'string' && COLOR.test(raw.color)) {
     options.color = raw.color.toLowerCase()
   }

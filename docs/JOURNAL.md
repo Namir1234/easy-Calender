@@ -6,12 +6,52 @@ Laufendes Protokoll des Projekts. Der neuste Eintrag steht oben.
 
 ## Aktueller Stand
 
-|                     |                                                                                     |
-| ------------------- | ----------------------------------------------------------------------------------- |
-| **Etappe**          | Alle sieben Etappen sind gebaut. Version 0.14.0: im Monat durch die Monate blättern |
-| **Als Nächstes**    | Handy-Version mit dem echten Google-Konto prüfen. Danach: Personen einladen         |
-| **Blockiert durch** | –                                                                                   |
-| **Offen bei Namir** | Handy-Version auf dem iPhone ausprobieren. Am 22.2. prüfen, ob der BMS-Plan im zweiten Semester gleich bleibt |
+|                     |                                                                                                                                                                                                   |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Etappe**          | Alle sieben Etappen sind gebaut. Version 0.15.0: Stundenplan im Hintergrund                                                                                                                       |
+| **Als Nächstes**    | Handy-Version mit dem echten Google-Konto prüfen. Danach: Personen einladen                                                                                                                       |
+| **Blockiert durch** | –                                                                                                                                                                                                 |
+| **Offen bei Namir** | 0.15.0 installieren und beim Kalender «Claude» «Im Hintergrund zeigen» einschalten. Handy-Version auf dem iPhone ausprobieren. Am 22.2. prüfen, ob der BMS-Plan im zweiten Semester gleich bleibt |
+
+---
+
+## 2026-11-19 · Stundenplan im Hintergrund (Version 0.15.0)
+
+Namirs Wunsch: TBZ und BMS sollen immer im Hintergrund liegen. Andere Termine wie ein Arzttermin sollen sie überdecken, statt sich die Tagesspalte mit der Schule zu teilen.
+
+**Gemacht**
+
+- Neue Einstellung pro Kalender im Menü «···»: «Im Hintergrund zeigen». Sie wird wie die anderen Einstellungen nur auf diesem Gerät gespeichert.
+- In Woche und Tag zeichnet FullCalendar solche Termine als getönte Fläche über die ganze Spaltenbreite (`display: 'background'`). Alle anderen Termine liegen in voller Breite darüber.
+- In der Monatsansicht bleiben sie normale Termine, weil FullCalendar Hintergrund-Termine dort nur ganztägig zeigt. Ganztägige Termine solcher Kalender bleiben ebenfalls normal.
+- Ein Klick auf eine Lektion öffnet weiterhin die Details. Wer über die Lektion zieht, legt wie überall einen neuen Termin an.
+- Nach Namirs erstem Test: Die Lektionen sehen jetzt aus wie normale Termine (Fläche, Farbbalken links, Uhrzeit und Titel) statt wie FullCalendars blasse, kursive Hintergrundfläche. Dafür zeichnet `backgroundEventContent` den Inhalt selbst.
+- Nach dem dritten Test («man soll noch lesen können, was im Hintergrund ist»): Liegt ein Termin über dem Titel einer Lektion, rutschen Uhrzeit und Titel in die erste freie Lücke von mindestens 25 Minuten, bei Chemie also unter die Mathe-Prüfung. Ist eine Lektion ganz verdeckt (Probeprüfung über Französisch), nennt der Termin darüber sie in einer zusätzlichen, gedämpften Zeile. Die Berechnung steht in `src/renderer/src/backgroundLabel.ts`, mit Tests.
+- Installer `easy-calender-0.15.0-setup.exe` gebaut. Im Arbeitsordner gibt es kein eigenes `node_modules`, darum braucht electron-builder dort `-c.electronVersion=44.11.3`. Die `.env` muss für den Build in den Arbeitsordner kopiert werden.
+
+**Aufgefallen**
+
+- FullCalendar 7 legt die Ebene der normalen Termine über die Hintergrund-Termine. Ein Klick kommt darum bei der Lektion nicht an, sondern markiert ein freies Feld. Die App erkennt einen einfachen Klick (höchstens ein Feld von 30 Minuten) in einer Lektion und zeigt dann deren Details statt des Formulars für einen neuen Termin.
+- `eventDidMount` wird für Hintergrund-Termine nicht aufgerufen. Die Lektion wird darum über die Uhrzeit des Klicks gefunden, nicht über das HTML-Element.
+
+**Geprüft**
+
+- Namirs erster Test lief noch mit der installierten 0.14.0, darum sah alles aus wie vorher.
+- Beim zweiten Test war eine andere «0.15.0» installiert: der Build aus dem Branch `arrow-key-day-navigation` (12:38). Drei Branches tragen gerade die Nummer 0.15.0. Im Menü fehlte darum «Im Hintergrund zeigen», und die Mathe-Prüfung am Montag teilte sich die Spalte noch mit Chemie. Danach diesen Build installiert und beim Kalender «Claude» die Einstellung gesetzt.
+- An der installierten App (Woche vom 16.11.): Mathe-Prüfung 08:00 liegt in voller Breite über BMS · Chemie, die Probeprüfung 15:20 über BMS · Französisch, die Lektionen haben alle die ganze Spaltenbreite.
+- Mit einer Testseite im Browser (die echte `CalendarView` mit nachgebauten Lektionen, dunkler Modus): Arzttermin liegt in voller Breite über dem TBZ-Block. Klick auf die Lektion ergibt die Details, Klick auf den Arzttermin ebenfalls, Klick auf ein freies Feld und Ziehen über die Lektion ergeben einen neuen Termin.
+- `npm test`: 133 von 133 Tests bestanden. `npm run typecheck` ohne Befund.
+- Lesbarkeit mit der Testseite geprüft (Montag 16.11. nachgebaut): «BMS · Chemie» steht unter der Mathe-Prüfung, die Probeprüfung zeigt «BMS · Französisch». 141 Tests bestanden.
+- An der installierten App (Woche vom 16.11.): «BMS · Chemie» steht unter der Mathe-Prüfung, die Probeprüfung hat die Zusatzzeile. Vorher lief eine Entwicklungsversion der Sitzung `app-version-hallmark-design` und blockierte den Start (eine Instanz pro Rechner). Auf Namirs Wunsch geschlossen.
+- **Nicht geprüft:** der Klick auf eine Lektion in der installierten App.
+- **Achtung:** Die installierte App enthält jetzt die Pfeiltasten-Navigation nicht mehr, bis die Branches in `main` zusammengeführt sind. Beim Mergen die Versionsnummern bereinigen.
+
+**Übernommen** über Pull Request #3 nach `main` (2026-11-20). Dafür ist jetzt die GitHub CLI installiert und angemeldet.
+
+**Als Nächstes**
+
+- Namir installiert 0.15.0 und schaltet beim Kalender «Claude» (dort liegen die Lektionen von TBZ und BMS) «Im Hintergrund zeigen» ein. Die Einstellung gilt für den ganzen Kalender, also für alles, was darin liegt.
+- Die Handy-Version hat die Einstellung noch nicht.
 
 ---
 
