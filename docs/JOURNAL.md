@@ -46,6 +46,8 @@ Namirs Wunsch: TBZ und BMS sollen immer im Hintergrund liegen. Andere Termine wi
 - **Nicht geprüft:** der Klick auf eine Lektion in der installierten App.
 - **Achtung:** Die installierte App enthält jetzt die Pfeiltasten-Navigation nicht mehr, bis die Branches in `main` zusammengeführt sind. Beim Mergen die Versionsnummern bereinigen.
 
+**Übernommen** über Pull Request #3 nach `main` (2026-11-20). Dafür ist jetzt die GitHub CLI installiert und angemeldet.
+
 **Als Nächstes**
 
 - Namir installiert 0.15.0 und schaltet beim Kalender «Claude» (dort liegen die Lektionen von TBZ und BMS) «Im Hintergrund zeigen» ein. Die Einstellung gilt für den ganzen Kalender, also für alles, was darin liegt.
